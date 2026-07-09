@@ -6,7 +6,7 @@ const { generateAccessToken, generateRefreshToken } = require("../utils/generate
 
 const cookieOptions = {
   httpOnly: true,
-  sameSite: "strict",
+  sameSite: "lax",
   secure: process.env.NODE_ENV === "production",
 };
 
@@ -41,6 +41,18 @@ const register = async (req, res) => {
       password: hashedPassword,
       departmentId,
       managerId,
+    });
+
+    const accessToken = generateAccessToken(user);
+    const refreshToken = generateRefreshToken(user);
+
+    res.cookie("accessToken", accessToken, {
+      ...cookieOptions,
+      maxAge: 15 * 60 * 1000,
+    });
+    res.cookie("refreshToken", refreshToken, {
+      ...cookieOptions,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     res.status(201).json({
