@@ -3,6 +3,8 @@ const Attendance = require("../models/Attendance");
 const attendanceTimezone = process.env.ATTENDANCE_TIMEZONE || "Asia/Kolkata";
 const shiftStartTime = process.env.SHIFT_START_TIME || "09:30";
 const lateGraceMinutes = Number(process.env.LATE_GRACE_MINUTES || 0);
+const fullDayMinimumHours = Number(process.env.FULL_DAY_MIN_HOURS || 8);
+const halfDayMinimumHours = Number(process.env.HALF_DAY_MIN_HOURS || 4);
 
 const getDatePartsInTimezone = (date) => {
   const dateParts = new Intl.DateTimeFormat("en-US", {
@@ -37,6 +39,18 @@ const isLateCheckIn = (date) => {
   const shiftStartMinutes = shiftHour * 60 + shiftMinute + lateGraceMinutes;
 
   return checkInMinutes > shiftStartMinutes;
+};
+
+const getAttendanceStatus = (hoursWorked) => {
+  if (hoursWorked >= fullDayMinimumHours) {
+    return "present";
+  }
+
+  if (hoursWorked >= halfDayMinimumHours) {
+    return "half-day";
+  }
+
+  return "absent";
 };
 
 const punchIn = async (req, res) => {
@@ -86,6 +100,59 @@ const punchIn = async (req, res) => {
   }
 };
 
+const punchOut = async (req, res) => {
+  try {
+    const now = new Date();
+    const date = getBusinessDate(now);
+    const attendance = await Attendance.findOne({
+      userId: req.user._id,
+      date,
+    });
+
+    if (!attendance || !attendance.punchIn) {
+      return res.status(404).json({
+        success: false,
+        message: "No punch-in record found for today",
+      });
+    }
+
+    if (attendance.punchOut) {
+      return res.status(409).json({
+        success: false,
+        message: "Punch-out has already been recorded for today",
+      });
+    }
+
+    if (now <= attendance.punchIn) {
+      return res.status(400).json({
+        success: false,
+        message: "Punch-out time must be later than punch-in time",
+      });
+    }
+
+    const hoursWorked = Math.round(((now - attendance.punchIn) / (60 * 60 * 1000)) * 100) / 100;
+
+    attendance.punchOut = now;
+    attendance.hoursWorked = hoursWorked;
+    attendance.status = getAttendanceStatus(hoursWorked);
+
+    await attendance.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Punch-out recorded successfully",
+      data: {
+        attendance,
+      },
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 const notImplemented = async (req, res) => {
   try {
     res.status(501).json({
@@ -102,5 +169,6 @@ const notImplemented = async (req, res) => {
 
 module.exports = {
   punchIn,
+  punchOut,
   notImplemented,
 };

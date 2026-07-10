@@ -1,7 +1,7 @@
 const express = require("express");
 const { body } = require("express-validator");
 
-const { punchIn, notImplemented } = require("../controllers/attendance.controller");
+const { punchIn, punchOut, notImplemented } = require("../controllers/attendance.controller");
 const { protect } = require("../middleware/auth.middleware");
 const { authorizeRoles } = require("../middleware/role.middleware");
 const validateRequest = require("../middleware/validate.middleware");
@@ -28,7 +28,22 @@ router.post(
   validateRequest,
   punchIn
 );
-router.post("/punch-out", notImplemented);
+router.post(
+  "/punch-out",
+  [
+    body().custom((value, { req }) => {
+      const unexpectedField = Object.keys(req.body)[0];
+
+      if (unexpectedField) {
+        throw new Error(`Field '${unexpectedField}' is not allowed for punch-out`);
+      }
+
+      return true;
+    }),
+  ],
+  validateRequest,
+  punchOut
+);
 router.get("/me", notImplemented);
 router.get("/team", authorizeRoles("manager", "hr"), notImplemented);
 router.get("/all", authorizeRoles("hr", "admin"), notImplemented);
