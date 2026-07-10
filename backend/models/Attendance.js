@@ -20,8 +20,12 @@ const attendanceSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ["present", "absent", "late", "half-day", "holiday"],
+    enum: ["present", "absent", "half-day", "holiday"],
     required: true,
+  },
+  isLate: {
+    type: Boolean,
+    default: false,
   },
   hoursWorked: {
     type: Number,
@@ -36,10 +40,12 @@ const attendanceSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  createdAt: {
-    type: Date,
-    default: Date.now,
   },
-});
+  {
+    timestamps: true,
+  }
+);
+
+attendanceSchema.index({ userId: 1, date: 1 }, { unique: true });
 
 module.exports = mongoose.model("Attendance", attendanceSchema);
