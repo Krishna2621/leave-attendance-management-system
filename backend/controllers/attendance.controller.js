@@ -153,6 +153,50 @@ const punchOut = async (req, res) => {
   }
 };
 
+const getAttendanceHistory = async (req, res) => {
+  try {
+    const { startDate, endDate, page = 1, limit = 20 } = req.query;
+    const filter = { userId: req.user._id };
+
+    if (startDate || endDate) {
+      filter.date = {};
+
+      if (startDate) {
+        filter.date.$gte = new Date(`${startDate}T00:00:00.000Z`);
+      }
+
+      if (endDate) {
+        filter.date.$lte = new Date(`${endDate}T00:00:00.000Z`);
+      }
+    }
+
+    const skip = (page - 1) * limit;
+    const [attendance, totalRecords] = await Promise.all([
+      Attendance.find(filter).sort({ date: -1 }).skip(skip).limit(limit).lean(),
+      Attendance.countDocuments(filter),
+    ]);
+
+    return res.status(200).json({
+      success: true,
+      message: "Attendance history retrieved successfully",
+      data: {
+        attendance,
+        pagination: {
+          page,
+          limit,
+          totalRecords,
+          totalPages: Math.ceil(totalRecords / limit),
+        },
+      },
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 const notImplemented = async (req, res) => {
   try {
     res.status(501).json({
@@ -170,5 +214,6 @@ const notImplemented = async (req, res) => {
 module.exports = {
   punchIn,
   punchOut,
+  getAttendanceHistory,
   notImplemented,
 };
