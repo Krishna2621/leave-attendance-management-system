@@ -44,4 +44,7 @@ const userSchema = new mongoose.Schema(
   }
 );
 
+userSchema.index({ managerId: 1 });
+userSchema.index({ departmentId: 1 });
+
 module.exports = mongoose.model("User", userSchema);

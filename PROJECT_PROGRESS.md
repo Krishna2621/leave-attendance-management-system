@@ -1,122 +1,99 @@
 # Leave & Attendance Management System - Project Progress
 
-**Last Updated:** July 10, 2026  
+**Last Updated:** July 11, 2026
 **Overall Status:** Active Development
-
 
 ## Current Version
 
-v0.2.0
+v0.3.0
 
-### Phase 1 - Foundation & Authentication (Completed)
+### Attendance Core (Completed)
 
-The backend foundation and Phase 1 authentication milestone have been completed, tested, verified, committed, and pushed. The project is ready to begin the Phase 2 Attendance Management module.
+Versions v0.1.0 through v0.3.0 have been implemented, tested with Postman, verified, committed, and pushed to GitHub. The attendance core is complete and the project is ready for the v0.4.0 attendance expansion.
 
 ## Completed Tasks
 
-- Created the prescribed backend folder structure for configuration, models, controllers, routes, middleware, and utilities.
-- Initialized the Node.js project and installed the required backend dependencies.
-- Configured the Express server with JSON parsing, cookies, CORS, Helmet, health checks, centralized 404 handling, and centralized error handling.
-- Integrated MongoDB Atlas using Mongoose and environment-based configuration.
-- Created Mongoose models for users, departments, attendance, leave types, leave requests, and leave balances.
-- Implemented and verified JWT authentication with access tokens and refresh tokens.
-- Implemented and tested user registration with bcrypt password hashing and duplicate email validation.
-- Implemented and tested user login with generic credential failure responses.
-- Implemented and tested user logout with access and refresh cookie clearing.
-- Implemented and tested refresh-token based access token renewal without refresh token rotation.
-- Configured secure HTTP-only authentication cookies for local development and production readiness.
-- Added and verified JWT authentication middleware for protected routes.
-- Added and verified role-based authorization middleware for Employee, Manager, HR, and Admin access checks.
-- Added request validation middleware using `express-validator`.
-- Added rate limiting to authentication routes.
-- Added security middleware including Helmet, CORS with credentials, validation, rate limiting, and HTTP-only cookies.
-- Added Cloudinary, Multer, Nodemailer, and cron utility foundations for later phases.
-- Defined the planned user, attendance, leave, and report API routes.
-- Added explicit `501 Not Implemented` responses for features reserved for future phases.
-- Added `.env.example` and root `.gitignore` configuration to protect secrets and generated files.
-- Verified backend JavaScript syntax and installed dependency integrity.
+### v0.1.0 - Foundation
+
+- Created the backend project structure and configured the Express server.
+- Integrated MongoDB Atlas through Mongoose and environment configuration.
+- Configured Git and GitHub for version control.
+- Added environment configuration and secret protection.
+- Implemented the health API endpoint.
+
+### v0.2.0 - Authentication & RBAC
+
+- Implemented JWT access-token and refresh-token authentication.
+- Implemented user registration, login, logout, and access-token refresh.
+- Added authentication middleware for protected routes.
+- Added role-based access control for Employee, Manager, HR, and Admin roles.
+- Added Helmet, request validation, authentication rate limiting, CORS, and HTTP-only authentication cookies.
+
+### v0.3.0 - Attendance Core
+
+- Improved the attendance data model with a separate `isLate` business flag.
+- Added a compound unique index to enforce one attendance record per employee per day.
+- Implemented authenticated Punch-In with server-generated timestamps and duplicate prevention.
+- Implemented authenticated Punch-Out with server-generated timestamps.
+- Added working-hours calculation and attendance-status calculation.
+- Implemented `GET /api/attendance/me` for authenticated users only.
+- Added pagination and date-range filtering to attendance history.
+- Validated attendance request and query inputs.
+- Tested and verified all attendance-core endpoints using Postman.
 
 ## Current Status
 
-- Phase 1 backend foundation and authentication are complete.
-- MongoDB Atlas integration has been verified.
-- Register, login, logout, and refresh-token endpoints are implemented and tested.
-- Authentication middleware correctly protects routes with valid access tokens.
-- Invalid, expired, missing, and inactive-user authentication cases are handled with `401 Unauthorized`.
-- RBAC middleware is verified for Employee, Manager, HR, and Admin role access.
-- Attendance, leave, reporting, dashboard, and frontend development have not been started yet.
-- The next active milestone is Phase 2 Attendance Management.
+- Backend foundation, authentication, RBAC, and attendance core are complete.
+- Employees can punch in, punch out, and retrieve only their own attendance history.
+- Attendance records use server-generated timestamps, duplicate prevention, status calculation, and the `isLate` flag.
+- Attendance history supports descending date order, pagination, and optional date-range filtering.
+- Team attendance, organization-wide attendance, HR corrections, attendance reports, and automatic absence marking remain pending.
+- The next active milestone is v0.4.0 Attendance Expansion.
 
 ## Today's Progress
 
-- Completed end-to-end testing for registration, login, logout, and refresh-token flows.
-- Confirmed bcrypt password hashing, duplicate email checks, sanitized responses, and HTTP-only cookie behavior.
-- Verified protected route authentication using access tokens.
-- Verified RBAC behavior across Employee, Manager, HR, and Admin roles.
-- Confirmed security middleware is active for Helmet, validation, auth rate limiting, and cookie-based authentication.
-- Committed and pushed the completed Phase 1 authentication milestone.
-
-## Milestone Summary
-
-### Phase 1 - Authentication (Completed)
-
-Completed Features:
-- JWT Authentication
-- Register API
-- Login API
-- Logout API
-- Refresh Token API
-- Authentication Middleware
-- Role-Based Access Control (RBAC)
-
-Status:
-- Fully implemented
-- Tested with Postman
-- Verified
-- Committed
-- Pushed to GitHub
+- Completed and approved the Punch-In endpoint.
+- Completed and approved the Punch-Out endpoint.
+- Added working-hours and attendance-status calculation.
+- Added the separate `isLate` attendance flag and daily duplicate prevention index.
+- Completed and approved the authenticated attendance-history endpoint.
+- Added attendance-history pagination, date-range filtering, descending sort, and query validation.
+- Tested attendance endpoints with Postman and verified expected responses and access controls.
+- Committed and pushed the completed v0.3.0 Attendance Core milestone.
 
 ## Next Session Plan
 
-1. Begin Phase 2 Attendance Management planning.
-2. Inspect the existing attendance model, routes, and controller placeholders.
-3. Design the punch-in and punch-out API flow.
-4. Implement attendance punch-in endpoint with authentication.
-5. Implement attendance punch-out endpoint with validation.
-6. Add own attendance history retrieval for employees.
-7. Test Attendance APIs with Postman before moving to manager or HR attendance views.
+Begin Version v0.4.0 - Attendance Expansion:
+
+1. Implement Team Attendance for reporting managers and HR.
+2. Implement Organization-wide Attendance for HR and Admin.
+3. Implement HR Attendance Corrections with validation and audit-ready notes.
+4. Implement Attendance Reports with appropriate filters and summaries.
+5. Implement cron-based automatic absence marking.
+6. Test each endpoint and access-control rule with Postman before proceeding.
 
 ## Important Notes
 
-- Development should now move into Phase 2 Attendance Management.
-- Do not begin Leave, Reports, Dashboard, or Frontend work until Attendance Management is established.
 - The `.env` file contains secrets and must never be committed.
-- Placeholder endpoints intentionally return `501 Not Implemented`; they are not defects until their phase begins.
-- All future API responses must continue using the standard `success`, `message`, and optional `data` structure.
-- Controllers must contain business logic, while routes remain thin and authentication/authorization stays in middleware.
-- Future changes should preserve async/await, centralized error handling, and the existing folder structure.
-
----
+- All API responses use the standard `success`, `message`, and optional `data` structure.
+- Controllers contain business logic; routes remain thin; authentication and role checks remain in middleware.
+- Future changes must preserve async/await, centralized error handling, and the existing project structure.
 
 ## Known Issues
 
-- Refresh token rotation and server-side refresh token revocation are not implemented yet.
-- Admin and role-management APIs are not implemented yet; test roles are managed manually in MongoDB during development.
-- Attendance, leave, reporting, dashboard, and frontend modules remain pending.
+- Refresh-token rotation and server-side refresh-token revocation are not implemented.
+- Admin and role-management APIs are not implemented; test roles are managed manually in MongoDB during development.
+- Team attendance, organization-wide attendance, HR corrections, reports, and cron-based absence marking remain pending.
 
 ## Git History
 
-Latest Commit
-
-Complete Phase 1 authentication
+Latest Commit: Complete v0.3.0 Attendance Core
 
 ## Version History
 
 | Version | Status | Description |
-|----------|--------|-------------|
-| v0.1.0 | ✅ Released | Backend foundation, Git, MongoDB, Express setup |
-| v0.2.0 | ✅ Released | Complete authentication system (JWT, Register, Login, Logout, Refresh Token, RBAC) |
-| v0.3.0 | 🔄 Planned | Attendance Management |
-| v0.4.0 | ⏳ Planned | Leave Management |
-| v0.5.0 | ⏳ Planned | Reports & Analytics |
-| v1.0.0 | ⏳ Planned | Final Production Release |
+|---|---|---|
+| v0.1.0 | Released | Foundation: Express server, MongoDB Atlas, environment configuration, Git/GitHub, and health API |
+| v0.2.0 | Released | Authentication & RBAC: JWT, user authentication, route protection, roles, and security middleware |
+| v0.3.0 | Released | Attendance Core: Punch-In, Punch-Out, status calculation, late flag, and attendance history |
+| v0.4.0 | Planned | Attendance Expansion: team/org views, HR corrections, reports, and automatic absence marking |
