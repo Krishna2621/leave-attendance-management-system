@@ -1,5 +1,6 @@
 const Attendance = require("../models/Attendance");
 const User = require("../models/User");
+const { createAttendanceAuditLog } = require("../utils/auditLog");
 
 const attendanceTimezone = process.env.ATTENDANCE_TIMEZONE || "Asia/Kolkata";
 const shiftStartTime = process.env.SHIFT_START_TIME || "09:30";
@@ -54,6 +55,29 @@ const getAttendanceStatus = (hoursWorked) => {
   return "absent";
 };
 
+const createAttendanceAuditEvent = async ({ req, attendance, action, beforeAttendance = {} }) => {
+  try {
+    await createAttendanceAuditLog({
+      attendanceId: attendance._id,
+      action,
+      actor: req.user,
+      targetUserId: attendance.userId,
+      beforeAttendance,
+      afterAttendance: attendance.toObject(),
+      correctionReason: action === "corrected" ? attendance.correctionReason : "",
+      source: "api",
+      ipAddress: req.ip,
+      userAgent: req.get("user-agent") || null,
+    });
+  } catch (error) {
+    console.error("Failed to create attendance audit log", {
+      action,
+      attendanceId: attendance._id,
+      error: error.message,
+    });
+  }
+};
+
 const punchIn = async (req, res) => {
   try {
     const now = new Date();
@@ -77,6 +101,12 @@ const punchIn = async (req, res) => {
       status: "present",
       isLate: isLateCheckIn(now),
       note: req.body.note || "",
+    });
+
+    await createAttendanceAuditEvent({
+      req,
+      attendance,
+      action: "punch_in",
     });
 
     return res.status(201).json({
@@ -131,6 +161,7 @@ const punchOut = async (req, res) => {
       });
     }
 
+    const beforeAttendance = attendance.toObject();
     const hoursWorked = Math.round(((now - attendance.punchIn) / (60 * 60 * 1000)) * 100) / 100;
 
     attendance.punchOut = now;
@@ -138,6 +169,13 @@ const punchOut = async (req, res) => {
     attendance.status = getAttendanceStatus(hoursWorked);
 
     await attendance.save();
+
+    await createAttendanceAuditEvent({
+      req,
+      attendance,
+      action: "punch_out",
+      beforeAttendance,
+    });
 
     return res.status(200).json({
       success: true,
@@ -382,6 +420,8 @@ const correctAttendance = async (req, res) => {
       });
     }
 
+    const beforeAttendance = attendance.toObject();
+
     const hasPunchIn = Object.prototype.hasOwnProperty.call(req.body, "punchIn");
     const hasPunchOut = Object.prototype.hasOwnProperty.call(req.body, "punchOut");
     const hasTimeCorrection = hasPunchIn || hasPunchOut;
@@ -416,6 +456,13 @@ const correctAttendance = async (req, res) => {
     attendance.correctionReason = req.body.correctionReason;
 
     await attendance.save();
+
+    await createAttendanceAuditEvent({
+      req,
+      attendance,
+      action: "corrected",
+      beforeAttendance,
+    });
 
     return res.status(200).json({
       success: true,

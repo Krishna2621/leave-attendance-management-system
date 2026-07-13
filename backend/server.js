@@ -11,6 +11,7 @@ const connectDB = require("./config/db");
 const authRoutes = require("./routes/auth.routes");
 const userRoutes = require("./routes/user.routes");
 const attendanceRoutes = require("./routes/attendance.routes");
+const auditLogRoutes = require("./routes/auditLog.routes");
 const leaveRoutes = require("./routes/leave.routes");
 const reportRoutes = require("./routes/report.routes");
 const { errorHandler, notFound } = require("./middleware/error.middleware");
@@ -46,6 +47,7 @@ app.get("/api/health", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/attendance", attendanceRoutes);
+app.use("/api/audit-logs", auditLogRoutes);
 app.use("/api/leaves", leaveRoutes);
 app.use("/api/reports", reportRoutes);
 
