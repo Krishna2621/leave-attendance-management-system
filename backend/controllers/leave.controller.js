@@ -5,6 +5,7 @@ const LeaveRequest = require("../models/LeaveRequest");
 const LeaveRequestHistory = require("../models/LeaveRequestHistory");
 const LeaveType = require("../models/LeaveType");
 const User = require("../models/User");
+const { queueNotification } = require("../services/notification.service");
 const {
   getBusinessDate,
   getLeaveDaysByYear,
@@ -13,6 +14,7 @@ const {
 } = require("../utils/leave.utils");
 
 const leaveRequestFields = "_id userId leaveTypeId startDate endDate totalDays reason documentUrl status approvedBy approverComment approvedAt rejectedAt cancelledAt createdAt updatedAt";
+const formatDate = (date) => new Date(date).toISOString().slice(0, 10);
 
 const createError = (message, statusCode) => {
   const error = new Error(message);
@@ -483,6 +485,18 @@ const approveLeaveRequest = async (req, res) => {
         comment: leaveRequest.approverComment,
         session,
       });
+      const leaveType = await LeaveType.findById(leaveRequest.leaveTypeId).select("name").session(session).lean();
+      await queueNotification({
+        recipientId: leaveRequest.userId,
+        type: "leave_approved",
+        referenceType: "LeaveRequest",
+        referenceId: leaveRequest._id,
+        template: "leave_approved",
+        payload: { leaveTypeName: leaveType?.name || "Leave", startDate: formatDate(leaveRequest.startDate), endDate: formatDate(leaveRequest.endDate), totalDays: leaveRequest.totalDays, approverComment: leaveRequest.approverComment },
+        metadata: { source: "leave-approval" },
+        dedupeKey: `leave-approved:${leaveRequest._id}`,
+        session,
+      });
     });
 
     return res.status(200).json({
@@ -523,6 +537,18 @@ const rejectLeaveRequest = async (req, res) => {
         nextStatus: "rejected",
         actor: req.user,
         comment: leaveRequest.approverComment,
+        session,
+      });
+      const leaveType = await LeaveType.findById(leaveRequest.leaveTypeId).select("name").session(session).lean();
+      await queueNotification({
+        recipientId: leaveRequest.userId,
+        type: "leave_rejected",
+        referenceType: "LeaveRequest",
+        referenceId: leaveRequest._id,
+        template: "leave_rejected",
+        payload: { leaveTypeName: leaveType?.name || "Leave", startDate: formatDate(leaveRequest.startDate), endDate: formatDate(leaveRequest.endDate), approverComment: leaveRequest.approverComment },
+        metadata: { source: "leave-rejection" },
+        dedupeKey: `leave-rejected:${leaveRequest._id}`,
         session,
       });
     });

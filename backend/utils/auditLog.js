@@ -47,6 +47,7 @@ const createAttendanceAuditLog = async ({
   source = "api",
   ipAddress = null,
   userAgent = null,
+  session = null,
 }) => {
   const changedFields = buildAttendanceChangedFields(beforeAttendance, afterAttendance);
   const normalizedCorrectionReason = typeof correctionReason === "string" ? correctionReason.trim() : "";
@@ -59,7 +60,7 @@ const createAttendanceAuditLog = async ({
     throw new Error("A correction audit log requires a correction reason");
   }
 
-  return AuditLog.create({
+  const auditLog = {
     entityType: "attendance",
     entityId: attendanceId,
     action,
@@ -71,7 +72,14 @@ const createAttendanceAuditLog = async ({
     source,
     ipAddress,
     userAgent,
-  });
+  };
+
+  if (session) {
+    const [createdAuditLog] = await AuditLog.create([auditLog], { session });
+    return createdAuditLog;
+  }
+
+  return AuditLog.create(auditLog);
 };
 
 module.exports = {

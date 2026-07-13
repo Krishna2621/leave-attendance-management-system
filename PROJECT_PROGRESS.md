@@ -1,19 +1,19 @@
 # Leave & Attendance Management System - Project Progress
 
 **Last Updated:** July 14, 2026
-**Overall Status:** Active Development
+**Overall Status:** Active Development (Version v0.7.0)
 
 ## Current Version
 
-v0.6.0(in development)
+v0.7.0 (In Development)
 
-### Attendance Module Completed
+### Leave Management Module Completed
 
-Versions v0.1.0 through v0.5.0 have been fully implemented, reviewed, manually tested using Postman, committed, and pushed to GitHub.
+Versions v0.1.0 through v0.6.0 have been fully implemented, reviewed, manually tested using Postman, committed, and pushed to GitHub.
 
-The Attendance Management module is now functionally complete, including authentication, attendance tracking, audit logging, reporting, and dashboard analytics.
+The Leave Management module is now functionally complete, including leave types, leave balances, leave applications, approval workflows, cancellation, immutable leave history, transactional balance updates, and role-based authorization.
 
-The next development milestone is **Version v0.6.0 — Leave Management Module**.
+Development has officially begun on **Version v0.7.0 — Automation & Notification Module**.
 
 ---
 
@@ -59,6 +59,22 @@ The next development milestone is **Version v0.6.0 — Leave Management Module**
 - Applied strict RBAC, secure projections, and read-only dashboard architecture.
 - Fully reviewed, manually tested with Postman, committed, and pushed to GitHub.
 
+
+### v0.6.0 - Leave Management Module
+
+- Implemented Leave Types management for HR/Admin, including creation, update, activation, deactivation, and listing.
+- Implemented Leave Balance allocation and employee balance management with server-calculated remaining leave.
+- Implemented Employee Leave Application with weekend exclusion, overlap prevention, and server-side leave-day calculation.
+- Added multi-year leave requests with per-year leave-day breakdown.
+- Implemented transactional Leave Approval and Rejection workflows with manager and HR/Admin authorization.
+- Added Employee Leave Cancellation for pending requests.
+- Implemented immutable Leave Request History with submitted, approved, rejected, and cancelled events.
+- Added manager-scoped approval for direct reports and organization-wide HR/Admin leave management.
+- Used MongoDB transactions to guarantee consistency between leave requests, leave balances, and history.
+- Applied strict validation, secure RBAC, safe projections, and optimized read queries using `lean()` and `Promise.all()`.
+- Fully reviewed, manually tested with Postman, committed, and pushed to GitHub.
+
+
 ---
 
 ## Current Status
@@ -66,45 +82,46 @@ The next development milestone is **Version v0.6.0 — Leave Management Module**
 - Backend foundation is complete.
 - Authentication and RBAC are complete.
 - Attendance Management module is complete.
-- Attendance reporting and dashboard analytics are complete.
-- Attendance audit logging is complete.
-- All Attendance APIs have been manually verified using Postman.
-- Backend architecture remains modular, optimized, and production-oriented.
+- Attendance Reporting and Dashboard Analytics are complete.
+- Attendance Audit Logging is complete.
+- Leave Management module is complete.
+- All Attendance and Leave APIs have been manually verified using Postman.
+- Backend architecture remains modular, secure, optimized, and production-oriented.
 
-The project is now transitioning into **Version v0.6.0 — Leave Management**.
+The project is now transitioning into **Version v0.7.0 — Automation & Notification Module**.
 
----
 
 ## Today's Progress
 
-- Completed the Dashboard module.
-- Implemented Employee Dashboard.
-- Implemented Manager Dashboard.
-- Implemented Organization Dashboard.
-- Added optimized aggregation-based dashboard statistics.
-- Added department attendance ranking.
-- Added recent attendance activity summaries.
-- Completed dashboard security and RBAC validation.
-- Manually tested all dashboard endpoints with Postman.
-- Reviewed, committed, and pushed the completed Dashboard module.
+- Completed the Leave Management module.
+- Implemented Leave Types management.
+- Implemented Leave Balance allocation and retrieval.
+- Implemented Employee Leave Application workflow.
+- Implemented Leave Approval, Rejection, and Cancellation workflows.
+- Added immutable Leave Request History.
+- Added transactional leave balance updates.
+- Implemented overlap prevention and weekend-aware leave calculation.
+- Applied strict RBAC, validation, and secure business rules.
+- Manually tested the complete Leave Management module using Postman.
+- Fixed issues discovered during testing.
+- Reviewed, committed, and pushed the completed Leave Management module.
 
 ---
 
+
+
 ## Next Session Plan
 
-### Version v0.6.0 - Leave Management
+### Version v0.7.0 - Automation & Notification Module
 
-1. Design Leave Management architecture.
-2. Implement Leave Types.
-3. Implement Leave Balance management.
-4. Implement Leave Request workflow.
-5. Implement Leave Approval / Rejection workflow.
-6. Prevent overlapping leave requests.
-7. Prevent negative leave balances.
-8. Implement Leave History APIs.
-9. Add transactional leave balance updates.
-10. Test all Leave APIs using Postman.
-
+1. Implement automated absence marking using Cron Jobs.
+2. Ensure scheduled jobs are idempotent.
+3. Generate audit events for cron-created attendance records.
+4. Integrate email notification infrastructure.
+5. Send email notifications for leave approval and rejection.
+6. Send attendance and leave reminders.
+7. Add notification utilities and templates.
+8. Test scheduled jobs and email workflows.
 ---
 
 ## Important Notes
@@ -129,7 +146,7 @@ The project is now transitioning into **Version v0.6.0 — Leave Management**.
 
 ## Git History
 
-Latest Commit: Complete v0.5.0 Dashboard Module
+Latest Commit: Complete v0.6.0 Leave Management Module
 
 ---
 
@@ -142,4 +159,5 @@ Latest Commit: Complete v0.5.0 Dashboard Module
 | v0.3.0 | Released | Attendance core: punch flows, calculations, late flag, attendance history, pagination, and filtering |
 | v0.4.0 | Released | Team attendance, organization attendance, HR/Admin corrections, filtering, indexes, and RBAC refinements |
 | v0.5.0 | Released | Attendance Audit Logs, Attendance Reports, Dashboard Module, analytics, aggregations, and secure dashboard APIs |
-| v0.6.0 | Planned | Leave Management Module |
+| v0.6.0 | Released | Leave Types, Leave Balances, Leave Requests, Approval/Rejection workflows, Cancellation, Leave History, Transactions, and RBAC |
+| v0.7.0 | In Development | Automation & Notification Module |

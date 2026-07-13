@@ -1,9 +1,10 @@
 const dns = require("dns");
 dns.setServers(["8.8.8.8", "1.1.1.1"]);  // Set global DNS
 dns.setDefaultResultOrder("ipv4first");
+const dotenv = require("dotenv");
+dotenv.config();
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
-const dotenv = require("dotenv");
 const express = require("express");
 const helmet = require("helmet");
 
@@ -14,15 +15,14 @@ const attendanceRoutes = require("./routes/attendance.routes");
 const auditLogRoutes = require("./routes/auditLog.routes");
 const dashboardRoutes = require("./routes/dashboard.routes");
 const leaveRoutes = require("./routes/leave.routes");
+const notificationRoutes = require("./routes/notification.routes");
+const automationRoutes = require("./routes/automation.routes");
 const reportRoutes = require("./routes/report.routes");
+const startCronJobs = require("./utils/cronJobs");
 const { errorHandler, notFound } = require("./middleware/error.middleware");
-
-dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-
-connectDB();
 
 app.use(helmet());
 app.use(
@@ -51,11 +51,19 @@ app.use("/api/attendance", attendanceRoutes);
 app.use("/api/audit-logs", auditLogRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/leaves", leaveRoutes);
+app.use("/api/notifications", notificationRoutes);
+app.use("/api/automation", automationRoutes);
 app.use("/api/reports", reportRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+const startServer = async () => {
+  await connectDB();
+  startCronJobs();
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+};
+
+startServer();
