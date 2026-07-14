@@ -1,19 +1,19 @@
 # Leave & Attendance Management System - Project Progress
 
 **Last Updated:** July 14, 2026
-**Overall Status:** Active Development (Version v0.7.0)
+**Overall Status:** Active Development (Version v0.8.0)
 
 ## Current Version
 
-v0.7.0 (In Development)
+v0.8.0 (Planning)
 
-### Leave Management Module Completed
+### Automation & Notification Module Completed
 
-Versions v0.1.0 through v0.6.0 have been fully implemented, reviewed, manually tested using Postman, committed, and pushed to GitHub.
+Versions v0.1.0 through v0.7.0 have been fully implemented, reviewed, manually tested using Postman, committed, and pushed to GitHub.
 
-The Leave Management module is now functionally complete, including leave types, leave balances, leave applications, approval workflows, cancellation, immutable leave history, transactional balance updates, and role-based authorization.
+The Automation & Notification module is now functionally complete, including automated attendance processing, scheduled job execution, immutable automation audit logging, notification management, email delivery, notification dispatching, and cron-based automation.
 
-Development has officially begun on **Version v0.7.0 — Automation & Notification Module**.
+Development will now transition into **Version v0.8.0 — Document Management & File Upload Module**.
 
 ---
 
@@ -59,7 +59,6 @@ Development has officially begun on **Version v0.7.0 — Automation & Notificati
 - Applied strict RBAC, secure projections, and read-only dashboard architecture.
 - Fully reviewed, manually tested with Postman, committed, and pushed to GitHub.
 
-
 ### v0.6.0 - Leave Management Module
 
 - Implemented Leave Types management for HR/Admin, including creation, update, activation, deactivation, and listing.
@@ -74,6 +73,30 @@ Development has officially begun on **Version v0.7.0 — Automation & Notificati
 - Applied strict validation, secure RBAC, safe projections, and optimized read queries using `lean()` and `Promise.all()`.
 - Fully reviewed, manually tested with Postman, committed, and pushed to GitHub.
 
+### v0.7.0 - Automation & Notification Module
+
+- Implemented automated attendance absence marking using scheduled Cron Jobs.
+- Added idempotent scheduled job execution with persistent job locking and execution history.
+- Implemented immutable audit events for cron-created attendance records.
+- Built a reusable Notification Outbox architecture supporting Email, In-App, and SMS channels.
+- Implemented Notification collection with queue, retry, deduplication, scheduling, and delivery tracking.
+- Built asynchronous Notification Dispatcher with exponential retry support.
+- Added reusable Email Service with centralized SMTP configuration.
+- Created modular email templates for:
+  - Leave Approved
+  - Leave Rejected
+  - Leave Reminder
+  - Attendance Reminder
+- Integrated leave approval and rejection notifications into existing MongoDB transactions.
+- Implemented Attendance Reminder automation.
+- Implemented Leave Reminder automation.
+- Implemented Notification History APIs with pagination.
+- Added secure development-only automation runner endpoints.
+- Added secure development-only test email endpoint.
+- Implemented ScheduledJobRun collection with locking, retries, execution metadata, and idempotency.
+- Applied strict Admin authorization for automation endpoints.
+- Added notification deduplication using unique dedupe keys.
+- Fully reviewed, manually tested with Postman, fixed runtime issues, committed, and pushed to GitHub.
 
 ---
 
@@ -85,43 +108,51 @@ Development has officially begun on **Version v0.7.0 — Automation & Notificati
 - Attendance Reporting and Dashboard Analytics are complete.
 - Attendance Audit Logging is complete.
 - Leave Management module is complete.
-- All Attendance and Leave APIs have been manually verified using Postman.
-- Backend architecture remains modular, secure, optimized, and production-oriented.
+- Automation & Notification module is complete.
+- Scheduled Cron Jobs are fully operational.
+- Email notification infrastructure is fully operational.
+- Notification Dispatcher is fully operational.
+- All backend APIs have been manually verified using Postman.
+- Backend architecture is modular, secure, optimized, scalable, and production-oriented.
 
-The project is now transitioning into **Version v0.7.0 — Automation & Notification Module**.
-
-
-## Today's Progress
-
-- Completed the Leave Management module.
-- Implemented Leave Types management.
-- Implemented Leave Balance allocation and retrieval.
-- Implemented Employee Leave Application workflow.
-- Implemented Leave Approval, Rejection, and Cancellation workflows.
-- Added immutable Leave Request History.
-- Added transactional leave balance updates.
-- Implemented overlap prevention and weekend-aware leave calculation.
-- Applied strict RBAC, validation, and secure business rules.
-- Manually tested the complete Leave Management module using Postman.
-- Fixed issues discovered during testing.
-- Reviewed, committed, and pushed the completed Leave Management module.
+The project is now transitioning into **Version v0.8.0 — Document Management & File Upload Module**.
 
 ---
 
+## Today's Progress
 
+- Completed the Automation & Notification module.
+- Implemented automated attendance absence marking.
+- Added scheduled attendance reminder automation.
+- Added scheduled leave reminder automation.
+- Implemented Notification Outbox architecture.
+- Added Notification Dispatcher with retry mechanism.
+- Built centralized Email Service.
+- Added reusable email templates.
+- Integrated leave approval and rejection email notifications.
+- Implemented ScheduledJobRun tracking with idempotency.
+- Added development-only automation execution endpoints.
+- Configured Gmail SMTP using App Password authentication.
+- Fixed transaction-related bulk insert issue in attendance automation.
+- Manually tested all automation, notification, cron, email, dispatcher, and notification history APIs.
+- Reviewed, committed, and pushed the completed Automation & Notification module.
+
+---
 
 ## Next Session Plan
 
-### Version v0.7.0 - Automation & Notification Module
+### Version v0.8.0 - Document Management & File Upload
 
-1. Implement automated absence marking using Cron Jobs.
-2. Ensure scheduled jobs are idempotent.
-3. Generate audit events for cron-created attendance records.
-4. Integrate email notification infrastructure.
-5. Send email notifications for leave approval and rejection.
-6. Send attendance and leave reminders.
-7. Add notification utilities and templates.
-8. Test scheduled jobs and email workflows.
+1. Integrate Cloudinary for secure document storage.
+2. Implement leave document upload support.
+3. Validate uploaded document types and sizes.
+4. Store document metadata securely.
+5. Allow employees to attach documents to leave requests.
+6. Implement secure document retrieval.
+7. Add role-based document access.
+8. Optimize upload middleware.
+9. Test complete document workflow using Postman.
+
 ---
 
 ## Important Notes
@@ -131,6 +162,9 @@ The project is now transitioning into **Version v0.7.0 — Automation & Notifica
 - Controllers contain business logic while routes remain thin.
 - Authentication and authorization remain middleware responsibilities.
 - Audit logs are immutable and append-only.
+- Scheduled jobs are idempotent using persistent execution locks.
+- Notifications use the Outbox Pattern with asynchronous delivery.
+- Email delivery failures never roll back business transactions.
 - Attendance reporting uses MongoDB aggregation instead of duplicated report collections.
 
 ---
@@ -139,14 +173,14 @@ The project is now transitioning into **Version v0.7.0 — Automation & Notifica
 
 - Refresh-token rotation is not yet implemented.
 - Server-side refresh-token revocation is not implemented.
-- Automated absence marking through scheduled cron jobs remains a future enhancement.
 - Admin and role-management APIs are not implemented; development roles are managed manually through MongoDB.
+- Holiday calendar support has not yet been implemented for attendance and leave calculations.
 
 ---
 
 ## Git History
 
-Latest Commit: Complete v0.6.0 Leave Management Module
+Latest Commit: Complete v0.7.0 Automation & Notification Module
 
 ---
 
@@ -160,4 +194,5 @@ Latest Commit: Complete v0.6.0 Leave Management Module
 | v0.4.0 | Released | Team attendance, organization attendance, HR/Admin corrections, filtering, indexes, and RBAC refinements |
 | v0.5.0 | Released | Attendance Audit Logs, Attendance Reports, Dashboard Module, analytics, aggregations, and secure dashboard APIs |
 | v0.6.0 | Released | Leave Types, Leave Balances, Leave Requests, Approval/Rejection workflows, Cancellation, Leave History, Transactions, and RBAC |
-| v0.7.0 | In Development | Automation & Notification Module |
+| v0.7.0 | Released | Automation, Notifications, Cron Jobs, Email Service, Notification Dispatcher, Scheduled Job Management, Idempotency, and Email Templates |
+| v0.8.0 | Planning | Document Management, Cloudinary Integration, File Uploads, Leave Attachments, and Secure Document Storage |

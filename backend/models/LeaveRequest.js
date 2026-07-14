@@ -54,11 +54,12 @@ const leaveRequestSchema = new mongoose.Schema(
       trim: true,
       immutable: true,
     },
-    documentUrl: {
-      type: String,
-      trim: true,
-      default: "",
-      immutable: true,
+    document: {
+      publicId: { type: String, trim: true, immutable: true },
+      url: { type: String, trim: true, immutable: true },
+      originalName: { type: String, trim: true, immutable: true },
+      mimeType: { type: String, trim: true, immutable: true },
+      size: { type: Number, min: 0, immutable: true },
     },
     status: {
       type: String,

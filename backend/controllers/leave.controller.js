@@ -6,6 +6,7 @@ const LeaveRequestHistory = require("../models/LeaveRequestHistory");
 const LeaveType = require("../models/LeaveType");
 const User = require("../models/User");
 const { queueNotification } = require("../services/notification.service");
+const { uploadToCloudinary, deleteFromCloudinary } = require("../utils/cloudinary");
 const {
   getBusinessDate,
   getLeaveDaysByYear,
@@ -13,7 +14,7 @@ const {
   toBusinessDate,
 } = require("../utils/leave.utils");
 
-const leaveRequestFields = "_id userId leaveTypeId startDate endDate totalDays reason documentUrl status approvedBy approverComment approvedAt rejectedAt cancelledAt createdAt updatedAt";
+const leaveRequestFields = "_id userId leaveTypeId startDate endDate totalDays reason document.url document.originalName document.mimeType status approvedBy approverComment approvedAt rejectedAt cancelledAt createdAt updatedAt";
 const formatDate = (date) => new Date(date).toISOString().slice(0, 10);
 
 const createError = (message, statusCode) => {
@@ -28,6 +29,22 @@ const sendError = (res, error) => {
     message: error.message,
   });
 };
+
+const getVerifiedDocumentMimeType = (file) => {
+  if (!file) return null;
+
+  const isPdf = file.buffer.subarray(0, 5).toString("ascii") === "%PDF-";
+  const isPng = file.buffer.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]));
+  const isJpeg = file.buffer.length >= 3 && file.buffer[0] === 0xff && file.buffer[1] === 0xd8 && file.buffer[2] === 0xff;
+
+  if ((file.mimetype === "application/pdf" && isPdf) || (file.mimetype === "image/png" && isPng) || (file.mimetype === "image/jpeg" && isJpeg)) {
+    return file.mimetype;
+  }
+
+  throw createError("Document content does not match its declared file type", 400);
+};
+
+const safeOriginalName = (name) => String(name || "document").replace(/[\\/\0]/g, "_").slice(0, 255);
 
 const appendHistory = async ({ leaveRequestId, action, previousStatus, nextStatus, actor, comment = "", session }) => {
   await LeaveRequestHistory.create(
@@ -280,6 +297,8 @@ const getLeaveBalances = async (req, res) => {
 
 const applyForLeave = async (req, res) => {
   const session = await mongoose.startSession();
+  let uploadedDocument;
+  let transactionCommitted = false;
 
   try {
     const startDate = toBusinessDate(req.body.startDate);
@@ -294,6 +313,28 @@ const applyForLeave = async (req, res) => {
 
     if (leaveDates.length === 0) {
       throw createError("Leave request must include at least one working day", 400);
+    }
+    
+    if (req.file) {
+      const mimeType = getVerifiedDocumentMimeType(req.file);
+      let cloudinaryResult;
+
+      try {
+        cloudinaryResult = await uploadToCloudinary(req.file.buffer);
+      } catch (error) {
+  console.error("========== CLOUDINARY ERROR ==========");
+  console.error(error);
+  console.error("=====================================");
+  throw createError("Unable to upload leave document", 500);
+}
+
+      uploadedDocument = {
+        publicId: cloudinaryResult.public_id,
+        url: cloudinaryResult.secure_url,
+        originalName: safeOriginalName(req.file.originalname),
+        mimeType,
+        size: req.file.size,
+      };
     }
 
     await session.withTransaction(async () => {
@@ -344,7 +385,7 @@ const applyForLeave = async (req, res) => {
             leaveDates,
             leaveDaysByYear,
             reason: req.body.reason,
-            documentUrl: req.body.documentUrl || "",
+            document: uploadedDocument,
           },
         ],
         { session }
@@ -359,15 +400,55 @@ const applyForLeave = async (req, res) => {
       });
     });
 
+    transactionCommitted = true;
+    const responseLeaveRequest = leaveRequest.toObject();
+
+    if (responseLeaveRequest.document) {
+      delete responseLeaveRequest.document.publicId;
+    }
+
     return res.status(201).json({
       success: true,
       message: "Leave request submitted successfully",
-      data: { leaveRequest },
+      data: { leaveRequest: responseLeaveRequest },
     });
   } catch (error) {
     return sendError(res, error);
   } finally {
+    if (uploadedDocument && !transactionCommitted) {
+      try {
+        await deleteFromCloudinary(uploadedDocument.publicId);
+      } catch (cleanupError) {
+        console.error("Failed to remove orphaned leave document", { publicId: uploadedDocument.publicId, error: cleanupError.message });
+      }
+    }
     await session.endSession();
+  }
+};
+
+const getLeaveDocument = async (req, res) => {
+  try {
+    const leaveRequest = await LeaveRequest.findById(req.params.id).select("userId document.url").lean();
+
+    if (!leaveRequest) {
+      return sendError(res, createError("Leave request not found", 404));
+    }
+
+    if (!leaveRequest.document?.url) {
+      return sendError(res, createError("No document is attached to this leave request", 404));
+    }
+
+    if (req.user.role === "employee" && String(leaveRequest.userId) !== String(req.user._id)) {
+      return sendError(res, createError("You can view documents only for your own leave requests", 403));
+    }
+
+    if (req.user.role === "manager") {
+      await verifyManagerScope(req.user._id, leaveRequest.userId);
+    }
+
+    return res.redirect(leaveRequest.document.url);
+  } catch (error) {
+    return sendError(res, error);
   }
 };
 
@@ -642,6 +723,7 @@ module.exports = {
   cancelLeaveRequest,
   createLeaveType,
   getLeaveBalances,
+  getLeaveDocument,
   getLeaveRequestHistory,
   getLeaveTypes,
   getMyLeaveBalances,

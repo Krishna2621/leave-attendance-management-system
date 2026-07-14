@@ -8,6 +8,7 @@ const {
   cancelLeaveRequest,
   createLeaveType,
   getLeaveBalances,
+  getLeaveDocument,
   getLeaveRequestHistory,
   getLeaveTypes,
   getMyLeaveBalances,
@@ -20,6 +21,7 @@ const {
 const { protect } = require("../middleware/auth.middleware");
 const { authorizeRoles } = require("../middleware/role.middleware");
 const validateRequest = require("../middleware/validate.middleware");
+const { uploadLeaveDocument } = require("../middleware/upload.middleware");
 
 const router = express.Router();
 
@@ -179,8 +181,9 @@ router.post(
 
 router.post(
   "/apply",
+  uploadLeaveDocument,
   [
-    validateAllowedBodyFields(["leaveTypeId", "startDate", "endDate", "reason", "documentUrl"], "leave application"),
+    validateAllowedBodyFields(["leaveTypeId", "startDate", "endDate", "reason"], "leave application"),
     body().custom((value, { req }) => {
       if (req.body.startDate && req.body.endDate && req.body.startDate > req.body.endDate) {
         throw new Error("startDate cannot be later than endDate");
@@ -198,7 +201,6 @@ router.post(
     body("startDate").matches(/^\d{4}-\d{2}-\d{2}$/).withMessage("startDate must use YYYY-MM-DD format").isISO8601({ strict: true, strictSeparator: true }).withMessage("startDate must be a valid date"),
     body("endDate").matches(/^\d{4}-\d{2}-\d{2}$/).withMessage("endDate must use YYYY-MM-DD format").isISO8601({ strict: true, strictSeparator: true }).withMessage("endDate must be a valid date"),
     body("reason").isString().withMessage("Reason must be a string").trim().isLength({ min: 5, max: 500 }).withMessage("Reason must be between 5 and 500 characters"),
-    body("documentUrl").optional().isURL({ protocols: ["http", "https"], require_protocol: true }).withMessage("documentUrl must be a valid HTTP(S) URL"),
   ],
   validateRequest,
   applyForLeave
@@ -206,6 +208,12 @@ router.post(
 router.get("/me", leaveRequestQueryValidation(), validateRequest, getMyLeaveRequests);
 router.get("/team", authorizeRoles("manager"), leaveRequestQueryValidation(), validateRequest, getTeamLeaveRequests);
 router.get("/all", authorizeRoles("hr", "admin"), leaveRequestQueryValidation(true), validateRequest, getOrganizationLeaveRequests);
+router.get(
+  "/:id/document",
+  [param("id").isMongoId().withMessage("Leave request ID must be a valid MongoDB ObjectId")],
+  validateRequest,
+  getLeaveDocument
+);
 router.get(
   "/:id/history",
   [param("id").isMongoId().withMessage("Leave request ID must be a valid MongoDB ObjectId")],
