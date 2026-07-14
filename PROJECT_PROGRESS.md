@@ -1,40 +1,46 @@
 # Leave & Attendance Management System - Project Progress
 
-**Last Updated:** July 14, 2026
-**Overall Status:** Active Development (Version v0.8.0)
+**Last Updated:** July 15, 2026
+**Overall Status:** Active Development (Version v0.9.0)
 
 ## Current Version
 
-v0.8.0 (Planning)
+v0.9.0 (Planning)
 
-### Automation & Notification Module Completed
+### Document Management & Cloudinary Integration Completed
 
-Versions v0.1.0 through v0.7.0 have been fully implemented, reviewed, manually tested using Postman, committed, and pushed to GitHub.
+Versions v0.1.0 through v0.8.0 have been fully implemented, reviewed, manually tested using Postman, committed, and pushed to GitHub.
 
-The Automation & Notification module is now functionally complete, including automated attendance processing, scheduled job execution, immutable automation audit logging, notification management, email delivery, notification dispatching, and cron-based automation.
+The Document Management module is now functionally complete, including secure Cloudinary integration, document upload, document validation, document retrieval, transaction-safe uploads, and role-based document access.
 
-Development will now transition into **Version v0.8.0 — Document Management & File Upload Module**.
+Development will now transition into **Version v0.9.0**.
 
 ---
 
-## Completed Tasks
+# Completed Tasks
 
-### v0.1.0 - Backend Foundation
+## v0.1.0 - Backend Foundation
 
 - Configured the Express backend, MongoDB Atlas connection, environment setup, Git/GitHub repository, and health API.
 
-### v0.2.0 - Authentication & RBAC
+---
+
+## v0.2.0 - Authentication & RBAC
 
 - Implemented JWT registration, login, logout, and refresh-token flows.
 - Added authentication middleware, role-based access control, and security middleware.
 
-### v0.3.0 - Attendance Core
+---
+
+## v0.3.0 - Attendance Core
 
 - Improved the attendance model and added the compound unique attendance index.
 - Implemented Punch-In, Punch-Out, duplicate prevention, working-hours calculation, attendance-status calculation, and the `isLate` business flag.
 - Implemented `GET /api/attendance/me` with pagination and date-range filtering.
 
-### v0.4.0 - HR & Management Attendance Module
+---
+
+## v0.4.0 - HR & Management Attendance Module
 
 - Implemented Team Attendance with manager-based direct-report scoping and HR manager selection.
 - Implemented Organization-wide Attendance for HR/Admin with pagination and date, status, late-arrival, department, and manager filters.
@@ -43,7 +49,9 @@ Development will now transition into **Version v0.8.0 — Document Management & 
 - Added attendance query optimizations, safe employee projections, `lean()` reads, concurrent record/count queries, and additional MongoDB indexes.
 - Refined request validation, filtering, and RBAC protections across attendance-management endpoints.
 
-### v0.5.0 - Audit Logs, Reporting & Dashboard Module
+---
+
+## v0.5.0 - Audit Logs, Reporting & Dashboard Module
 
 - Implemented immutable Attendance Audit Logs with compact field-level tracking and audit indexes.
 - Integrated audit logging into Punch-In, Punch-Out, and HR/Admin attendance correction workflows.
@@ -59,7 +67,9 @@ Development will now transition into **Version v0.8.0 — Document Management & 
 - Applied strict RBAC, secure projections, and read-only dashboard architecture.
 - Fully reviewed, manually tested with Postman, committed, and pushed to GitHub.
 
-### v0.6.0 - Leave Management Module
+---
+
+## v0.6.0 - Leave Management Module
 
 - Implemented Leave Types management for HR/Admin, including creation, update, activation, deactivation, and listing.
 - Implemented Leave Balance allocation and employee balance management with server-calculated remaining leave.
@@ -73,7 +83,9 @@ Development will now transition into **Version v0.8.0 — Document Management & 
 - Applied strict validation, secure RBAC, safe projections, and optimized read queries using `lean()` and `Promise.all()`.
 - Fully reviewed, manually tested with Postman, committed, and pushed to GitHub.
 
-### v0.7.0 - Automation & Notification Module
+---
+
+## v0.7.0 - Automation & Notification Module
 
 - Implemented automated attendance absence marking using scheduled Cron Jobs.
 - Added idempotent scheduled job execution with persistent job locking and execution history.
@@ -82,11 +94,7 @@ Development will now transition into **Version v0.8.0 — Document Management & 
 - Implemented Notification collection with queue, retry, deduplication, scheduling, and delivery tracking.
 - Built asynchronous Notification Dispatcher with exponential retry support.
 - Added reusable Email Service with centralized SMTP configuration.
-- Created modular email templates for:
-  - Leave Approved
-  - Leave Rejected
-  - Leave Reminder
-  - Attendance Reminder
+- Created modular email templates for Leave Approved, Leave Rejected, Leave Reminder, and Attendance Reminder.
 - Integrated leave approval and rejection notifications into existing MongoDB transactions.
 - Implemented Attendance Reminder automation.
 - Implemented Leave Reminder automation.
@@ -100,7 +108,23 @@ Development will now transition into **Version v0.8.0 — Document Management & 
 
 ---
 
-## Current Status
+## v0.8.0 - Document Management & Cloudinary Integration
+
+- Integrated Cloudinary for secure cloud-based document storage.
+- Added Multer-based document upload middleware using memory storage.
+- Implemented secure upload of leave attachments directly to Cloudinary.
+- Added support for PDF, JPG, JPEG, and PNG documents up to 10 MB.
+- Implemented server-side MIME type and file signature validation.
+- Stored only document metadata in MongoDB, including secure URL, Cloudinary public ID, original filename, MIME type, and file size.
+- Added secure document retrieval endpoint with employee, manager, and HR/Admin authorization.
+- Implemented transaction-safe Cloudinary uploads with automatic cleanup of uploaded files when MongoDB transactions fail.
+- Preserved existing Leave Management architecture without modifying approval, rejection, cancellation, or history workflows.
+- Maintained optimized `lean()` queries and secure response projections.
+- Fully reviewed, manually tested with Postman, fixed Cloudinary environment configuration, committed, and pushed to GitHub.
+
+---
+
+# Current Status
 
 - Backend foundation is complete.
 - Authentication and RBAC are complete.
@@ -109,53 +133,54 @@ Development will now transition into **Version v0.8.0 — Document Management & 
 - Attendance Audit Logging is complete.
 - Leave Management module is complete.
 - Automation & Notification module is complete.
+- Document Management & Cloudinary Integration module is complete.
 - Scheduled Cron Jobs are fully operational.
 - Email notification infrastructure is fully operational.
-- Notification Dispatcher is fully operational.
+- Cloudinary integration is fully operational.
+- Secure document uploads and retrieval are fully operational.
 - All backend APIs have been manually verified using Postman.
 - Backend architecture is modular, secure, optimized, scalable, and production-oriented.
 
-The project is now transitioning into **Version v0.8.0 — Document Management & File Upload Module**.
+The project is now transitioning into **Version v0.9.0**.
 
 ---
 
-## Today's Progress
+# Today's Progress
 
-- Completed the Automation & Notification module.
-- Implemented automated attendance absence marking.
-- Added scheduled attendance reminder automation.
-- Added scheduled leave reminder automation.
-- Implemented Notification Outbox architecture.
-- Added Notification Dispatcher with retry mechanism.
-- Built centralized Email Service.
-- Added reusable email templates.
-- Integrated leave approval and rejection email notifications.
-- Implemented ScheduledJobRun tracking with idempotency.
-- Added development-only automation execution endpoints.
-- Configured Gmail SMTP using App Password authentication.
-- Fixed transaction-related bulk insert issue in attendance automation.
-- Manually tested all automation, notification, cron, email, dispatcher, and notification history APIs.
-- Reviewed, committed, and pushed the completed Automation & Notification module.
+- Completed Document Management & Cloudinary Integration.
+- Configured Cloudinary cloud storage.
+- Added secure Multer upload middleware.
+- Implemented leave document upload.
+- Added PDF and image validation.
+- Added secure Cloudinary document storage.
+- Added secure document retrieval endpoint.
+- Implemented transaction-safe Cloudinary cleanup.
+- Verified Cloudinary uploads and MongoDB metadata storage.
+- Fixed Cloudinary authentication configuration in `.env`.
+- Manually tested all document upload, retrieval, validation, authorization, and Cloudinary workflows.
+- Reviewed, committed, and pushed the completed Document Management module.
 
 ---
 
-## Next Session Plan
+# Next Session Plan
 
-### Version v0.8.0 - Document Management & File Upload
+## Version v0.9.0
 
-1. Integrate Cloudinary for secure document storage.
-2. Implement leave document upload support.
-3. Validate uploaded document types and sizes.
-4. Store document metadata securely.
-5. Allow employees to attach documents to leave requests.
-6. Implement secure document retrieval.
-7. Add role-based document access.
-8. Optimize upload middleware.
-9. Test complete document workflow using Postman.
+The next milestone will focus on expanding the HRMS into a more complete enterprise system.
+
+Planned work includes:
+
+1. Employee Profile Management enhancements.
+2. Department Management improvements.
+3. Holiday Management module.
+4. Working Day calculation service.
+5. Holiday-aware Attendance and Leave calculations.
+6. Organization configuration APIs.
+7. Additional production-ready backend refinements.
 
 ---
 
-## Important Notes
+# Important Notes
 
 - The `.env` file contains secrets and must never be committed.
 - All API responses follow the standard `success`, `message`, and optional `data` structure.
@@ -166,10 +191,11 @@ The project is now transitioning into **Version v0.8.0 — Document Management &
 - Notifications use the Outbox Pattern with asynchronous delivery.
 - Email delivery failures never roll back business transactions.
 - Attendance reporting uses MongoDB aggregation instead of duplicated report collections.
+- Uploaded documents are stored securely in Cloudinary while MongoDB stores metadata only.
 
 ---
 
-## Known Issues
+# Known Issues
 
 - Refresh-token rotation is not yet implemented.
 - Server-side refresh-token revocation is not implemented.
@@ -178,13 +204,13 @@ The project is now transitioning into **Version v0.8.0 — Document Management &
 
 ---
 
-## Git History
+# Git History
 
-Latest Commit: Complete v0.7.0 Automation & Notification Module
+Latest Commit: Complete v0.8.0 Document Management & Cloudinary Integration
 
 ---
 
-## Version History
+# Version History
 
 | Version | Status | Description |
 |----------|--------|-------------|
@@ -195,4 +221,4 @@ Latest Commit: Complete v0.7.0 Automation & Notification Module
 | v0.5.0 | Released | Attendance Audit Logs, Attendance Reports, Dashboard Module, analytics, aggregations, and secure dashboard APIs |
 | v0.6.0 | Released | Leave Types, Leave Balances, Leave Requests, Approval/Rejection workflows, Cancellation, Leave History, Transactions, and RBAC |
 | v0.7.0 | Released | Automation, Notifications, Cron Jobs, Email Service, Notification Dispatcher, Scheduled Job Management, Idempotency, and Email Templates |
-| v0.8.0 | Planning | Document Management, Cloudinary Integration, File Uploads, Leave Attachments, and Secure Document Storage |
+| v0.8.0 | Released | Document Management, Cloudinary Integration, Secure File Uploads, Leave Attachments, Cloud Storage, Document Retrieval, Transaction-safe Uploads, and Role-based Document Access |
