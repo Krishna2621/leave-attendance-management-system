@@ -1,19 +1,19 @@
 # Leave & Attendance Management System - Project Progress
 
-**Last Updated:** July 15, 2026
-**Overall Status:** Active Development (Version v0.9.0)
+**Last Updated:** July 16, 2026
+**Overall Status:** Active Development (Version v1.0.0)
 
 ## Current Version
 
-v0.9.0 (Planning)
+v1.0.0 (Planning)
 
-### Document Management & Cloudinary Integration Completed
+### Authentication Completion Module Completed
 
-Versions v0.1.0 through v0.8.0 have been fully implemented, reviewed, manually tested using Postman, committed, and pushed to GitHub.
+Versions v0.1.0 through v0.9.0 have been fully implemented, reviewed, manually tested using Postman, committed, and pushed to GitHub.
 
-The Document Management module is now functionally complete, including secure Cloudinary integration, document upload, document validation, document retrieval, transaction-safe uploads, and role-based document access.
+The Authentication module is now production-ready, including refresh-token rotation, persistent refresh-session management, logout-all-devices, forgot-password workflow, password-reset workflow, secure session revocation, and one-time password reset tokens.
 
-Development will now transition into **Version v0.9.0**.
+Development will now transition into **Version v1.0.0**.
 
 ---
 
@@ -124,6 +124,28 @@ Development will now transition into **Version v0.9.0**.
 
 ---
 
+## v0.9.0 - Authentication Completion Module
+
+- Implemented refresh-token rotation with unique JWT IDs (JTI).
+- Added persistent Refresh Session management using hashed refresh tokens.
+- Implemented secure refresh-token revocation.
+- Added Logout Current Device functionality.
+- Added Logout All Devices functionality.
+- Implemented Forgot Password workflow.
+- Implemented Password Reset workflow.
+- Added PasswordResetToken model with hashed reset tokens.
+- Added automatic reset-token expiration using MongoDB TTL indexes.
+- Added reusable Password Reset email template.
+- Added confirmPassword validation for registration and password reset.
+- Revoked all active refresh sessions after successful password reset.
+- Prevented refresh-token replay attacks through token rotation.
+- Prevented email enumeration using generic forgot-password responses.
+- Applied MongoDB transactions for refresh-session rotation and password reset.
+- Fully reviewed, manually tested using Postman, committed, and pushed to GitHub.
+
+
+---
+
 # Current Status
 
 - Backend foundation is complete.
@@ -140,43 +162,48 @@ Development will now transition into **Version v0.9.0**.
 - Secure document uploads and retrieval are fully operational.
 - All backend APIs have been manually verified using Postman.
 - Backend architecture is modular, secure, optimized, scalable, and production-oriented.
+- Authentication Completion module is complete.
+- Refresh-token lifecycle is fully implemented.
+- Password-reset workflow is fully operational.
+- Session revocation is fully operational.
 
-The project is now transitioning into **Version v0.9.0**.
+The project is now transitioning into **Version v1.0.0**.
 
 ---
 
 # Today's Progress
 
-- Completed Document Management & Cloudinary Integration.
-- Configured Cloudinary cloud storage.
-- Added secure Multer upload middleware.
-- Implemented leave document upload.
-- Added PDF and image validation.
-- Added secure Cloudinary document storage.
-- Added secure document retrieval endpoint.
-- Implemented transaction-safe Cloudinary cleanup.
-- Verified Cloudinary uploads and MongoDB metadata storage.
-- Fixed Cloudinary authentication configuration in `.env`.
-- Manually tested all document upload, retrieval, validation, authorization, and Cloudinary workflows.
-- Reviewed, committed, and pushed the completed Document Management module.
+- Completed Authentication Completion Module.
+- Implemented refresh-token rotation.
+- Added persistent Refresh Session storage.
+- Added Logout All Devices functionality.
+- Implemented Forgot Password workflow.
+- Implemented Password Reset workflow.
+- Added secure PasswordResetToken storage with TTL expiration.
+- Added reusable Password Reset email template.
+- Added refresh-token replay protection.
+- Added session revocation after password reset.
+- Manually tested complete authentication lifecycle using Postman.
+- Verified refresh-token rotation, session revocation, forgot-password, password-reset, logout-all-devices, and replay protection.
+- Reviewed, committed, and pushed the completed Authentication Completion module.
 
 ---
 
 # Next Session Plan
 
-## Version v0.9.0
+## Version v1.0.0
 
-The next milestone will focus on expanding the HRMS into a more complete enterprise system.
+The next milestone will focus on completing the remaining core backend functionality before frontend development.
 
 Planned work includes:
 
-1. Employee Profile Management enhancements.
-2. Department Management improvements.
-3. Holiday Management module.
-4. Working Day calculation service.
-5. Holiday-aware Attendance and Leave calculations.
-6. Organization configuration APIs.
-7. Additional production-ready backend refinements.
+1. Employee Management APIs.
+2. Department Management APIs.
+3. Employee activation/deactivation.
+4. Manager assignment.
+5. Role management improvements.
+6. Employee profile management.
+7. Backend architecture review and production hardening.
 
 ---
 
@@ -192,13 +219,14 @@ Planned work includes:
 - Email delivery failures never roll back business transactions.
 - Attendance reporting uses MongoDB aggregation instead of duplicated report collections.
 - Uploaded documents are stored securely in Cloudinary while MongoDB stores metadata only.
+- Refresh tokens are stored as secure hashed sessions in MongoDB.
+- Password reset tokens are one-time use and automatically expire.
+- Successful password reset revokes all active refresh sessions.
 
 ---
 
 # Known Issues
 
-- Refresh-token rotation is not yet implemented.
-- Server-side refresh-token revocation is not implemented.
 - Admin and role-management APIs are not implemented; development roles are managed manually through MongoDB.
 - Holiday calendar support has not yet been implemented for attendance and leave calculations.
 
@@ -206,7 +234,7 @@ Planned work includes:
 
 # Git History
 
-Latest Commit: Complete v0.8.0 Document Management & Cloudinary Integration
+Latest Commit: Complete v0.9.0 Authentication Completion Module
 
 ---
 
@@ -222,3 +250,4 @@ Latest Commit: Complete v0.8.0 Document Management & Cloudinary Integration
 | v0.6.0 | Released | Leave Types, Leave Balances, Leave Requests, Approval/Rejection workflows, Cancellation, Leave History, Transactions, and RBAC |
 | v0.7.0 | Released | Automation, Notifications, Cron Jobs, Email Service, Notification Dispatcher, Scheduled Job Management, Idempotency, and Email Templates |
 | v0.8.0 | Released | Document Management, Cloudinary Integration, Secure File Uploads, Leave Attachments, Cloud Storage, Document Retrieval, Transaction-safe Uploads, and Role-based Document Access |
+| v0.9.0 | Released | Authentication Completion, Refresh Token Rotation, Refresh Sessions, Logout All Devices, Forgot Password, Password Reset, Session Revocation, Password Reset Tokens, and Production-ready Authentication |
