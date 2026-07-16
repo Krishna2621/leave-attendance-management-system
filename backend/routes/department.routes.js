@@ -1,0 +1,17 @@
+const express = require("express");
+const { body, param, query } = require("express-validator");
+const controller = require("../controllers/department.controller");
+const { protect } = require("../middleware/auth.middleware");
+const { authorizeRoles } = require("../middleware/role.middleware");
+const validateRequest = require("../middleware/validate.middleware");
+const router = express.Router();
+const fields = ["name", "description", "managerId", "isActive"];
+const allowed = (label) => body().custom((value, { req }) => { const unexpected = Object.keys(req.body).find((key) => !fields.includes(key)); if (unexpected) throw new Error(`Field '${unexpected}' is not allowed for ${label}`); return true; });
+const details = (requiredName = false) => [allowed("department"), body("name")[requiredName ? "isString" : "optional"]().trim().isLength({ min: 2, max: 100 }).withMessage("Name must be between 2 and 100 characters"), body("description").optional().isString().trim().isLength({ max: 500 }).withMessage("Description cannot exceed 500 characters"), body("managerId").optional({ nullable: true }).isMongoId().withMessage("managerId must be a valid MongoDB ObjectId"), body("isActive").optional().isBoolean({ strict: true }).toBoolean().withMessage("isActive must be true or false")];
+router.use(protect);
+router.get("/", [query("page").optional().isInt({ min: 1 }).toInt(), query("limit").optional().isInt({ min: 1, max: 100 }).toInt(), query("search").optional().isString().trim().isLength({ max: 100 }), query("isActive").optional().isBoolean({ strict: true }).toBoolean()], validateRequest, controller.listDepartments);
+router.get("/:id", [param("id").isMongoId().withMessage("Department ID must be a valid MongoDB ObjectId")], validateRequest, controller.getDepartment);
+router.post("/", authorizeRoles("hr", "admin"), details(true), validateRequest, controller.createDepartment);
+router.put("/:id", authorizeRoles("hr", "admin"), [param("id").isMongoId(), ...details(), body().custom((value, { req }) => { if (!Object.keys(req.body).length) throw new Error("At least one department field is required"); return true; })], validateRequest, controller.updateDepartment);
+router.delete("/:id", authorizeRoles("admin"), [param("id").isMongoId()], validateRequest, controller.deleteDepartment);
+module.exports = router;

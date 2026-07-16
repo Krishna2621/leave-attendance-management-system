@@ -1,17 +1,19 @@
 # Leave & Attendance Management System - Project Progress
 
-**Last Updated:** July 16, 2026
-**Overall Status:** Active Development (Version v1.0.0)
+**Last Updated:** July 17, 2026
+**Overall Status:** Active Development (Version v1.1.0)
 
 ## Current Version
 
-v1.0.0 (Planning)
+v1.1.0 (Planning)
 
 ### Authentication Completion Module Completed
 
-Versions v0.1.0 through v0.9.0 have been fully implemented, reviewed, manually tested using Postman, committed, and pushed to GitHub.
+Versions v0.1.0 through v1.0.0 have been fully implemented, reviewed, manually tested using Postman, committed, and pushed to GitHub.
 
-The Authentication module is now production-ready, including refresh-token rotation, persistent refresh-session management, logout-all-devices, forgot-password workflow, password-reset workflow, secure session revocation, and one-time password reset tokens.
+The Employee & Department Management module is now complete, including employee profile management, department management, manager assignment, role management, profile picture uploads, Cloudinary integration, employee lifecycle management, advanced search and filtering, business rule validation, and audit logging.
+
+Development will now transition into **Version v1.1.0 — Production Hardening & Backend Polish**.
 
 Development will now transition into **Version v1.0.0**.
 
@@ -143,6 +145,31 @@ Development will now transition into **Version v1.0.0**.
 - Applied MongoDB transactions for refresh-session rotation and password reset.
 - Fully reviewed, manually tested using Postman, committed, and pushed to GitHub.
 
+---
+
+## v1.0.0 - Employee & Department Management Module
+
+- Implemented complete Employee Management APIs.
+- Added Employee Profile retrieval and update functionality.
+- Implemented Profile Picture uploads using the existing Cloudinary integration.
+- Added secure profile-picture replacement with automatic cleanup of previous Cloudinary assets.
+- Implemented complete Department CRUD operations.
+- Added Department Head assignment and validation.
+- Added Employee activation and deactivation.
+- Implemented Manager assignment with circular hierarchy prevention.
+- Added Role management with final-admin protection.
+- Added Department assignment with active department validation.
+- Implemented employee search, pagination, and advanced filtering.
+- Added department search and pagination.
+- Prevented self-manager assignment and invalid reporting relationships.
+- Prevented employee self-deactivation.
+- Prevented deletion of departments containing employees.
+- Added additional MongoDB indexes for employee search, department queries, manager hierarchy, and active employees.
+- Integrated employee and department actions into the existing audit logging system.
+- Reused existing Cloudinary utilities without duplicating upload infrastructure.
+- Applied strict RBAC, ownership validation, secure projections, `lean()` queries, and optimized MongoDB access patterns.
+- Fully reviewed, manually tested using Postman, committed, and pushed to GitHub.
+
 
 ---
 
@@ -166,44 +193,54 @@ Development will now transition into **Version v1.0.0**.
 - Refresh-token lifecycle is fully implemented.
 - Password-reset workflow is fully operational.
 - Session revocation is fully operational.
+- Employee Management module is complete.
+- Department Management module is complete.
+- Profile Picture management is fully operational.
+- Employee lifecycle management is fully operational.
+- Department lifecycle management is fully operational.
+- Employee search, filtering, and pagination are fully operational.
+- Role and manager assignment workflows are fully operational.
 
-The project is now transitioning into **Version v1.0.0**.
+The project is now transitioning into **Version v1.1.0 — Production Hardening & Backend Polish**.
 
 ---
 
 # Today's Progress
 
-- Completed Authentication Completion Module.
-- Implemented refresh-token rotation.
-- Added persistent Refresh Session storage.
-- Added Logout All Devices functionality.
-- Implemented Forgot Password workflow.
-- Implemented Password Reset workflow.
-- Added secure PasswordResetToken storage with TTL expiration.
-- Added reusable Password Reset email template.
-- Added refresh-token replay protection.
-- Added session revocation after password reset.
-- Manually tested complete authentication lifecycle using Postman.
-- Verified refresh-token rotation, session revocation, forgot-password, password-reset, logout-all-devices, and replay protection.
-- Reviewed, committed, and pushed the completed Authentication Completion module.
+- Completed Employee & Department Management Module.
+- Implemented Employee Profile management.
+- Implemented secure Profile Picture uploads using Cloudinary.
+- Implemented complete Department CRUD operations.
+- Added Employee activation and deactivation.
+- Implemented Manager assignment with hierarchy validation.
+- Added Department assignment workflow.
+- Implemented Role management.
+- Added advanced employee search, filtering, and pagination.
+- Added department search and pagination.
+- Implemented business-rule validation for employee hierarchy and department lifecycle.
+- Integrated employee and department events into the existing audit logging system.
+- Reused existing Cloudinary architecture for profile-picture management.
+- Manually tested all Employee and Department APIs using Postman.
+- Fixed issues discovered during testing.
+- Reviewed, committed, and pushed the completed Employee & Department Management module.
 
 ---
 
 # Next Session Plan
 
-## Version v1.0.0
+## Version v1.1.0 - Production Hardening & Backend Polish
 
-The next milestone will focus on completing the remaining core backend functionality before frontend development.
+The next milestone will focus on preparing the backend for frontend integration and production readiness.
 
 Planned work includes:
 
-1. Employee Management APIs.
-2. Department Management APIs.
-3. Employee activation/deactivation.
-4. Manager assignment.
-5. Role management improvements.
-6. Employee profile management.
-7. Backend architecture review and production hardening.
+1. Startup environment validation.
+2. Structured logging improvements.
+3. Health and readiness endpoints.
+4. Global API hardening and production configuration.
+5. OpenAPI / Swagger documentation.
+6. Deployment improvements.
+7. Final backend architecture review before frontend development.
 
 ---
 
@@ -222,19 +259,28 @@ Planned work includes:
 - Refresh tokens are stored as secure hashed sessions in MongoDB.
 - Password reset tokens are one-time use and automatically expire.
 - Successful password reset revokes all active refresh sessions.
+- Profile pictures are securely stored in Cloudinary while MongoDB stores metadata only.
+- Employee lifecycle operations are fully audited.
+- Department lifecycle operations are fully audited.
+- Manager hierarchy validation prevents circular reporting structures.
 
 ---
 
 # Known Issues
 
-- Admin and role-management APIs are not implemented; development roles are managed manually through MongoDB.
+# Known Issues
+
+- Holiday calendar support has not yet been implemented for attendance and leave calculations.
+- Organization-wide working calendar configuration remains a future enhancement.
+- OpenAPI / Swagger documentation has not yet been implemented.
+- Production deployment configuration and monitoring remain future enhancements.
 - Holiday calendar support has not yet been implemented for attendance and leave calculations.
 
 ---
 
 # Git History
 
-Latest Commit: Complete v0.9.0 Authentication Completion Module
+Latest Commit: Complete v1.0.0 Employee & Department Management Module
 
 ---
 
@@ -251,3 +297,4 @@ Latest Commit: Complete v0.9.0 Authentication Completion Module
 | v0.7.0 | Released | Automation, Notifications, Cron Jobs, Email Service, Notification Dispatcher, Scheduled Job Management, Idempotency, and Email Templates |
 | v0.8.0 | Released | Document Management, Cloudinary Integration, Secure File Uploads, Leave Attachments, Cloud Storage, Document Retrieval, Transaction-safe Uploads, and Role-based Document Access |
 | v0.9.0 | Released | Authentication Completion, Refresh Token Rotation, Refresh Sessions, Logout All Devices, Forgot Password, Password Reset, Session Revocation, Password Reset Tokens, and Production-ready Authentication |
+| v1.0.0 | Released | Employee Management, Department Management, Employee Profiles, Profile Pictures, Cloudinary Integration, Department CRUD, Employee Lifecycle, Manager Assignment, Role Management, Search, Filtering, Pagination, Business Rule Validation, and Audit Logging |

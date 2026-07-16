@@ -30,4 +30,24 @@ const uploadLeaveDocument = (req, res, next) => {
   });
 };
 
-module.exports = { uploadLeaveDocument, ALLOWED_MIME_TYPES, MAX_DOCUMENT_SIZE };
+const profileUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024, files: 1 },
+  fileFilter: (req, file, callback) => {
+    if (!["image/jpeg", "image/png"].includes(file.mimetype)) {
+      const error = new Error("Only JPG, JPEG, and PNG profile pictures are allowed");
+      error.statusCode = 400;
+      return callback(error);
+    }
+    return callback(null, true);
+  },
+}).single("profilePicture");
+
+const uploadProfilePicture = (req, res, next) => {
+  profileUpload(req, res, (error) => {
+    if (error) return res.status(error.statusCode || 400).json({ success: false, message: error.message || "Invalid profile picture" });
+    return next();
+  });
+};
+
+module.exports = { uploadLeaveDocument, uploadProfilePicture, ALLOWED_MIME_TYPES, MAX_DOCUMENT_SIZE };

@@ -82,8 +82,27 @@ const createAttendanceAuditLog = async ({
   return AuditLog.create(auditLog);
 };
 
+const createHRAuditLog = async ({ entityType, entityId, action, actor, targetUserId = null, changedFields = {}, session = null }) => {
+  const auditLog = {
+    entityType,
+    entityId,
+    action,
+    actorId: actor?._id || null,
+    actorRole: actor?.role || null,
+    targetUserId,
+    changedFields,
+    source: "api",
+  };
+  if (session) {
+    const [created] = await AuditLog.create([auditLog], { session });
+    return created;
+  }
+  return AuditLog.create(auditLog);
+};
+
 module.exports = {
   auditableAttendanceFields,
   buildAttendanceChangedFields,
   createAttendanceAuditLog,
+  createHRAuditLog,
 };

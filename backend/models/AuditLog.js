@@ -20,7 +20,7 @@ const auditLogSchema = new mongoose.Schema(
   {
     entityType: {
       type: String,
-      enum: ["attendance"],
+      enum: ["attendance", "employee", "department"],
       required: true,
       immutable: true,
     },
@@ -32,7 +32,7 @@ const auditLogSchema = new mongoose.Schema(
     },
     action: {
       type: String,
-      enum: ["punch_in", "punch_out", "corrected", "absence_marked"],
+      enum: ["punch_in", "punch_out", "corrected", "absence_marked", "activated", "deactivated", "role_changed", "manager_changed", "department_changed", "created", "updated", "deleted"],
       required: true,
       immutable: true,
     },
@@ -51,7 +51,7 @@ const auditLogSchema = new mongoose.Schema(
     targetUserId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
+      default: null,
       immutable: true,
     },
     changedFields: {

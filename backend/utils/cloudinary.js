@@ -1,10 +1,10 @@
 const { Readable } = require("stream");
 const cloudinary = require("../config/cloudinary");
 
-const uploadToCloudinary = (buffer) =>
+const uploadToCloudinary = (buffer, options = {}) =>
   new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
-      { folder: "leave_documents", resource_type: "auto" },
+      { folder: "leave_documents", resource_type: "auto", ...options },
       (error, result) => (error ? reject(error) : resolve(result))
     );
 

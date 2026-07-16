@@ -18,6 +18,7 @@ const leaveRoutes = require("./routes/leave.routes");
 const notificationRoutes = require("./routes/notification.routes");
 const automationRoutes = require("./routes/automation.routes");
 const reportRoutes = require("./routes/report.routes");
+const departmentRoutes = require("./routes/department.routes");
 const startCronJobs = require("./utils/cronJobs");
 const { errorHandler, notFound } = require("./middleware/error.middleware");
 
@@ -47,6 +48,7 @@ app.get("/api/health", (req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/departments", departmentRoutes);
 app.use("/api/attendance", attendanceRoutes);
 app.use("/api/audit-logs", auditLogRoutes);
 app.use("/api/dashboard", dashboardRoutes);
