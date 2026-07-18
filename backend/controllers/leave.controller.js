@@ -7,6 +7,7 @@ const LeaveType = require("../models/LeaveType");
 const User = require("../models/User");
 const { queueNotification } = require("../services/notification.service");
 const { uploadToCloudinary, deleteFromCloudinary } = require("../utils/cloudinary");
+const logger = require("../utils/logger");
 const {
   getBusinessDate,
   getLeaveDaysByYear,
@@ -24,9 +25,10 @@ const createError = (message, statusCode) => {
 };
 
 const sendError = (res, error) => {
-  return res.status(error.statusCode || 500).json({
+  const statusCode = error.statusCode || 500;
+  return res.status(statusCode).json({
     success: false,
-    message: error.message,
+    message: statusCode >= 400 && statusCode < 500 ? error.message : "Internal server error",
   });
 };
 
@@ -322,9 +324,7 @@ const applyForLeave = async (req, res) => {
       try {
         cloudinaryResult = await uploadToCloudinary(req.file.buffer);
       } catch (error) {
-  console.error("========== CLOUDINARY ERROR ==========");
-  console.error(error);
-  console.error("=====================================");
+  logger.error("Leave document upload failed", { error: error.message });
   throw createError("Unable to upload leave document", 500);
 }
 
@@ -419,7 +419,7 @@ const applyForLeave = async (req, res) => {
       try {
         await deleteFromCloudinary(uploadedDocument.publicId);
       } catch (cleanupError) {
-        console.error("Failed to remove orphaned leave document", { publicId: uploadedDocument.publicId, error: cleanupError.message });
+        logger.error("Failed to remove orphaned leave document", { publicId: uploadedDocument.publicId, error: cleanupError.message });
       }
     }
     await session.endSession();

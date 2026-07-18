@@ -7,8 +7,13 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const express = require("express");
 const helmet = require("helmet");
+const rateLimit = require("express-rate-limit");
+const swaggerUi = require("swagger-ui-express");
 
 const connectDB = require("./config/db");
+const { validateEnvironment } = require("./config/env");
+const swaggerSpec = require("./config/swagger");
+const healthRoutes = require("./routes/health.routes");
 const authRoutes = require("./routes/auth.routes");
 const userRoutes = require("./routes/user.routes");
 const attendanceRoutes = require("./routes/attendance.routes");
@@ -20,22 +25,31 @@ const automationRoutes = require("./routes/automation.routes");
 const reportRoutes = require("./routes/report.routes");
 const departmentRoutes = require("./routes/department.routes");
 const startCronJobs = require("./utils/cronJobs");
+const { stopCronJobs } = require("./utils/cronJobs");
 const { errorHandler, notFound } = require("./middleware/error.middleware");
+const requestLogger = require("./middleware/requestLogger.middleware");
+const logger = require("./utils/logger");
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = Number(process.env.PORT);
 
-app.use(helmet());
+app.disable("x-powered-by");
+if (process.env.NODE_ENV === "production") app.set("trust proxy", 1);
+app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
 app.use(
   cors({
-    origin: process.env.CLIENT_URL,
+    origin: process.env.FRONTEND_URL || process.env.CLIENT_URL,
     credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   })
 );
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: "1mb" }));
+app.use(express.urlencoded({ extended: true, limit: "1mb" }));
 app.use(cookieParser());
+app.use(requestLogger);
+app.use("/api", rateLimit({ windowMs: 15 * 60 * 1000, max: 1000, standardHeaders: true, legacyHeaders: false, message: { success: false, message: "Too many requests. Please try again later." } }));
 
+app.use("/health", healthRoutes);
 app.get("/api/health", (req, res) => {
   res.status(200).json({
     success: true,
@@ -45,6 +59,7 @@ app.get("/api/health", (req, res) => {
     },
   });
 });
+app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec, { explorer: true, customSiteTitle: "Leave & Attendance API Docs" }));
 
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
@@ -61,11 +76,35 @@ app.use(notFound);
 app.use(errorHandler);
 
 const startServer = async () => {
+  validateEnvironment();
   await connectDB();
-  startCronJobs();
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-  });
+  const cronJobs = startCronJobs();
+  const server = app.listen(PORT, () => logger.info("Server started", { port: PORT, environment: process.env.NODE_ENV }));
+  let shuttingDown = false;
+  const shutdown = async (signal) => {
+    if (shuttingDown) return;
+    shuttingDown = true;
+    logger.info("Graceful shutdown started", { signal });
+    stopCronJobs(cronJobs);
+    server.close(async () => {
+      try {
+        await require("mongoose").connection.close(false);
+        logger.info("Graceful shutdown completed");
+        process.exit(0);
+      } catch (error) {
+        logger.error("Graceful shutdown failed", { error: error.message });
+        process.exit(1);
+      }
+    });
+    setTimeout(() => { logger.error("Graceful shutdown timed out"); process.exit(1); }, 30000).unref();
+  };
+  process.once("SIGINT", () => shutdown("SIGINT"));
+  process.once("SIGTERM", () => shutdown("SIGTERM"));
+  return server;
 };
 
-startServer();
+if (require.main === module) {
+  startServer().catch((error) => { logger.error("Server startup failed", { error: error.message }); process.exit(1); });
+}
+
+module.exports = { app, startServer };

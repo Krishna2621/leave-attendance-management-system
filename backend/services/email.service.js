@@ -13,4 +13,6 @@ const sendEmail = async ({ to, subject, html, text }) => {
   return getTransporter().sendMail({ from: getEmailFrom(), to, subject, html, text });
 };
 
-module.exports = { sendEmail };
+const verifyEmailTransport = async () => getTransporter().verify();
+
+module.exports = { sendEmail, verifyEmailTransport };

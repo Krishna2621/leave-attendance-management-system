@@ -1,5 +1,6 @@
 const Notification = require("../models/Notification");
 const { sendEmail } = require("../services/email.service");
+const logger = require("../utils/logger");
 
 const getMyNotifications = async (req, res) => {
   try {
@@ -10,7 +11,7 @@ const getMyNotifications = async (req, res) => {
       Notification.countDocuments(filter),
     ]);
     return res.status(200).json({ success: true, message: "Notifications retrieved successfully", data: { notifications, pagination: { page, limit, totalRecords, totalPages: Math.ceil(totalRecords / limit) } } });
-  } catch (error) { return res.status(500).json({ success: false, message: error.message }); }
+  } catch (error) { return res.status(500).json({ success: false, message: "Internal server error" }); }
 };
 
 const testNotificationEmail = async (req, res) => {
@@ -19,7 +20,7 @@ const testNotificationEmail = async (req, res) => {
     await sendEmail({ to: req.user.email, subject: "Notification service test", text: "The notification email service is configured successfully.", html: "<p>The notification email service is configured successfully.</p>" });
     return res.status(200).json({ success: true, message: "Test notification email sent successfully", data: { recipient: req.user.email } });
   } catch (error) {
-    console.error("Test notification email failed", { userId: req.user._id, error: error.message });
+    logger.error("Test notification email failed", { userId: req.user._id, error: error.message });
     return res.status(502).json({ success: false, message: "Test notification email could not be sent" });
   }
 };

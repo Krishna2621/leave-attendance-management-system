@@ -9,6 +9,7 @@ const User = require("../models/User");
 const { sendEmail } = require("../services/email.service");
 const passwordResetTemplate = require("../templates/email/passwordReset");
 const { generateAccessToken, generateRefreshToken } = require("../utils/generateToken");
+const logger = require("../utils/logger");
 
 const ACCESS_TOKEN_DURATION_MS = 15 * 60 * 1000;
 const REFRESH_TOKEN_DURATION_MS = 7 * 24 * 60 * 60 * 1000;
@@ -169,11 +170,11 @@ const forgotPassword = async (req, res) => {
     await PasswordResetToken.deleteMany({ userId: user._id });
     await PasswordResetToken.create({ userId: user._id, tokenHash: hashToken(token), expiresAt: new Date(Date.now() + PASSWORD_RESET_DURATION_MS) });
 
-    const resetUrl = new URL("/reset-password", process.env.CLIENT_URL);
+    const resetUrl = new URL("/reset-password", process.env.FRONTEND_URL || process.env.CLIENT_URL);
     resetUrl.searchParams.set("token", token);
     await sendEmail({ to: user.email, ...passwordResetTemplate({ recipientName: user.name, resetUrl: resetUrl.toString() }) });
   } catch (error) {
-    console.error("Password reset request could not be completed");
+    logger.error("Password reset request could not be completed", { error: error.message });
   }
   return res.status(200).json(response);
 };

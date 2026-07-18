@@ -1,4 +1,5 @@
 const Attendance = require("../models/Attendance");
+const logger = require("../utils/logger");
 const User = require("../models/User");
 const { createAttendanceAuditLog } = require("../utils/auditLog");
 
@@ -70,7 +71,7 @@ const createAttendanceAuditEvent = async ({ req, attendance, action, beforeAtten
       userAgent: req.get("user-agent") || null,
     });
   } catch (error) {
-    console.error("Failed to create attendance audit log", {
+    logger.error("Failed to create attendance audit log", {
       action,
       attendanceId: attendance._id,
       error: error.message,
@@ -126,7 +127,7 @@ const punchIn = async (req, res) => {
 
     return res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Internal server error",
     });
   }
 };
@@ -187,7 +188,7 @@ const punchOut = async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Internal server error",
     });
   }
 };
@@ -231,7 +232,7 @@ const getAttendanceHistory = async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Internal server error",
     });
   }
 };
@@ -304,7 +305,7 @@ const getTeamAttendance = async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Internal server error",
     });
   }
 };
@@ -404,7 +405,7 @@ const getOrganizationAttendance = async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Internal server error",
     });
   }
 };
@@ -474,7 +475,7 @@ const correctAttendance = async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Internal server error",
     });
   }
 };
@@ -488,7 +489,7 @@ const notImplemented = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Internal server error",
     });
   }
 };

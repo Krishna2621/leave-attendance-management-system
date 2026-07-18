@@ -2,7 +2,7 @@ const Department = require("../models/Department");
 const User = require("../models/User");
 const { createHRAuditLog } = require("../utils/auditLog");
 
-const fail = (res, error) => res.status(error.statusCode || 500).json({ success: false, message: error.message });
+const fail = (res, error) => { const statusCode = error.statusCode || 500; return res.status(statusCode).json({ success: false, message: statusCode >= 400 && statusCode < 500 ? error.message : "Internal server error" }); };
 const error = (message, statusCode) => Object.assign(new Error(message), { statusCode });
 const changes = (before, after, fields) => Object.fromEntries(fields.filter((field) => String(before[field] ?? "") !== String(after[field] ?? "")).map((field) => [field, { before: before[field] ?? null, after: after[field] ?? null }]));
 

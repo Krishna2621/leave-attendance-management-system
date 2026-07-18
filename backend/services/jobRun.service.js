@@ -1,4 +1,5 @@
 const ScheduledJobRun = require("../models/ScheduledJobRun");
+const logger = require("../utils/logger");
 
 const maxAttempts = Number(process.env.SCHEDULED_JOB_MAX_ATTEMPTS || 3);
 const lockMinutes = Number(process.env.SCHEDULED_JOB_LOCK_MINUTES || 30);
@@ -28,11 +29,11 @@ const runScheduledJob = async ({ jobName, runKey, metadata, handler }) => {
   try {
     const result = await handler();
     await ScheduledJobRun.updateOne({ _id: jobRun._id }, { $set: { status: "completed", lockUntil: null, completedAt: new Date(), metadata: { ...metadata, result } } });
-    console.log("Scheduled job completed", { jobName, runKey, durationMs: Date.now() - startedAt, result });
+    logger.info("Scheduled job completed", { jobName, runKey, durationMs: Date.now() - startedAt, result });
     return { skipped: false, result };
   } catch (error) {
     await ScheduledJobRun.updateOne({ _id: jobRun._id }, { $set: { status: "failed", lockUntil: null, failedAt: new Date(), lastError: cleanError(error) } });
-    console.error("Scheduled job failed", { jobName, runKey, durationMs: Date.now() - startedAt, error: cleanError(error) });
+    logger.error("Scheduled job failed", { jobName, runKey, durationMs: Date.now() - startedAt, error: cleanError(error) });
     throw error;
   }
 };

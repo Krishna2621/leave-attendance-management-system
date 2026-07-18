@@ -1,6 +1,7 @@
 const Notification = require("../models/Notification");
 const User = require("../models/User");
 const { sendEmail } = require("./email.service");
+const logger = require("../utils/logger");
 const templates = {
   leave_approved: require("../templates/email/leaveApproved"),
   leave_rejected: require("../templates/email/leaveRejected"),
@@ -45,7 +46,7 @@ const dispatchQueuedNotifications = async ({ limit = Number(process.env.NOTIFICA
       const retryDelay = retryBaseMinutes * 2 ** Math.max(notification.attemptCount - 1, 0);
       await Notification.updateOne({ _id: notification._id }, { $set: { status: finalAttempt ? "failed" : "queued", lockUntil: null, nextAttemptAt: new Date(Date.now() + retryDelay * 60000), lastError: cleanError(error) } });
       summary.failedCount += 1;
-      console.error("Notification delivery failed", { notificationId: notification._id, type: notification.type, error: cleanError(error) });
+      logger.error("Notification delivery failed", { notificationId: notification._id, type: notification.type, error: cleanError(error) });
     }
   }
   return summary;
