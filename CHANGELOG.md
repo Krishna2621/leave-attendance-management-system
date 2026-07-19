@@ -6,6 +6,42 @@ The format is based on semantic project versioning, with each release summarizin
 
 ---
 
+# v1.1.0 - Production Hardening & Backend Polish
+**Release Date:** July 19, 2026
+
+### Added
+- Startup environment validation.
+- Health endpoints.
+- Swagger UI.
+- `.env.example`.
+- Structured logger.
+- Graceful shutdown.
+- Production testing guide.
+
+### Changed
+- Improved security middleware.
+- Improved startup configuration.
+- Improved production readiness.
+- Normalized server errors.
+- Updated package version to v1.1.0.
+
+### Security
+- Production-safe logging.
+- Redacted sensitive information.
+- Hardened request handling.
+- Improved startup validation.
+
+### Testing
+- Successfully verified startup validation.
+- Successfully verified health endpoints.
+- Successfully verified Swagger UI.
+- Successfully verified MongoDB connectivity.
+- Successfully verified graceful shutdown.
+- Successfully verified environment validation.
+- Successfully verified production configuration.
+
+---
+
 # v0.9.0 - Authentication Completion Module
 **Release Date:** July 16, 2026
 
