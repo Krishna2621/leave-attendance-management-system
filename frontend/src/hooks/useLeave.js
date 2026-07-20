@@ -1,0 +1,7 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { applyLeave, approveLeave, cancelLeave, getLeaveHistory, getLeaveRequests, getLeaveTypes, getMyLeaveBalances, rejectLeave } from "../api/leave.api";
+export const useLeaveRequests = (scope, filters) => useQuery({ queryKey: ["leaves", scope, filters], queryFn: () => getLeaveRequests(scope, filters), placeholderData: (previous) => previous });
+export const useLeaveTypes = () => useQuery({ queryKey: ["leave-types"], queryFn: getLeaveTypes, staleTime: 300_000 });
+export const useLeaveBalances = (enabled = true) => useQuery({ queryKey: ["leave-balances", "me"], queryFn: getMyLeaveBalances, enabled });
+export const useLeaveHistory = (id) => useQuery({ queryKey: ["leave-history", id], queryFn: () => getLeaveHistory(id), enabled: Boolean(id) });
+export function useLeaveActions() { const client = useQueryClient(); const refresh = async () => { await Promise.all([client.invalidateQueries({ queryKey: ["leaves"] }), client.invalidateQueries({ queryKey: ["leave-balances", "me"] })]); await client.refetchQueries({ queryKey: ["leave-balances", "me"], type: "active" }); }; return { apply: useMutation({ mutationFn: ({ values, onProgress }) => applyLeave(values, onProgress), onSuccess: refresh }), approve: useMutation({ mutationFn: ({ id, comment }) => approveLeave(id, comment), onSuccess: refresh }), reject: useMutation({ mutationFn: ({ id, comment }) => rejectLeave(id, comment), onSuccess: refresh }), cancel: useMutation({ mutationFn: cancelLeave, onSuccess: refresh }) }; }

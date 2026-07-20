@@ -9,6 +9,7 @@ const User = require("../models/User");
 const { sendEmail } = require("../services/email.service");
 const passwordResetTemplate = require("../templates/email/passwordReset");
 const { generateAccessToken, generateRefreshToken } = require("../utils/generateToken");
+const { initializeLeaveBalancesForUser } = require("../utils/leaveBalance");
 const logger = require("../utils/logger");
 
 const ACCESS_TOKEN_DURATION_MS = 15 * 60 * 1000;
@@ -61,12 +62,18 @@ const createRefreshSession = async ({ user, token, req, session }) => {
 };
 
 const register = async (req, res) => {
+  const session = await mongoose.startSession();
   try {
     const { name, email, password, departmentId, managerId } = req.body;
     const existingUser = await User.findOne({ email });
     if (existingUser) return res.status(409).json({ success: false, message: "User with this email already exists" });
 
-    const user = await User.create({ name, email, password: await bcrypt.hash(password, 10), departmentId, managerId });
+    let user;
+    await session.withTransaction(async () => {
+      const [createdUser] = await User.create([{ name, email, password: await bcrypt.hash(password, 10), departmentId, managerId }], { session });
+      user = createdUser;
+      await initializeLeaveBalancesForUser({ userId: user._id, session });
+    });
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
     await createRefreshSession({ user, token: refreshToken, req });
@@ -75,6 +82,8 @@ const register = async (req, res) => {
     return res.status(201).json({ success: true, message: "User registered successfully", data: { user: sanitizeUser(user) } });
   } catch (error) {
     return res.status(500).json({ success: false, message: "Unable to register user" });
+  } finally {
+    await session.endSession();
   }
 };
 

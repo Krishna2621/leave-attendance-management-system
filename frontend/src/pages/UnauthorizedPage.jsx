@@ -1,0 +1,2 @@
+import { Link } from "react-router-dom";
+export default function UnauthorizedPage() { return <main className="grid min-h-screen place-items-center bg-slate-50 p-6 text-center"><div><p className="text-7xl font-bold text-teal-700">403</p><h1 className="mt-4 text-2xl font-bold">Access denied</h1><p className="mt-2 text-slate-600">You do not have permission to view this page.</p><Link className="mt-6 inline-block font-semibold text-teal-700 hover:text-teal-800" to="/dashboard">Return to dashboard</Link></div></main>; }

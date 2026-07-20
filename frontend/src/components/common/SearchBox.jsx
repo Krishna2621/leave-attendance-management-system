@@ -1,0 +1,2 @@
+import { Search } from "lucide-react";
+export default function SearchBox({ value, onChange, placeholder = "Search…" }) { return <label className="flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-500 focus-within:border-teal-600 focus-within:ring-4 focus-within:ring-teal-600/10"><Search size={18} /><input className="w-full bg-transparent text-sm outline-none placeholder:text-slate-400" value={value} onChange={onChange} placeholder={placeholder} /></label>; }

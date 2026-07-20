@@ -1,0 +1,12 @@
+import client from "./client";
+const data = (response) => response.data.data;
+const params = (value = {}) => Object.fromEntries(Object.entries(value).filter(([key, item]) => !["search", "leaveType"].includes(key) && item !== "" && item !== undefined && item !== null));
+const endpoint = (scope) => scope === "team" ? "/leaves/team" : scope === "organization" ? "/leaves/all" : "/leaves/me";
+export const getLeaveRequests = (scope, query) => client.get(endpoint(scope), { params: params(query) }).then(data);
+export const getLeaveTypes = () => client.get("/leaves/types").then(data);
+export const getMyLeaveBalances = () => client.get("/leaves/balance/me").then(data);
+export const getLeaveHistory = (id) => client.get(`/leaves/${id}/history`).then(data);
+export const applyLeave = (values, onProgress) => { const form = new FormData(); Object.entries(values).forEach(([key, value]) => { if (value && key !== "document") form.append(key, value); }); if (values.document) form.append("document", values.document); return client.post("/leaves/apply", form, { headers: { "Content-Type": "multipart/form-data" }, onUploadProgress: (event) => onProgress?.(event.total ? Math.round((event.loaded * 100) / event.total) : 0) }).then(data); };
+export const approveLeave = (id, approverComment) => client.put(`/leaves/${id}/approve`, { approverComment }).then(data);
+export const rejectLeave = (id, approverComment) => client.put(`/leaves/${id}/reject`, { approverComment }).then(data);
+export const cancelLeave = (id) => client.put(`/leaves/${id}/cancel`, {}).then(data);
