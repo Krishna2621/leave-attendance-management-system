@@ -1,4 +1,5 @@
 import { createContext, useCallback, useEffect, useMemo, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { loginRequest, logoutRequest } from "../api/auth.api";
 import { refreshSession } from "../api/client";
@@ -18,12 +19,14 @@ const getStoredUser = () => {
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const queryClient = useQueryClient();
 
   const clearSession = useCallback((message) => {
     localStorage.removeItem(USER_STORAGE_KEY);
     setUser(null);
+    queryClient.clear();
     if (message) toast.error(message);
-  }, []);
+  }, [queryClient]);
 
   useEffect(() => {
     const restoreSession = async () => {
@@ -48,10 +51,11 @@ export function AuthProvider({ children }) {
   const login = useCallback(async (credentials) => {
     const { data } = await loginRequest(credentials);
     const loggedInUser = data.data.user;
+    queryClient.clear();
     localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(loggedInUser));
     setUser(loggedInUser);
     return loggedInUser;
-  }, []);
+  }, [queryClient]);
 
   const logout = useCallback(async () => {
     try {
@@ -63,7 +67,16 @@ export function AuthProvider({ children }) {
     }
   }, [clearSession]);
 
-  const value = useMemo(() => ({ user, isLoading, isAuthenticated: Boolean(user), login, logout }), [user, isLoading, login, logout]);
+  const updateUser = useCallback((partial) => {
+    setUser((current) => {
+      if (!current) return current;
+      const next = { ...current, ...partial };
+      localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(next));
+      return next;
+    });
+  }, []);
+
+  const value = useMemo(() => ({ user, isLoading, isAuthenticated: Boolean(user), login, logout, updateUser }), [user, isLoading, login, logout, updateUser]);
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 

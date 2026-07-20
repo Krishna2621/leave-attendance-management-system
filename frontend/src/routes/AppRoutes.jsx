@@ -11,6 +11,11 @@ import ApplyLeavePage from "../pages/leave/ApplyLeavePage";
 import LeaveListPage from "../pages/leave/LeaveListPage";
 import LeaveBalancePage from "../pages/leave/LeaveBalancePage";
 import LeaveHistoryPage from "../pages/leave/LeaveHistoryPage";
+import EmployeeListPage from "../pages/employee/EmployeeListPage";
+import EmployeeDetailsPage from "../pages/employee/EmployeeDetailsPage";
+import DepartmentListPage from "../pages/department/DepartmentListPage";
+import DepartmentDetailsPage from "../pages/department/DepartmentDetailsPage";
+import ProfilePage from "../pages/profile/ProfilePage";
 import UnauthorizedPage from "../pages/UnauthorizedPage";
 import NotFoundPage from "../pages/NotFoundPage";
 import ProtectedRoute from "./ProtectedRoute";
@@ -31,8 +36,9 @@ export default function AppRoutes() {
       <Route path="/leave/my" element={<LeaveListPage scope="my" />} />
       <Route path="/leave/history" element={<LeaveHistoryPage />} />
       <Route path="/leave/balance" element={<LeaveBalancePage />} />
+      <Route path="/profile" element={<ProfilePage />} />
       <Route element={<ProtectedRoute roles={["manager"]} />}><Route path="/attendance/team" element={<AttendanceListPage scope="team" />} /><Route path="/leave/team" element={<LeaveListPage scope="team" />} /></Route>
-      <Route element={<ProtectedRoute roles={["hr", "admin"]} />}><Route path="/attendance/organization" element={<AttendanceListPage scope="organization" />} /><Route path="/leave/all" element={<LeaveListPage scope="organization" />} /></Route>
+      <Route element={<ProtectedRoute roles={["hr", "admin"]} />}><Route path="/attendance/organization" element={<AttendanceListPage scope="organization" />} /><Route path="/leave/all" element={<LeaveListPage scope="organization" />} /><Route path="/employees" element={<EmployeeListPage />} /><Route path="/employees/:id" element={<EmployeeDetailsPage />} /><Route path="/departments" element={<DepartmentListPage />} /><Route path="/departments/:id" element={<DepartmentDetailsPage />} /></Route>
     </Route></Route>
     <Route path="/unauthorized" element={<UnauthorizedPage />} /><Route path="/" element={<Navigate to="/dashboard" replace />} /><Route path="*" element={<NotFoundPage />} />
   </Routes>;

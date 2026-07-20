@@ -1,19 +1,24 @@
 # Leave & Attendance Management System - Project Progress
 
-**Last Updated:** July 19, 2026
-**Overall Status:** Backend Production Ready (v1.1.0)
+**Last Updated:** July 21, 2026
+**Overall Status:** Backend Production Ready (v1.1.1) · Frontend In Progress (v1.4.0)
 
 ## Current Version
 
-Frontend v1.0.0 (Planning)
+Frontend v1.4.0 (Employee Management)
+
+### Current Completion Snapshot
+
+- **Backend:** ~95% complete and production-ready. All core modules shipped; remaining work is leave reporting and CSV/PDF export (currently stubbed) plus the holiday calendar.
+- **Frontend:** ~65% complete. Foundation, authentication, layout, shared components, and the Dashboard, Attendance, Leave, and Employee Management modules are built. Department, Reports, Notifications, Profile, and Settings pages are not yet started.
 
 ### Authentication Completion Module Completed
 
-Versions v0.1.0 through v1.0.0 have been fully implemented, reviewed, manually tested using Postman, committed, and pushed to GitHub.
+Versions v0.1.0 through v1.1.0 have been fully implemented, reviewed, manually tested using Postman, committed, and pushed to GitHub. Backend v1.1.1 added automatic leave-balance initialization on registration.
 
-The Employee & Department Management module is now complete, including employee profile management, department management, manager assignment, role management, profile picture uploads, Cloudinary integration, employee lifecycle management, advanced search and filtering, business rule validation, and audit logging.
+The Employee & Department Management backend module is complete. Frontend development is underway: the Foundation, Attendance, Leave, and Employee Management modules are implemented and building successfully.
 
-The backend is complete and production-ready through **Version v1.1.0 — Production Hardening & Backend Polish**. Development now transitions to **Frontend v1.0.0**.
+The backend is complete and production-ready through **Version v1.1.1**. Frontend development is progressing through **Frontend v1.4.0 — Employee Management**.
 
 ---
 
@@ -185,6 +190,64 @@ The backend is complete and production-ready through **Version v1.1.0 — Produc
 
 ---
 
+## v1.1.1 - Automatic Leave Balance Initialization (Backend)
+
+- Added `utils/leaveBalance.js` with `getCurrentLeaveYear` and `initializeLeaveBalancesForUser`.
+- New users are automatically seeded leave balances from active leave types on registration.
+- Registration now wraps user creation and leave-balance seeding in a single MongoDB transaction.
+- Removed a leftover debug `console.log` from the leave application upload flow.
+
+---
+
+## Frontend v1.0.0–v1.3.0 - Foundation, Attendance & Leave UI
+
+- Scaffolded the React 19 + Vite application with Tailwind CSS v4 and React Router v7.
+- Implemented cookie-based authentication: `AuthContext`, `useAuth`, session restore on load, and a pub/sub auth-event bus.
+- Built a centralized Axios client with `withCredentials`, a deduplicated refresh-token retry interceptor, and session-expiry handling.
+- Established the React Query architecture with domain hooks (`useAttendance`, `useLeave`, `useDashboard`) using keyed queries and invalidation.
+- Added protected and public route guards with role-aware gating (`ProtectedRoute`, `PublicRoute`).
+- Built the application layout: sidebar (role-filtered navigation), top navbar, breadcrumbs, and content outlet.
+- Created the shared UI component library (Button, Input, Select, TextArea, Card, Badge, Avatar, Modal, ConfirmDialog, Spinner, Loader) and common components (Table, Pagination, SearchBox, EmptyState).
+- Implemented the Dashboard module with role-specific stat cards, Recharts visualizations, and quick actions.
+- Implemented the Attendance module: dashboard summary, mark attendance (punch in/out), filterable list with HR/Admin correction, and calendar view.
+- Implemented the Leave module: dashboard, apply leave with Cloudinary document upload and progress, request list with approve/reject/cancel decision modals, balance view, and history.
+
+---
+
+## Frontend v1.4.0 - Employee Management Module
+
+- Added `api/user.api.js` covering the users and departments endpoints.
+- Added `hooks/useEmployees.js` with list, detail, department-options, manager-options queries and mutation actions.
+- Built the Employee Directory page with server-side search, role/department/status filters, pagination, profile pictures, and status badges.
+- Built the Employee Details page displaying employment, personal, and contact information.
+- Implemented Edit Employee, Assign Department, Assign Manager, Change Role, and Activate/Deactivate actions using the existing modal, confirm dialog, and toast primitives.
+- Enforced RBAC in the UI: the directory is HR/Admin-only, and role changes are Admin-only, matching the backend.
+- Wired the module into AppRoutes (HR/Admin protected), the sidebar, breadcrumbs, and the dashboard Quick Actions, replacing the dead Departments link.
+- Verified a successful production build.
+
+---
+
+## Frontend v1.4.1 - Employee Management Integration Fixes
+
+- Fixed an empty department dropdown: `GET /api/departments?isActive=true` was rejected with 400 because express-validator v7 `isBoolean({ strict: true })` only accepts real JS booleans (a query string can never satisfy it). The frontend now omits the `isActive` query param and filters active departments and managers client-side via a React Query `select`.
+- Fixed the Employee Directory status filter returning "Invalid value" for the same root cause; the active/inactive filter is now applied client-side over the returned page, matching the existing attendance status-filter pattern.
+- Verified with Postman-equivalent reproduction against the installed backend validator chain and a successful production build.
+
+---
+
+## Frontend v1.5.0 - Department Management & Profile
+
+- Added `api/department.api.js` and `hooks/useDepartments.js` covering list, detail, create, update, and delete.
+- Built the Department Directory (search, client-side status filter, pagination) and Department Details page (overview, description, timeline).
+- Implemented Create, Edit, Assign Head (manager-role only), and Activate/Deactivate via a shared department form modal; Delete is Admin-only with a confirmation dialog.
+- Added the User Profile module: `hooks/useProfile.js`, profile endpoints on `api/user.api.js`, and a Profile page with avatar, employment details, and personal/contact info.
+- Implemented self-service profile editing limited to backend-permitted fields and profile-picture upload reusing the existing `PUT /api/users/me/profile-picture` endpoint.
+- Added `updateUser` to the auth context so name/picture changes reflect immediately in the top navbar; the navbar user chip now links to the profile.
+- Wired departments (HR/Admin) and profile (all roles) into AppRoutes, the sidebar, breadcrumbs, and Quick Actions; restored the Departments Quick Action.
+- Verified a successful production build.
+
+---
+
 # Current Status
 
 - Backend foundation is complete.
@@ -215,30 +278,37 @@ The backend is complete and production-ready through **Version v1.1.0 — Produc
 - Environment validation, structured logging, health endpoints, and Swagger UI are complete.
 - Security middleware and production configuration have been hardened.
 - Graceful shutdown safely stops MongoDB, the HTTP server, and cron jobs.
-- The backend is production-ready through v1.1.0.
+- The backend is production-ready through v1.1.1.
+- Automatic leave-balance initialization on registration is operational.
+- Frontend foundation, authentication, layout, and shared component library are complete.
+- Frontend Dashboard, Attendance, and Leave modules are complete and building successfully.
+- Frontend Employee Management module (directory, details, edit, RBAC-gated actions) is complete, including the department-dropdown and status-filter integration fixes.
+- Frontend Department Management module (directory, details, create, edit, head assignment, delete) is complete.
+- Frontend User Profile module (view, edit, profile-picture upload) is complete.
+- Remaining frontend modules (Reports, Notifications, Settings) are not yet started.
 
-The project is now transitioning into **Frontend v1.0.0 — Foundation & Architecture**.
+The project is now progressing through **Frontend v1.5.0 — Department Management & Profile**.
 
 ---
 
 # Today's Progress
 
-- Completed v1.1.0 Production Hardening & Backend Polish.
-- Added environment and startup validation plus `.env.example`.
-- Added live and readiness health endpoints.
-- Implemented centralized structured JSON logging and request timing logs.
-- Integrated Swagger/OpenAPI documentation and Swagger UI.
-- Hardened Helmet, CORS, body-size limits, trust-proxy configuration, and error responses.
-- Implemented graceful shutdown for MongoDB, the HTTP server, and cron jobs.
-- Completed production-readiness improvements, startup validation, and Postman verification.
+- Synchronized documentation (PROJECT_PROGRESS, PROJECT_CONTEXT, CHANGELOG) with the actual project state.
+- Recorded the backend v1.1.1 automatic leave-balance initialization and console.log cleanup.
+- Documented the existing frontend foundation, Attendance, and Leave modules.
+- Implemented the Employee Management frontend module and fixed two integration bugs (empty department dropdown and the "Invalid value" status filter, both from the backend strict-boolean `isActive` query rejection).
+- Implemented the Department Management module (`api/department.api.js`, `hooks/useDepartments.js`, directory and details pages, create/edit/delete, head assignment).
+- Implemented the User Profile module (`hooks/useProfile.js`, profile endpoints, view/edit page, profile-picture upload) and added `updateUser` to the auth context.
+- Wired both modules into routing, sidebar, breadcrumbs, and Quick Actions; restored the Departments Quick Action.
+- Verified successful production builds throughout.
 
 ---
 
 # Next Session Plan
 
-## Frontend v1.0.0 - Foundation & Architecture
+## Frontend v1.6.0 - Notifications & Reports
 
-Frontend Development begins with **Version Frontend v1.0.0**.
+Implement the Notifications page (using `GET /api/notifications/me` and a navbar bell) and the Reports module (attendance `$facet` report via Recharts). Note the backend leave report and CSV/PDF export are still stubbed (501).
 
 ---
 
@@ -257,6 +327,7 @@ Frontend Development begins with **Version Frontend v1.0.0**.
 - Refresh tokens are stored as secure hashed sessions in MongoDB.
 - Password reset tokens are one-time use and automatically expire.
 - Successful password reset revokes all active refresh sessions.
+- New users receive automatically initialized leave balances from active leave types on registration.
 - Profile pictures are securely stored in Cloudinary while MongoDB stores metadata only.
 - Employee lifecycle operations are fully audited.
 - Department lifecycle operations are fully audited.
@@ -265,6 +336,10 @@ Frontend Development begins with **Version Frontend v1.0.0**.
 - Health, readiness, and Swagger endpoints support operations and integration work.
 - Structured logs redact sensitive information and include request timing.
 - Graceful shutdown must remain enabled for production deployments.
+- Frontend authentication is cookie-based; the Axios client attaches credentials and transparently retries once after refreshing the session.
+- Frontend API calls always go through the centralized Axios client; server state is managed by React Query.
+- Frontend components are reused from the shared UI and common libraries; no duplicate primitives.
+- Backend `isActive` query filters use express-validator v7 `isBoolean({ strict: true })`, which only accepts real JS booleans; the frontend must never send `isActive` as a query-string param and should filter active/inactive client-side instead.
 
 ---
 
@@ -272,13 +347,15 @@ Frontend Development begins with **Version Frontend v1.0.0**.
 
 - Holiday calendar support has not yet been implemented for attendance and leave calculations.
 - Organization-wide working calendar configuration remains a future enhancement.
-- Frontend development has not yet started.
+- Backend leave reporting (`GET /api/reports/leaves`) and export (`GET /api/reports/export`) are stubbed (501 Not Implemented).
+- There is no admin "create employee" endpoint; registration is the only user-creation path, so the frontend omits a Create Employee flow.
+- Frontend Reports, Notifications, and Settings modules are not yet built.
 
 ---
 
 # Git History
 
-Latest Commit: Complete v1.1.0 Production Hardening & Backend Polish
+Latest Commit: latest commit of frontend
 
 ---
 
@@ -297,3 +374,8 @@ Latest Commit: Complete v1.1.0 Production Hardening & Backend Polish
 | v0.9.0 | Released | Authentication Completion, Refresh Token Rotation, Refresh Sessions, Logout All Devices, Forgot Password, Password Reset, Session Revocation, Password Reset Tokens, and Production-ready Authentication |
 | v1.0.0 | Released | Employee Management, Department Management, Employee Profiles, Profile Pictures, Cloudinary Integration, Department CRUD, Employee Lifecycle, Manager Assignment, Role Management, Search, Filtering, Pagination, Business Rule Validation, and Audit Logging |
 | v1.1.0 | Released | Production hardening, environment validation, health endpoints, structured logging, Swagger/OpenAPI, security improvements, graceful shutdown, and production-readiness verification |
+| v1.1.1 | Released | Automatic leave-balance initialization on registration (transactional) and debug-log cleanup |
+| Frontend v1.0.0–v1.3.0 | Released | React/Vite foundation, cookie auth, Axios interceptors, React Query architecture, layout, shared component library, and the Dashboard, Attendance, and Leave modules |
+| Frontend v1.4.0 | Released | Employee Management: directory, filters, pagination, details, edit, assign department/manager, change role, activate/deactivate, and RBAC gating |
+| Frontend v1.4.1 | Released | Employee Management integration fixes: department dropdown and status filter (backend strict-boolean `isActive` query rejection) |
+| Frontend v1.5.0 | Released | Department Management (directory, details, create/edit/delete, head assignment) and User Profile (view, edit, profile-picture upload) |

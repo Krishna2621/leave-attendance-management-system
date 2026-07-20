@@ -1,4 +1,4 @@
-import { CalendarCheck, CalendarDays, ClipboardList, History, LayoutDashboard, LogOut, Menu, WalletCards, X } from "lucide-react";
+import { Building2, CalendarCheck, CalendarDays, ClipboardList, History, LayoutDashboard, LogOut, Menu, UserCircle, Users, WalletCards, X } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 
@@ -9,6 +9,9 @@ const navItems = [
   { label: "My Leave Requests", to: "/leave/my", icon: ClipboardList, roles: ["employee", "manager", "hr", "admin"] },
   { label: "Leave History", to: "/leave/history", icon: History, roles: ["employee", "manager", "hr", "admin"] },
   { label: "Leave Balance", to: "/leave/balance", icon: WalletCards, roles: ["employee"] },
+  { label: "Employees", to: "/employees", icon: Users, roles: ["hr", "admin"] },
+  { label: "Departments", to: "/departments", icon: Building2, roles: ["hr", "admin"] },
+  { label: "Profile", to: "/profile", icon: UserCircle, roles: ["employee", "manager", "hr", "admin"] },
 ];
 
 export default function Sidebar({ open, onClose }) {

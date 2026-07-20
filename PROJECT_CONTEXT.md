@@ -364,15 +364,25 @@ CLIENT_URL=http://localhost:5173   # Frontend URL for CORS
 
 ## Current Status
 
-- **Current backend status:** Production Ready (v1.1.0).
-- **Current objective:** Frontend Development.
-- **Current frontend status:** Not Started.
-- **Next milestone:** Frontend v1.0.0 – Foundation & Architecture.
-- **Completed modules:** Backend Foundation, Authentication & RBAC, Refresh Token Rotation, Session Management, Password Reset, Attendance, Attendance Reports, Dashboard APIs, Leave Management, Leave Documents, Cloudinary Integration, Employee Management, Department Management, Notifications, Email, Cron Jobs, Audit Logs, Swagger, Health Endpoints, Structured Logging, Environment Validation, and Graceful Shutdown.
+- **Current backend status:** Production Ready (v1.1.1).
+- **Current objective:** Frontend Development (Employee, Department, and Profile complete; Notifications and Reports next).
+- **Current frontend status:** In Progress (~80%). Foundation, Auth, Layout, Shared Components, Dashboard, Attendance, Leave, Employee Management, Department Management, and Profile are built.
+- **Next milestone:** Frontend v1.6.0 – Notifications & Reports.
+- **Completed backend modules:** Backend Foundation, Authentication & RBAC, Refresh Token Rotation, Session Management, Password Reset, Attendance, Attendance Reports, Dashboard APIs, Leave Management, Automatic Leave-Balance Initialization, Leave Documents, Cloudinary Integration, Employee Management, Department Management, Notifications, Email, Cron Jobs, Audit Logs, Swagger, Health Endpoints, Structured Logging, Environment Validation, and Graceful Shutdown.
+- **Completed frontend modules:** Foundation & Architecture, Authentication (cookie-based), Axios interceptors, React Query architecture, Protected routing, Layout, Shared component library, Dashboard, Attendance, Leave, Employee Management, Department Management, and User Profile.
+- **Pending frontend modules:** Reports, Notifications, and Settings.
+- **Known backend gaps:** Leave reporting and CSV/PDF export are stubbed (501); holiday calendar not yet implemented; no admin create-employee endpoint (registration is the only user-creation path).
 - The developer is familiar with: Node.js & npm, VS Code, Git, MongoDB Compass.
 - OS: **Windows**.
 - The developer is an intern — explain concepts clearly when introducing new ones, but don't oversimplify the code itself.
-- The backend is complete; begin frontend work with **Frontend v1.0.0 – Foundation & Architecture**.
+- The backend is complete; frontend work is progressing module by module using only existing backend APIs.
+
+### Note on actual project structure
+
+The folder-structure diagram earlier in this document reflects the original plan. The implemented project uses a richer, nested structure that supersedes it. Follow the actual code, not the diagram:
+
+- **Backend** adds: `config/` (db, cloudinary, email, env, swagger), `services/` (email, notification dispatcher, automation, job runs), `templates/email/`, extra `models/` (AuditLog, LeaveRequestHistory, Notification, PasswordResetToken, RefreshSession, ScheduledJobRun), and additional `middleware/` and `utils/`.
+- **Frontend** uses: `api/` (client.js + domain modules), `components/{ui,common,layout,dashboard,attendance,leave,employee}/`, `context/`, `hooks/`, `layout/`, `pages/<domain>/`, `routes/` (AppRoutes, ProtectedRoute, PublicRoute), `services/` (authEvents), `styles/`, and `utils/`. Auth uses httpOnly cookies (no client-side token storage).
 
 ---
 

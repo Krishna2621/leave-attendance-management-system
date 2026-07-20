@@ -1,4 +1,4 @@
 import { ChevronRight } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
-const labels = { dashboard: "Dashboard", leave: "Leave", my: "My Leave Requests", history: "Leave History", balance: "Leave Balance", apply: "Apply Leave" };
+const labels = { dashboard: "Dashboard", leave: "Leave", my: "My Leave Requests", history: "Leave History", balance: "Leave Balance", apply: "Apply Leave", attendance: "Attendance", mark: "Mark Attendance", calendar: "Calendar", team: "Team", organization: "Organization", all: "All", employees: "Employees", departments: "Departments", profile: "Profile" };
 export default function Breadcrumbs() { const parts = useLocation().pathname.split("/").filter(Boolean); return <nav aria-label="Breadcrumb" className="flex items-center gap-1 text-sm text-slate-500"><Link to="/dashboard" className="hover:text-teal-700">Home</Link>{parts.map((part, index) => <span className="flex items-center gap-1" key={part}><ChevronRight size={15} /><span className={index === parts.length - 1 ? "font-medium text-slate-700" : ""}>{labels[part] || part}</span></span>)}</nav>; }
