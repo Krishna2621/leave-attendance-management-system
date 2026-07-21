@@ -6,6 +6,38 @@ The format is based on semantic project versioning, with each release summarizin
 
 ---
 
+# Frontend v1.7.0 - Reports & Analytics Module
+**Release Date:** July 22, 2026
+
+### Added
+- **Attendance Reports** (HR/Admin): `api/report.api.js`, `hooks/useReports.js`, and an Attendance Reports page powered by the production-ready `GET /api/reports/attendance` aggregation endpoint.
+- Summary cards (present/absent/half-days, late arrivals, attendance rate, hours worked, total records) built on the shared `StatCard`.
+- Recharts visualizations: status-breakdown pie chart, attendance-rate-by-department bar chart, and a daily attendance/late-arrival trend line chart.
+- Department and Manager attendance summary tables (present, absent, half-day, late, hours, and rate per group).
+- Filters: date range (defaults to the last 30 days), department, employee, status, and late-arrivals-only, all mapped to backend-supported query params.
+- **Leave Reports** (HR/Admin): a clean "Coming Soon" state that makes no API calls, because the backend `GET /api/reports/leaves` endpoint is intentionally stubbed (501).
+
+### Changed
+- Added `/reports/attendance` and `/reports/leaves` routes (HR/Admin only).
+- Added Attendance Reports and Leave Reports sidebar links (HR/Admin).
+- Extended Breadcrumbs with `reports` and `leaves` labels.
+- Added an Attendance Reports dashboard Quick Action for HR/Admin.
+
+### Security
+- Report routes are nested under the HR/Admin `ProtectedRoute`, mirroring the backend RBAC (`authorizeRoles("hr", "admin")`). Employees and managers never see reports.
+
+### Notes
+- No backend changes. Only the production-ready attendance report endpoint is consumed.
+- CSV/PDF export buttons are intentionally omitted because `GET /api/reports/export` is stubbed (501).
+- Leave reporting UI is intentionally not built beyond the "Coming Soon" placeholder for the same reason.
+
+### Testing
+- Verified a successful production build (`npm run build`).
+- Verified attendance report generation, filters, charts, and breakdown tables.
+- Verified the Leave Reports Coming Soon state issues no network requests.
+
+---
+
 # Frontend v1.5.0 - Department Management & Profile
 **Release Date:** July 21, 2026
 

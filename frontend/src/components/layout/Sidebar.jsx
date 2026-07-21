@@ -1,4 +1,4 @@
-import { Building2, CalendarCheck, CalendarDays, ClipboardList, History, LayoutDashboard, LogOut, Menu, UserCircle, Users, WalletCards, X } from "lucide-react";
+import { Building2, CalendarCheck, CalendarDays, ChartColumn, ClipboardList, History, LayoutDashboard, LogOut, Menu, UserCircle, Users, WalletCards, X } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 
@@ -7,10 +7,14 @@ const navItems = [
   { label: "Attendance", to: "/attendance", icon: CalendarCheck, roles: ["employee", "manager", "hr", "admin"] },
   { label: "Leave Dashboard", to: "/leave", icon: CalendarDays, roles: ["employee", "manager", "hr", "admin"] },
   { label: "My Leave Requests", to: "/leave/my", icon: ClipboardList, roles: ["employee", "manager", "hr", "admin"] },
+  { label: "Team Leave Requests", to: "/leave/team", icon: ClipboardList, roles: ["manager"] },
+  { label: "All Leave Requests", to: "/leave/all", icon: ClipboardList, roles: ["hr", "admin"] },
   { label: "Leave History", to: "/leave/history", icon: History, roles: ["employee", "manager", "hr", "admin"] },
   { label: "Leave Balance", to: "/leave/balance", icon: WalletCards, roles: ["employee"] },
   { label: "Employees", to: "/employees", icon: Users, roles: ["hr", "admin"] },
   { label: "Departments", to: "/departments", icon: Building2, roles: ["hr", "admin"] },
+  { label: "Attendance Reports", to: "/reports/attendance", icon: ChartColumn, roles: ["hr", "admin"] },
+  { label: "Leave Reports", to: "/reports/leaves", icon: ClipboardList, roles: ["hr", "admin"] },
   { label: "Profile", to: "/profile", icon: UserCircle, roles: ["employee", "manager", "hr", "admin"] },
 ];
 

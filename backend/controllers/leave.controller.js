@@ -80,7 +80,11 @@ const verifyDecisionScope = async (actor, leaveRequest, session) => {
 };
 
 const buildLeaveHistoryFilter = (query, userId) => {
-  const filter = { userId };
+  const filter = {};
+
+  if (userId !== undefined) {
+    filter.userId = userId;
+  }
 
   if (query.status) {
     filter.status = query.status;
@@ -398,6 +402,36 @@ const applyForLeave = async (req, res) => {
         actor: req.user,
         session,
       });
+
+      const reviewers = await User.find({
+        isActive: true,
+        _id: { $ne: req.user._id },
+        $or: [{ role: { $in: ["hr", "admin"] } }, ...(req.user.managerId ? [{ _id: req.user.managerId }] : [])],
+      })
+        .select("_id")
+        .session(session)
+        .lean();
+
+      for (const reviewer of reviewers) {
+        await queueNotification({
+          recipientId: reviewer._id,
+          channel: "in_app",
+          type: "leave_submitted",
+          referenceType: "LeaveRequest",
+          referenceId: leaveRequest._id,
+          payload: {
+            employeeName: req.user.name,
+            leaveTypeName: leaveType.name,
+            startDate: formatDate(startDate),
+            endDate: formatDate(endDate),
+            totalDays: leaveDates.length,
+            status: "pending",
+          },
+          metadata: { source: "leave-submission", reviewPath: "/leave/all" },
+          dedupeKey: `leave-submitted:${leaveRequest._id}:${reviewer._id}`,
+          session,
+        });
+      }
     });
 
     transactionCommitted = true;

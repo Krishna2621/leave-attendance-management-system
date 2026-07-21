@@ -1,16 +1,16 @@
 # Leave & Attendance Management System - Project Progress
 
-**Last Updated:** July 21, 2026
-**Overall Status:** Backend Production Ready (v1.1.1) · Frontend In Progress (v1.4.0)
+**Last Updated:** July 22, 2026
+**Overall Status:** Backend Production Ready (v1.1.1) · Frontend In Progress (v1.7.0)
 
 ## Current Version
 
-Frontend v1.4.0 (Employee Management)
+Frontend v1.7.0 (Reports & Analytics)
 
 ### Current Completion Snapshot
 
 - **Backend:** ~95% complete and production-ready. All core modules shipped; remaining work is leave reporting and CSV/PDF export (currently stubbed) plus the holiday calendar.
-- **Frontend:** ~65% complete. Foundation, authentication, layout, shared components, and the Dashboard, Attendance, Leave, and Employee Management modules are built. Department, Reports, Notifications, Profile, and Settings pages are not yet started.
+- **Frontend:** ~85% complete. Foundation, authentication, layout, shared components, and the Dashboard, Attendance, Leave, Employee Management, Department, Profile, Notifications, and Reports (Attendance) modules are built. Leave Reports and CSV/PDF export remain blocked on stubbed backend endpoints; the Settings page is not yet started.
 
 ### Authentication Completion Module Completed
 
@@ -300,15 +300,19 @@ The project is now progressing through **Frontend v1.5.0 — Department Manageme
 - Implemented the Department Management module (`api/department.api.js`, `hooks/useDepartments.js`, directory and details pages, create/edit/delete, head assignment).
 - Implemented the User Profile module (`hooks/useProfile.js`, profile endpoints, view/edit page, profile-picture upload) and added `updateUser` to the auth context.
 - Wired both modules into routing, sidebar, breadcrumbs, and Quick Actions; restored the Departments Quick Action.
+- Implemented the Reports & Analytics module (v1.7.0): `api/report.api.js`, `hooks/useReports.js`, and `components/report/*` (filters, summary cards, Recharts charts, breakdown tables, Coming Soon).
+- Built the Attendance Reports page on the production-ready `GET /api/reports/attendance` aggregation endpoint (summary, department/manager breakdowns, daily trend) with date/department/employee/status/late filters.
+- Added a Leave Reports Coming Soon page that makes no API calls (backend `GET /api/reports/leaves` is 501) and omitted CSV/PDF export (backend `GET /api/reports/export` is 501).
+- Wired Reports into routing (HR/Admin only), sidebar, breadcrumbs, and a dashboard Quick Action.
 - Verified successful production builds throughout.
 
 ---
 
 # Next Session Plan
 
-## Frontend v1.6.0 - Notifications & Reports
+## Frontend v1.8.0 - Settings
 
-Implement the Notifications page (using `GET /api/notifications/me` and a navbar bell) and the Reports module (attendance `$facet` report via Recharts). Note the backend leave report and CSV/PDF export are still stubbed (501).
+Build the Settings module and revisit Leave Reports/CSV/PDF export once the backend `GET /api/reports/leaves` and `GET /api/reports/export` endpoints are implemented (currently 501).
 
 ---
 
@@ -347,9 +351,9 @@ Implement the Notifications page (using `GET /api/notifications/me` and a navbar
 
 - Holiday calendar support has not yet been implemented for attendance and leave calculations.
 - Organization-wide working calendar configuration remains a future enhancement.
-- Backend leave reporting (`GET /api/reports/leaves`) and export (`GET /api/reports/export`) are stubbed (501 Not Implemented).
+- Backend leave reporting (`GET /api/reports/leaves`) and export (`GET /api/reports/export`) are stubbed (501 Not Implemented). The frontend Leave Reports page shows a Coming Soon state and makes no API call; attendance report export buttons are omitted entirely.
 - There is no admin "create employee" endpoint; registration is the only user-creation path, so the frontend omits a Create Employee flow.
-- Frontend Reports, Notifications, and Settings modules are not yet built.
+- The frontend Settings module is not yet built.
 
 ---
 
@@ -379,3 +383,4 @@ Latest Commit: latest commit of frontend
 | Frontend v1.4.0 | Released | Employee Management: directory, filters, pagination, details, edit, assign department/manager, change role, activate/deactivate, and RBAC gating |
 | Frontend v1.4.1 | Released | Employee Management integration fixes: department dropdown and status filter (backend strict-boolean `isActive` query rejection) |
 | Frontend v1.5.0 | Released | Department Management (directory, details, create/edit/delete, head assignment) and User Profile (view, edit, profile-picture upload) |
+| Frontend v1.7.0 | Released | Reports & Analytics: Attendance Reports (summary cards, Recharts pie/bar/line charts, department & manager breakdown tables, date/department/employee/status filters) using the production-ready attendance aggregation endpoint; Leave Reports Coming Soon state; export omitted (backend 501) |
