@@ -3,6 +3,11 @@ const Notification = require("../models/Notification");
 const queueNotification = async ({ recipientId, channel = "email", type, referenceType = "", referenceId = null, template = "", payload = {}, metadata = {}, dedupeKey, scheduledFor = new Date(), session }) => {
   const notification = { recipientId, channel, type, referenceType, referenceId, template, payload, metadata, dedupeKey, scheduledFor, nextAttemptAt: scheduledFor };
 
+  if (channel === "in_app") {
+    notification.status = "sent";
+    notification.sentAt = scheduledFor;
+  }
+
   if (session) {
     const [created] = await Notification.create([notification], { session });
     return created;

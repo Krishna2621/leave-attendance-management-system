@@ -10,7 +10,6 @@ import LeaveDashboardPage from "../pages/leave/LeaveDashboardPage";
 import ApplyLeavePage from "../pages/leave/ApplyLeavePage";
 import LeaveListPage from "../pages/leave/LeaveListPage";
 import LeaveBalancePage from "../pages/leave/LeaveBalancePage";
-import LeaveHistoryPage from "../pages/leave/LeaveHistoryPage";
 import EmployeeListPage from "../pages/employee/EmployeeListPage";
 import EmployeeDetailsPage from "../pages/employee/EmployeeDetailsPage";
 import DepartmentListPage from "../pages/department/DepartmentListPage";
@@ -36,7 +35,7 @@ export default function AppRoutes() {
       <Route path="/leave" element={<LeaveDashboardPage />} />
       <Route path="/leave/apply" element={<ApplyLeavePage />} />
       <Route path="/leave/my" element={<LeaveListPage scope="my" />} />
-      <Route path="/leave/history" element={<LeaveHistoryPage />} />
+      <Route path="/leave/history" element={<Navigate to="/leave/my" replace />} />
       <Route path="/leave/balance" element={<LeaveBalancePage />} />
       <Route path="/profile" element={<ProfilePage />} />
       <Route element={<ProtectedRoute roles={["manager"]} />}><Route path="/attendance/team" element={<AttendanceListPage scope="team" />} /><Route path="/leave/team" element={<LeaveListPage scope="team" />} /></Route>
