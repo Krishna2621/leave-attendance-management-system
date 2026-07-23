@@ -3,6 +3,16 @@
 @theme { --font-sans: "Inter", "Segoe UI", sans-serif; }
 
 * { box-sizing: border-box; }
+* { scrollbar-width: thin; scrollbar-color: #0f766e transparent; }
+*::-webkit-scrollbar { width: 8px; height: 8px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb { background: #0f766e; border: 1px solid transparent; border-radius: 9999px; background-clip: content-box; }
+*::-webkit-scrollbar-thumb:hover { background-color: #115e59; }
+*::-webkit-scrollbar-corner { background: transparent; }
+button, a[href], select, input[type="checkbox"], input[type="radio"], input[type="file"], input[type="button"], input[type="submit"], input[type="reset"] { cursor: pointer; }
+input:not([type]), input[type="text"], input[type="email"], input[type="password"], input[type="date"], input[type="number"], input[type="search"], input[type="tel"], input[type="url"], textarea { cursor: text; }
+input[readonly], textarea[readonly] { cursor: default; }
+button:disabled, input:disabled, select:disabled, textarea:disabled { cursor: not-allowed; }
 html { font-family: var(--font-sans); background: #f8fafc; color: #0f172a; }
 body { margin: 0; min-width: 320px; }
 button, input, textarea, select { font: inherit; }

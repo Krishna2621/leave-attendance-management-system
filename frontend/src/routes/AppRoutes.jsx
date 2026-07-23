@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import MainLayout from "../layout/MainLayout";
 import LoginPage from "../pages/auth/LoginPage";
+import RegisterPage from "../pages/auth/RegisterPage";
 import DashboardPage from "../pages/dashboard/DashboardPage";
 import AttendanceDashboardPage from "../pages/attendance/AttendanceDashboardPage";
 import MarkAttendancePage from "../pages/attendance/MarkAttendancePage";
@@ -24,7 +25,7 @@ import PublicRoute from "./PublicRoute";
 
 export default function AppRoutes() {
   return <Routes>
-    <Route element={<PublicRoute />}><Route path="/login" element={<LoginPage />} /></Route>
+    <Route element={<PublicRoute />}><Route path="/login" element={<LoginPage />} /><Route path="/register" element={<RegisterPage />} /></Route>
     <Route element={<ProtectedRoute />}><Route element={<MainLayout />}>
       <Route path="/dashboard" element={<DashboardPage />} />
       <Route path="/attendance" element={<AttendanceDashboardPage />} />

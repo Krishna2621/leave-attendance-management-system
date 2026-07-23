@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { Camera } from "lucide-react";
+import { Camera, CheckCircle2, Circle } from "lucide-react";
 import useAuth from "../../hooks/useAuth";
 import { useProfile, useProfileActions } from "../../hooks/useProfile";
 import Loader from "../../components/ui/Loader";
@@ -16,6 +16,7 @@ import Select from "../../components/ui/Select";
 import { getApiErrorMessage } from "../../utils/apiError";
 import { formatDate } from "../../utils/attendance";
 import { genderText, roleText, roleTone } from "../../utils/employee";
+import { getProfileCompletion } from "../../utils/profileCompletion";
 
 const Row = ({ label, value }) => <div className="flex justify-between gap-4 py-2 text-sm"><span className="text-slate-500">{label}</span><span className="text-right font-medium text-slate-800">{value ?? "—"}</span></div>;
 const validImageTypes = ["image/jpeg", "image/png"];
@@ -32,6 +33,7 @@ export default function ProfilePage() {
   if (query.isError) return <DashboardError error={query.error} onRetry={query.refetch} />;
   const profile = query.data?.user;
   if (!profile) return <DashboardError error={{}} onRetry={query.refetch} />;
+  const completion = getProfileCompletion(profile);
 
   const startEditing = () => {
     reset({
@@ -72,6 +74,7 @@ export default function ProfilePage() {
 
   return <div className="mt-6 space-y-5">
     <div><h1 className="text-2xl font-bold text-slate-900">My Profile</h1><p className="mt-1 text-sm text-slate-600">View and update your personal information.</p></div>
+    {completion.isComplete ? <Card className="border-emerald-100 bg-emerald-50 p-5"><div className="flex gap-4"><div className="grid size-11 shrink-0 place-items-center rounded-full bg-emerald-100 text-emerald-700"><CheckCircle2 size={24} aria-hidden="true" /></div><div><div className="flex flex-wrap items-center gap-2"><h2 className="font-semibold text-emerald-950">Profile Completed</h2><Badge tone="success">✓ All required fields completed</Badge></div><p className="mt-1 text-sm font-medium text-emerald-800">Congratulations! Your employee profile is fully completed.</p><p className="mt-3 text-sm leading-6 text-emerald-900/80">Thank you for keeping your information up to date. All required profile information has been provided.</p></div></div></Card> : <Card className="p-5"><div className="flex items-center justify-between gap-4"><div><h2 className="font-semibold text-slate-900">Profile Completion</h2><p className="mt-1 text-sm text-slate-600">{completion.completedRequiredFields} of {completion.totalRequiredFields} required fields completed</p></div><span className="text-lg font-bold text-teal-700">{completion.percentage}%</span></div><div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-100" role="progressbar" aria-label="Profile completion" aria-valuemin="0" aria-valuemax="100" aria-valuenow={completion.percentage}><div className="h-full rounded-full bg-teal-700 transition-all" style={{ width: `${completion.percentage}%` }} /></div><ul className="mt-4 grid gap-2 text-sm sm:grid-cols-2 lg:grid-cols-3">{completion.fields.map((field) => <li key={field.key} className={`flex items-center gap-2 ${field.complete ? "text-emerald-700" : "text-slate-500"}`}>{field.complete ? <CheckCircle2 size={17} aria-hidden="true" /> : <Circle size={17} className="text-rose-500" aria-hidden="true" />}<span>{field.label}</span><span className="sr-only">{field.complete ? "completed" : "pending"}</span></li>)}</ul></Card>}
     <div className="grid gap-5 lg:grid-cols-3">
       <Card className="p-6 lg:col-span-1">
         <div className="flex flex-col items-center text-center">

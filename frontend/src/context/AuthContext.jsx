@@ -1,7 +1,7 @@
 import { createContext, useCallback, useEffect, useMemo, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { loginRequest, logoutRequest } from "../api/auth.api";
+import { loginRequest, logoutRequest, registerRequest } from "../api/auth.api";
 import { refreshSession } from "../api/client";
 import { subscribeToAuthEvents } from "../services/authEvents";
 
@@ -57,6 +57,15 @@ export function AuthProvider({ children }) {
     return loggedInUser;
   }, [queryClient]);
 
+  const register = useCallback(async (payload) => {
+    const { data } = await registerRequest(payload);
+    const registeredUser = data.data.user;
+    queryClient.clear();
+    localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(registeredUser));
+    setUser(registeredUser);
+    return registeredUser;
+  }, [queryClient]);
+
   const logout = useCallback(async () => {
     try {
       await logoutRequest();
@@ -76,7 +85,7 @@ export function AuthProvider({ children }) {
     });
   }, []);
 
-  const value = useMemo(() => ({ user, isLoading, isAuthenticated: Boolean(user), login, logout, updateUser }), [user, isLoading, login, logout, updateUser]);
+  const value = useMemo(() => ({ user, isLoading, isAuthenticated: Boolean(user), login, register, logout, updateUser }), [user, isLoading, login, register, logout, updateUser]);
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
