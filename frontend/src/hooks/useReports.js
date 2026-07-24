@@ -22,7 +22,7 @@ export const useReportDepartmentOptions = (enabled = true) =>
 export const useReportEmployeeOptions = (enabled = true) =>
   useQuery({
     queryKey: ["employees", "report-options"],
-    queryFn: () => getEmployees({ limit: 200 }),
+    queryFn: () => getEmployees({ limit: 100 }),
     enabled,
     staleTime: 300_000,
     select: (data) => (data.users || []).filter((user) => user.isActive),

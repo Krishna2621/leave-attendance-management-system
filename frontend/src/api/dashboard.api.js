@@ -8,6 +8,9 @@ export const getDashboard = (role) => {
 };
 
 export const getNotifications = () => client.get("/notifications/me", { params: { limit: 5 } }).then(getData);
+export const markNotificationAsRead = (id) => client.patch(`/notifications/${id}/read`).then(getData);
+export const markAllNotificationsAsRead = () => client.patch("/notifications/read-all").then(getData);
+export const deleteNotification = (id) => client.delete(`/notifications/${id}`).then(getData);
 
 const getLeaveEndpoint = (role) => role === "employee" ? "/leaves/me" : role === "manager" ? "/leaves/team" : "/leaves/all";
 

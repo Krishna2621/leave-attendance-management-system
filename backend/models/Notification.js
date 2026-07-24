@@ -19,12 +19,15 @@ const notificationSchema = new mongoose.Schema(
     lastError: { type: String, trim: true, maxlength: 1000, default: "" },
     sentAt: { type: Date, default: null },
     providerMessageId: { type: String, trim: true, default: "" },
+    isRead: { type: Boolean, default: false },
+    readAt: { type: Date, default: null },
   },
   { timestamps: true }
 );
 
 notificationSchema.index({ status: 1, nextAttemptAt: 1 });
 notificationSchema.index({ recipientId: 1, createdAt: -1 });
+notificationSchema.index({ recipientId: 1, isRead: 1, createdAt: -1 });
 notificationSchema.index({ referenceType: 1, referenceId: 1 });
 
 module.exports = mongoose.model("Notification", notificationSchema);
