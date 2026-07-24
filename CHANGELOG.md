@@ -6,6 +6,47 @@ The format is based on semantic project versioning, with each release summarizin
 
 ---
 
+# v1.8.0 - DevOps Foundation
+**Release Date:** July 25, 2026
+
+### Added
+- Docker support for the backend and frontend.
+- Multi-stage Docker build for the React frontend.
+- Docker Compose configuration for running the complete application.
+- Automatic Docker network creation through Docker Compose.
+- Docker environment variable integration.
+- Production-ready backend Docker configuration.
+- Production-ready frontend container using Nginx.
+
+### Changed
+- The backend Dockerfile now uses `npm ci --omit=dev` instead of `npm install`.
+- The backend container now starts with `npm start` instead of `npm run dev`.
+- Added `USER node` so the backend container runs as a non-root user.
+- Updated the Docker workflow so the complete application can be started with `docker compose up --build`.
+
+### Improved
+- Optimized Docker layer caching.
+- Reduced frontend image size using multi-stage builds.
+- Improved backend container security.
+- Improved production readiness of the application.
+- Improved the project deployment workflow.
+
+### Fixed
+- Fixed CORS configuration to support the Dockerized frontend running on `localhost:3000`.
+- Fixed frontend-to-backend communication after containerization.
+- Fixed environment variable loading inside Docker containers.
+- Verified MongoDB Atlas connectivity from inside Docker.
+- Verified authentication works correctly after Docker Compose integration.
+
+### Security
+- Backend container now runs as a non-root user.
+- Development dependencies are excluded from the production container.
+
+### Notes
+- This release introduces full Docker containerization, Docker Compose support, and production-ready container configuration, preparing the project for CI/CD and deployment.
+
+---
+
 # Frontend v1.7.0 - Reports & Analytics Module
 **Release Date:** July 22, 2026
 

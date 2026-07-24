@@ -1,7 +1,7 @@
 # Leave & Attendance Management System - Project Progress
 
-**Last Updated:** July 22, 2026
-**Overall Status:** Backend Production Ready (v1.1.1) · Frontend In Progress (v1.7.0)
+**Last Updated:** July 25, 2026
+**Overall Status:** Fully Containerized · Backend Production Ready (v1.1.1) · Frontend In Progress (v1.7.0)
 
 ## Current Version
 
@@ -11,6 +11,7 @@ Frontend v1.7.0 (Reports & Analytics)
 
 - **Backend:** ~95% complete and production-ready. All core modules shipped; remaining work is leave reporting and CSV/PDF export (currently stubbed) plus the holiday calendar.
 - **Frontend:** ~85% complete. Foundation, authentication, layout, shared components, and the Dashboard, Attendance, Leave, Employee Management, Department, Profile, Notifications, and Reports (Attendance) modules are built. Leave Reports and CSV/PDF export remain blocked on stubbed backend endpoints; the Settings page is not yet started.
+- **DevOps:** Docker foundation is complete. The backend and frontend are fully containerized and can be launched together with a single `docker compose up --build` command.
 
 ### Authentication Completion Module Completed
 
@@ -248,6 +249,41 @@ The backend is complete and production-ready through **Version v1.1.1**. Fronten
 
 ---
 
+## Sprint 2 – DevOps Foundation
+
+- Installed Docker Desktop and configured the WSL2 environment.
+- Created Dockerfiles for the backend and frontend.
+- Containerized the backend application.
+- Containerized the frontend using a multi-stage Docker build and Nginx for production serving.
+- Implemented Docker Compose to build and launch the frontend and backend together.
+- Configured Docker Compose networking, with the required network created automatically by Compose.
+- Integrated environment variables through `docker-compose` configuration.
+- Improved the backend Dockerfile for production by replacing `npm install` with `npm ci --omit=dev`.
+- Updated the backend container command from `npm run dev` to `npm start`.
+- Added `USER node` to the backend Dockerfile for improved container security.
+- Successfully built and launched the backend and frontend together using `docker compose up --build`.
+- Verified MongoDB Atlas connectivity from inside the backend container.
+- Verified frontend-to-backend communication in the Docker Compose environment.
+- Fixed Docker-related CORS configuration for `localhost:3000`.
+- Successfully tested authentication after Docker Compose integration.
+
+### Key Concepts Learned
+
+- Docker Images
+- Docker Containers
+- Dockerfile
+- `.dockerignore`
+- Layer Caching
+- Multi-stage Builds
+- Nginx for React production
+- Port Mapping
+- Environment Variables
+- Docker Compose
+- Docker Networks
+- Production vs Development Containers
+
+---
+
 # Current Status
 
 - Backend foundation is complete.
@@ -286,6 +322,12 @@ The backend is complete and production-ready through **Version v1.1.1**. Fronten
 - Frontend Department Management module (directory, details, create, edit, head assignment, delete) is complete.
 - Frontend User Profile module (view, edit, profile-picture upload) is complete.
 - Remaining frontend modules (Reports, Notifications, Settings) are not yet started.
+- Docker Desktop and WSL2 setup are complete.
+- Backend and frontend Dockerfiles are complete.
+- The frontend is served in its production container through Nginx.
+- Docker Compose builds, networks, and launches the application services together.
+- Docker Compose environment variables, MongoDB Atlas connectivity, frontend-to-backend communication, CORS, and authentication have been verified.
+- The application is fully containerized and can be started with `docker compose up --build`.
 
 The project is now progressing through **Frontend v1.5.0 — Department Management & Profile**.
 
@@ -305,6 +347,18 @@ The project is now progressing through **Frontend v1.5.0 — Department Manageme
 - Added a Leave Reports Coming Soon page that makes no API calls (backend `GET /api/reports/leaves` is 501) and omitted CSV/PDF export (backend `GET /api/reports/export` is 501).
 - Wired Reports into routing (HR/Admin only), sidebar, breadcrumbs, and a dashboard Quick Action.
 - Verified successful production builds throughout.
+- Completed Sprint 2 – DevOps Foundation, including Docker Desktop/WSL2 setup, production Dockerfiles, Docker Compose orchestration, automatic networking, and environment variable integration.
+- Verified the complete Docker Compose application flow: MongoDB Atlas connectivity, frontend-to-backend communication, Docker CORS support for `localhost:3000`, and authentication.
+
+---
+
+# Next Sprint
+
+- Implement GitHub Actions for Continuous Integration.
+- Add automated Docker image builds.
+- Implement deployment as Continuous Deployment.
+- Configure production hosting.
+- Redesign the frontend after deployment.
 
 ---
 
@@ -384,3 +438,4 @@ Latest Commit: latest commit of frontend
 | Frontend v1.4.1 | Released | Employee Management integration fixes: department dropdown and status filter (backend strict-boolean `isActive` query rejection) |
 | Frontend v1.5.0 | Released | Department Management (directory, details, create/edit/delete, head assignment) and User Profile (view, edit, profile-picture upload) |
 | Frontend v1.7.0 | Released | Reports & Analytics: Attendance Reports (summary cards, Recharts pie/bar/line charts, department & manager breakdown tables, date/department/employee/status filters) using the production-ready attendance aggregation endpoint; Leave Reports Coming Soon state; export omitted (backend 501) |
+| Sprint 2 – DevOps Foundation | Completed | Docker Desktop and WSL2 setup, backend and multi-stage frontend Dockerfiles, Nginx production serving, Docker Compose orchestration, automatic networking, environment variable integration, production backend container hardening, and verified containerized authentication and service communication |
