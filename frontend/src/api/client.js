@@ -1,3 +1,4 @@
+let sessionExpiredNotified = false;
 import axios from "axios";
 import { emitAuthEvent } from "../services/authEvents";
 
@@ -34,8 +35,11 @@ client.interceptors.response.use(
         await refreshSession();
         return client(request);
       } catch {
-        emitAuthEvent("session-expired");
-      }
+          if (!sessionExpiredNotified) {
+            sessionExpiredNotified = true;
+            emitAuthEvent("session-expired");
+          }
+        }
     }
 
     if (status === 401 && !request?.url?.includes("/auth/refresh-token"))
@@ -43,6 +47,10 @@ client.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+export const resetSessionNotification = () => {
+  sessionExpiredNotified = false;
+};
 
 export { API_URL, refreshSession };
 export default client;

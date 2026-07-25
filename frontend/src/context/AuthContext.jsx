@@ -2,7 +2,7 @@ import { createContext, useCallback, useEffect, useMemo, useState } from "react"
 import { useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { loginRequest, logoutRequest, registerRequest } from "../api/auth.api";
-import { refreshSession } from "../api/client";
+import { refreshSession, resetSessionNotification } from "../api/client";
 import { subscribeToAuthEvents } from "../services/authEvents";
 
 const AuthContext = createContext(null);
@@ -48,12 +48,16 @@ export function AuthProvider({ children }) {
       }
     };
     restoreSession();
-    return subscribeToAuthEvents((event) =>
-      clearSession(
-        event === "session-expired" ? "Your session has expired. Please sign in again." : null
-      )
-    );
-  }, [clearSession]);
+   return subscribeToAuthEvents((event) => {
+  const storedUser = getStoredUser();
+
+  clearSession(
+    event === "session-expired" && storedUser
+      ? "Your session has expired. Please sign in again."
+      : null
+  );
+});
+}, [clearSession]);
 
   const login = useCallback(
     async (credentials) => {
@@ -62,6 +66,7 @@ export function AuthProvider({ children }) {
       queryClient.clear();
       localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(loggedInUser));
       setUser(loggedInUser);
+      resetSessionNotification();
       return loggedInUser;
     },
     [queryClient]
@@ -74,6 +79,7 @@ export function AuthProvider({ children }) {
       queryClient.clear();
       localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(registeredUser));
       setUser(registeredUser);
+      resetSessionNotification();
       return registeredUser;
     },
     [queryClient]
