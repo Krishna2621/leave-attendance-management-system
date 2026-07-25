@@ -1,9 +1,7 @@
 module.exports = {
   testEnvironment: "node",
 
-  testMatch: [
-    "<rootDir>/tests/**/*.test.js"
-  ],
+  testMatch: ["<rootDir>/tests/**/*.test.js"],
 
   collectCoverageFrom: [
     "controllers/**/*.js",

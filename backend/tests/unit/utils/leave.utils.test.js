@@ -45,11 +45,7 @@ describe("leave.utils", () => {
 
   describe("getLeaveDaysByYear", () => {
     test("should group leave days by year", () => {
-      const dates = [
-        new Date("2025-12-30"),
-        new Date("2025-12-31"),
-        new Date("2026-01-01"),
-      ];
+      const dates = [new Date("2025-12-30"), new Date("2025-12-31"), new Date("2026-01-01")];
 
       expect(getLeaveDaysByYear(dates)).toEqual([
         { year: 2025, days: 2 },

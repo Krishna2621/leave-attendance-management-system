@@ -1,8 +1,5 @@
 const jwt = require("jsonwebtoken");
-const {
-  generateAccessToken,
-  generateRefreshToken,
-} = require("../../../utils/generateToken");
+const { generateAccessToken, generateRefreshToken } = require("../../../utils/generateToken");
 
 describe("Token Generation", () => {
   const user = {
@@ -45,10 +42,7 @@ describe("Token Generation", () => {
       // Assert
       expect(typeof token).toBe("string");
 
-      const decoded = jwt.verify(
-        token,
-        process.env.JWT_REFRESH_SECRET
-      );
+      const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
 
       expect(decoded.id).toBe(expectedId);
       expect(decoded.jti).toBeDefined();
