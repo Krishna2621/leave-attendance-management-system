@@ -58,9 +58,10 @@ jobs:
       # -----------------------------
       # Docker
       # -----------------------------
+      
       - name: Create Backend Environment File
         run: cp backend/.env.example backend/.env
-        
+
       - name: Validate Docker Compose
         run: docker compose config
 
