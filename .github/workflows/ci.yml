@@ -1,0 +1,65 @@
+name: LeaveFlow CI
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+
+  pull_request:
+    branches:
+      - main
+      - develop
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Build & Verify Project
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            backend/package-lock.json
+            frontend/package-lock.json
+
+      # -----------------------------
+      # Backend
+      # -----------------------------
+      - name: Install Backend Dependencies
+        working-directory: backend
+        run: npm ci
+
+      - name: Verify Backend Syntax
+        working-directory: backend
+        run: node --check server.js
+
+      # -----------------------------
+      # Frontend
+      # -----------------------------
+      - name: Install Frontend Dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Build Frontend
+        working-directory: frontend
+        run: npm run build
+
+      # -----------------------------
+      # Docker
+      # -----------------------------
+      - name: Validate Docker Compose
+        run: docker compose config
+
+      - name: Build Docker Images
+        run: docker compose build
