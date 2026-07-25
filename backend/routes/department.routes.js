@@ -15,7 +15,8 @@ const allowed = (label) =>
 const details = (requiredName = false) => [
   allowed("department"),
 
-  body("name")[requiredName ? "isString" : "optional"]()
+  body("name")
+    [requiredName ? "isString" : "optional"]()
     .trim()
     .isLength({ min: 2, max: 100 })
     .withMessage("Name must be between 2 and 100 characters"),
