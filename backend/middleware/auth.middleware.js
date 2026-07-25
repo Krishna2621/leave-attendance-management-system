@@ -7,6 +7,11 @@ const protect = async (req, res, next) => {
     const authHeader = req.headers.authorization;
     const bearerToken =
       authHeader && authHeader.startsWith("Bearer ") ? authHeader.split(" ")[1] : null;
+    console.log("========== AUTH DEBUG ==========");
+    console.log("Cookies:", req.cookies);
+    console.log("Headers Cookie:", req.headers.cookie);
+    console.log("Bearer:", bearerToken);
+
     const token = req.cookies.accessToken || bearerToken;
 
     if (!token) {
