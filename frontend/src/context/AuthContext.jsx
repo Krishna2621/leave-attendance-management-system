@@ -21,12 +21,15 @@ export function AuthProvider({ children }) {
   const [isLoading, setIsLoading] = useState(true);
   const queryClient = useQueryClient();
 
-  const clearSession = useCallback((message) => {
-    localStorage.removeItem(USER_STORAGE_KEY);
-    setUser(null);
-    queryClient.clear();
-    if (message) toast.error(message);
-  }, [queryClient]);
+  const clearSession = useCallback(
+    (message) => {
+      localStorage.removeItem(USER_STORAGE_KEY);
+      setUser(null);
+      queryClient.clear();
+      if (message) toast.error(message);
+    },
+    [queryClient]
+  );
 
   useEffect(() => {
     const restoreSession = async () => {
@@ -45,26 +48,36 @@ export function AuthProvider({ children }) {
       }
     };
     restoreSession();
-    return subscribeToAuthEvents((event) => clearSession(event === "session-expired" ? "Your session has expired. Please sign in again." : null));
+    return subscribeToAuthEvents((event) =>
+      clearSession(
+        event === "session-expired" ? "Your session has expired. Please sign in again." : null
+      )
+    );
   }, [clearSession]);
 
-  const login = useCallback(async (credentials) => {
-    const { data } = await loginRequest(credentials);
-    const loggedInUser = data.data.user;
-    queryClient.clear();
-    localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(loggedInUser));
-    setUser(loggedInUser);
-    return loggedInUser;
-  }, [queryClient]);
+  const login = useCallback(
+    async (credentials) => {
+      const { data } = await loginRequest(credentials);
+      const loggedInUser = data.data.user;
+      queryClient.clear();
+      localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(loggedInUser));
+      setUser(loggedInUser);
+      return loggedInUser;
+    },
+    [queryClient]
+  );
 
-  const register = useCallback(async (payload) => {
-    const { data } = await registerRequest(payload);
-    const registeredUser = data.data.user;
-    queryClient.clear();
-    localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(registeredUser));
-    setUser(registeredUser);
-    return registeredUser;
-  }, [queryClient]);
+  const register = useCallback(
+    async (payload) => {
+      const { data } = await registerRequest(payload);
+      const registeredUser = data.data.user;
+      queryClient.clear();
+      localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(registeredUser));
+      setUser(registeredUser);
+      return registeredUser;
+    },
+    [queryClient]
+  );
 
   const logout = useCallback(async () => {
     try {
@@ -85,7 +98,18 @@ export function AuthProvider({ children }) {
     });
   }, []);
 
-  const value = useMemo(() => ({ user, isLoading, isAuthenticated: Boolean(user), login, register, logout, updateUser }), [user, isLoading, login, register, logout, updateUser]);
+  const value = useMemo(
+    () => ({
+      user,
+      isLoading,
+      isAuthenticated: Boolean(user),
+      login,
+      register,
+      logout,
+      updateUser,
+    }),
+    [user, isLoading, login, register, logout, updateUser]
+  );
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 

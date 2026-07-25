@@ -60,11 +60,16 @@ const buildAttendanceStatisticsPipeline = (match) => [
 const getEmployeeDashboard = async (req, res) => {
   try {
     const today = getBusinessDate(new Date());
-    const attendanceFields = "_id date punchIn punchOut status isLate hoursWorked createdAt updatedAt";
+    const attendanceFields =
+      "_id date punchIn punchOut status isLate hoursWorked createdAt updatedAt";
     const [statistics, todayAttendance, recentAttendance] = await Promise.all([
       Attendance.aggregate(buildAttendanceStatisticsPipeline({ userId: req.user._id })),
       Attendance.findOne({ userId: req.user._id, date: today }).select(attendanceFields).lean(),
-      Attendance.find({ userId: req.user._id }).select(attendanceFields).sort({ date: -1, updatedAt: -1 }).limit(5).lean(),
+      Attendance.find({ userId: req.user._id })
+        .select(attendanceFields)
+        .sort({ date: -1, updatedAt: -1 })
+        .limit(5)
+        .lean(),
     ]);
 
     return res.status(200).json({
@@ -119,7 +124,9 @@ const getTeamDashboard = async (req, res) => {
 
     const teamAttendanceFilter = { userId: { $in: teamMemberIds } };
     const [todayStatistics, recentAttendance] = await Promise.all([
-      Attendance.aggregate(buildAttendanceStatisticsPipeline({ ...teamAttendanceFilter, date: today })),
+      Attendance.aggregate(
+        buildAttendanceStatisticsPipeline({ ...teamAttendanceFilter, date: today })
+      ),
       Attendance.find(teamAttendanceFilter)
         .select("_id userId date punchIn punchOut status isLate hoursWorked createdAt updatedAt")
         .sort({ date: -1, updatedAt: -1 })
@@ -127,7 +134,9 @@ const getTeamDashboard = async (req, res) => {
         .lean(),
     ]);
     const statistics = todayStatistics[0] || emptyAttendanceStatistics;
-    const employeeById = new Map(teamMembers.map((teamMember) => [String(teamMember._id), teamMember]));
+    const employeeById = new Map(
+      teamMembers.map((teamMember) => [String(teamMember._id), teamMember])
+    );
 
     return res.status(200).json({
       success: true,
@@ -157,7 +166,13 @@ const getOrganizationDashboard = async (req, res) => {
   try {
     const today = getBusinessDate(new Date());
     const todayFilter = { date: today };
-    const [totalEmployees, activeEmployees, todayStatistics, topDepartmentsByAttendance, recentAttendanceActivities] = await Promise.all([
+    const [
+      totalEmployees,
+      activeEmployees,
+      todayStatistics,
+      topDepartmentsByAttendance,
+      recentAttendanceActivities,
+    ] = await Promise.all([
       User.countDocuments({}),
       User.countDocuments({ isActive: true }),
       Attendance.aggregate(buildAttendanceStatisticsPipeline(todayFilter)),

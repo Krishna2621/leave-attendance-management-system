@@ -7,9 +7,11 @@ The format is based on semantic project versioning, with each release summarizin
 ---
 
 # v1.8.0 - DevOps Foundation
+
 **Release Date:** July 25, 2026
 
 ### Added
+
 - Docker support for the backend and frontend.
 - Multi-stage Docker build for the React frontend.
 - Docker Compose configuration for running the complete application.
@@ -19,12 +21,14 @@ The format is based on semantic project versioning, with each release summarizin
 - Production-ready frontend container using Nginx.
 
 ### Changed
+
 - The backend Dockerfile now uses `npm ci --omit=dev` instead of `npm install`.
 - The backend container now starts with `npm start` instead of `npm run dev`.
 - Added `USER node` so the backend container runs as a non-root user.
 - Updated the Docker workflow so the complete application can be started with `docker compose up --build`.
 
 ### Improved
+
 - Optimized Docker layer caching.
 - Reduced frontend image size using multi-stage builds.
 - Improved backend container security.
@@ -32,6 +36,7 @@ The format is based on semantic project versioning, with each release summarizin
 - Improved the project deployment workflow.
 
 ### Fixed
+
 - Fixed CORS configuration to support the Dockerized frontend running on `localhost:3000`.
 - Fixed frontend-to-backend communication after containerization.
 - Fixed environment variable loading inside Docker containers.
@@ -39,18 +44,22 @@ The format is based on semantic project versioning, with each release summarizin
 - Verified authentication works correctly after Docker Compose integration.
 
 ### Security
+
 - Backend container now runs as a non-root user.
 - Development dependencies are excluded from the production container.
 
 ### Notes
+
 - This release introduces full Docker containerization, Docker Compose support, and production-ready container configuration, preparing the project for CI/CD and deployment.
 
 ---
 
 # Frontend v1.7.0 - Reports & Analytics Module
+
 **Release Date:** July 22, 2026
 
 ### Added
+
 - **Attendance Reports** (HR/Admin): `api/report.api.js`, `hooks/useReports.js`, and an Attendance Reports page powered by the production-ready `GET /api/reports/attendance` aggregation endpoint.
 - Summary cards (present/absent/half-days, late arrivals, attendance rate, hours worked, total records) built on the shared `StatCard`.
 - Recharts visualizations: status-breakdown pie chart, attendance-rate-by-department bar chart, and a daily attendance/late-arrival trend line chart.
@@ -59,20 +68,24 @@ The format is based on semantic project versioning, with each release summarizin
 - **Leave Reports** (HR/Admin): a clean "Coming Soon" state that makes no API calls, because the backend `GET /api/reports/leaves` endpoint is intentionally stubbed (501).
 
 ### Changed
+
 - Added `/reports/attendance` and `/reports/leaves` routes (HR/Admin only).
 - Added Attendance Reports and Leave Reports sidebar links (HR/Admin).
 - Extended Breadcrumbs with `reports` and `leaves` labels.
 - Added an Attendance Reports dashboard Quick Action for HR/Admin.
 
 ### Security
+
 - Report routes are nested under the HR/Admin `ProtectedRoute`, mirroring the backend RBAC (`authorizeRoles("hr", "admin")`). Employees and managers never see reports.
 
 ### Notes
+
 - No backend changes. Only the production-ready attendance report endpoint is consumed.
 - CSV/PDF export buttons are intentionally omitted because `GET /api/reports/export` is stubbed (501).
 - Leave reporting UI is intentionally not built beyond the "Coming Soon" placeholder for the same reason.
 
 ### Testing
+
 - Verified a successful production build (`npm run build`).
 - Verified attendance report generation, filters, charts, and breakdown tables.
 - Verified the Leave Reports Coming Soon state issues no network requests.
@@ -80,9 +93,11 @@ The format is based on semantic project versioning, with each release summarizin
 ---
 
 # Frontend v1.5.0 - Department Management & Profile
+
 **Release Date:** July 21, 2026
 
 ### Added
+
 - **Department Management** (HR/Admin): `api/department.api.js`, `hooks/useDepartments.js`, department directory with search, status filter, and pagination, and a details page.
 - Create Department, Edit Department, Assign Department Head (restricted to manager-role users), and Activate/Deactivate via a shared form modal.
 - Delete Department action (Admin-only) with a confirmation dialog.
@@ -92,6 +107,7 @@ The format is based on semantic project versioning, with each release summarizin
 - `updateUser` on the auth context so profile name/picture changes reflect immediately in the top navbar.
 
 ### Changed
+
 - Added `/departments`, `/departments/:id` (HR/Admin) and `/profile` (all roles) routes.
 - Added Departments (HR/Admin) and Profile (all roles) sidebar links.
 - Extended Breadcrumbs with department and profile labels.
@@ -99,10 +115,12 @@ The format is based on semantic project versioning, with each release summarizin
 - The top-navbar user chip now links to the Profile page and shows the uploaded avatar.
 
 ### Security
+
 - Department create/edit/head-assignment routes follow backend RBAC (HR/Admin); delete is Admin-only.
 - Profile editing is limited to self via `/api/users/me`; only backend-permitted fields are sent.
 
 ### Testing
+
 - Verified a successful production build (`npm run build`).
 - Verified department listing, search, status filter, create, edit, head assignment, and delete.
 - Verified profile view, edit, and picture upload.
@@ -110,18 +128,22 @@ The format is based on semantic project versioning, with each release summarizin
 ---
 
 # Frontend v1.4.1 - Employee Management Integration Fixes
+
 **Release Date:** July 21, 2026
 
 ### Fixed
+
 - Department dropdown was empty because `GET /api/departments?isActive=true` was rejected (400). Express-validator v7 `isBoolean({ strict: true })` only accepts real JS booleans, which a query string can never be. The frontend no longer sends `isActive` as a query param and filters active departments/managers client-side.
 - Employee Directory status filter returned "Invalid value" for the same reason. The `isActive` filter is now applied client-side over the returned page, matching the existing attendance status-filter pattern.
 
 ---
 
 # Frontend v1.4.0 - Employee Management Module
+
 **Release Date:** July 21, 2026
 
 ### Added
+
 - Employee Directory page with server-side search, role filter, department filter, and status filter.
 - Paginated employee listing with profile pictures, role badges, and active/inactive badges.
 - Employee Details page showing employment, personal, and contact information.
@@ -133,17 +155,20 @@ The format is based on semantic project versioning, with each release summarizin
 - Employee shared components (`EmployeeFilters`, `EmployeeTable`, `EditEmployeeModal`, `AssignmentModal`) and `utils/employee.js` helpers.
 
 ### Changed
+
 - Wired `/employees` and `/employees/:id` routes behind an HR/Admin protected route.
 - Added an Employees link to the sidebar for HR and Admin.
 - Extended Breadcrumbs label map for attendance, leave, and employee segments.
 - Replaced the dead Departments Quick Action; the Employee Directory Quick Action now navigates to the live directory.
 
 ### Security
+
 - Employee management routes are gated to HR and Admin via `ProtectedRoute`.
 - Role change, activate/deactivate, and role filter controls follow the backend RBAC (role change is Admin-only).
 - All mutations use only existing backend endpoints; no client-side privilege assumptions.
 
 ### Testing
+
 - Verified a successful production build (`npm run build`).
 - Verified employee listing, search, filters, and pagination.
 - Verified role-based access and navigation.
@@ -152,9 +177,11 @@ The format is based on semantic project versioning, with each release summarizin
 ---
 
 # Frontend v1.0.0–v1.3.0 - Foundation, Attendance & Leave UI
+
 **Release Date:** July 20, 2026
 
 ### Added
+
 - Vite + React 19 application scaffold with Tailwind CSS v4 and React Router v7.
 - Cookie-based authentication flow: `AuthContext`, `useAuth`, session restore, and pub/sub auth events.
 - Centralized Axios client with credentials, a deduplicated refresh-token retry interceptor, and session-expiry handling.
@@ -167,6 +194,7 @@ The format is based on semantic project versioning, with each release summarizin
 - Leave module: dashboard, apply leave with document upload and progress, request list with approve/reject/cancel decision modals, balance view, and history.
 
 ### Testing
+
 - Verified authentication, refresh flow, and protected routing.
 - Verified attendance and leave workflows against the backend APIs.
 - Verified production builds.
@@ -174,24 +202,30 @@ The format is based on semantic project versioning, with each release summarizin
 ---
 
 # Backend v1.1.1 - Automatic Leave Balance Initialization
+
 **Release Date:** July 20, 2026
 
 ### Added
+
 - `utils/leaveBalance.js` with `getCurrentLeaveYear` and `initializeLeaveBalancesForUser`.
 - Automatic seeding of leave balances from active leave types during registration.
 
 ### Changed
+
 - Registration now wraps user creation and leave-balance seeding in a single MongoDB transaction.
 
 ### Fixed
+
 - Removed a leftover debug `console.log` from the leave application upload flow.
 
 ---
 
 # v1.1.0 - Production Hardening & Backend Polish
+
 **Release Date:** July 19, 2026
 
 ### Added
+
 - Startup environment validation.
 - Health endpoints.
 - Swagger UI.
@@ -201,6 +235,7 @@ The format is based on semantic project versioning, with each release summarizin
 - Production testing guide.
 
 ### Changed
+
 - Improved security middleware.
 - Improved startup configuration.
 - Improved production readiness.
@@ -208,12 +243,14 @@ The format is based on semantic project versioning, with each release summarizin
 - Updated package version to v1.1.0.
 
 ### Security
+
 - Production-safe logging.
 - Redacted sensitive information.
 - Hardened request handling.
 - Improved startup validation.
 
 ### Testing
+
 - Successfully verified startup validation.
 - Successfully verified health endpoints.
 - Successfully verified Swagger UI.
@@ -225,9 +262,11 @@ The format is based on semantic project versioning, with each release summarizin
 ---
 
 # v0.9.0 - Authentication Completion Module
+
 **Release Date:** July 16, 2026
 
 ## Added
+
 - Refresh Session model for persistent refresh token management.
 - Password Reset Token model with automatic expiration (TTL).
 - Password Reset email template.
@@ -236,6 +275,7 @@ The format is based on semantic project versioning, with each release summarizin
 - Reset Password endpoint.
 
 ## Changed
+
 - Implemented refresh token rotation with unique JWT IDs (JTI).
 - Refresh tokens are now stored as SHA-256 hashes.
 - Added persistent refresh-session management.
@@ -245,6 +285,7 @@ The format is based on semantic project versioning, with each release summarizin
 - Logout revokes only the current session.
 
 ## Security
+
 - Prevented refresh-token replay attacks.
 - Password reset tokens are one-time use.
 - Generic forgot-password responses prevent email enumeration.
@@ -252,6 +293,7 @@ The format is based on semantic project versioning, with each release summarizin
 - Automatic password reset token expiration.
 
 ## Testing
+
 - Verified registration.
 - Verified login.
 - Verified refresh-token rotation.
@@ -266,9 +308,11 @@ The format is based on semantic project versioning, with each release summarizin
 ---
 
 # v0.8.0 - Document Management & Cloudinary Integration
+
 **Release Date:** July 15, 2026
 
 ## Added
+
 - Cloudinary integration.
 - Secure document upload.
 - Secure document retrieval.
@@ -277,12 +321,14 @@ The format is based on semantic project versioning, with each release summarizin
 - Cloudinary cleanup on failed transactions.
 
 ## Security
+
 - File signature validation.
 - MIME type validation.
 - Metadata-only storage in MongoDB.
 - Role-based document access.
 
 ## Testing
+
 - Verified document upload.
 - Verified document retrieval.
 - Verified Cloudinary storage.
@@ -292,9 +338,11 @@ The format is based on semantic project versioning, with each release summarizin
 ---
 
 # v0.7.0 - Automation & Notification Module
+
 **Release Date:** July 14, 2026
 
 ## Added
+
 - Attendance automation.
 - Cron job scheduler.
 - Notification Outbox architecture.
@@ -306,12 +354,14 @@ The format is based on semantic project versioning, with each release summarizin
 - Notification History APIs.
 
 ## Security
+
 - Idempotent scheduled jobs.
 - Notification deduplication.
 - Admin-only automation endpoints.
 - Immutable automation audit events.
 
 ## Testing
+
 - Verified attendance automation.
 - Verified notification delivery.
 - Verified scheduled jobs.
@@ -321,9 +371,11 @@ The format is based on semantic project versioning, with each release summarizin
 ---
 
 # v0.6.0 - Leave Management Module
+
 **Release Date:** July 13, 2026
 
 ## Added
+
 - Leave Types.
 - Leave Balances.
 - Leave Requests.
@@ -334,12 +386,14 @@ The format is based on semantic project versioning, with each release summarizin
 - Multi-year leave handling.
 
 ## Security
+
 - Transactional leave updates.
 - Overlap prevention.
 - Weekend-aware leave calculation.
 - Manager and HR authorization.
 
 ## Testing
+
 - Verified leave workflow.
 - Verified transactions.
 - Verified leave balances.
@@ -349,9 +403,11 @@ The format is based on semantic project versioning, with each release summarizin
 ---
 
 # v0.5.0 - Audit Logs, Reports & Dashboard
+
 **Release Date:** July 12, 2026
 
 ## Added
+
 - Attendance Audit Logs.
 - Attendance Reports.
 - Employee Dashboard.
@@ -360,6 +416,7 @@ The format is based on semantic project versioning, with each release summarizin
 - Attendance analytics.
 
 ## Testing
+
 - Verified reports.
 - Verified dashboards.
 - Verified audit logs.
@@ -368,9 +425,11 @@ The format is based on semantic project versioning, with each release summarizin
 ---
 
 # v0.4.0 - HR & Management Attendance
+
 **Release Date:** July 11, 2026
 
 ## Added
+
 - Team Attendance.
 - Organization Attendance.
 - Attendance Corrections.
@@ -378,6 +437,7 @@ The format is based on semantic project versioning, with each release summarizin
 - Attendance query optimization.
 
 ## Testing
+
 - Verified manager access.
 - Verified HR attendance correction.
 - Verified filtering.
@@ -386,9 +446,11 @@ The format is based on semantic project versioning, with each release summarizin
 ---
 
 # v0.3.0 - Attendance Core
+
 **Release Date:** July 10, 2026
 
 ## Added
+
 - Punch In.
 - Punch Out.
 - Attendance History.
@@ -397,6 +459,7 @@ The format is based on semantic project versioning, with each release summarizin
 - Attendance Status calculation.
 
 ## Testing
+
 - Verified punch workflows.
 - Verified duplicate prevention.
 - Verified attendance history.
@@ -404,9 +467,11 @@ The format is based on semantic project versioning, with each release summarizin
 ---
 
 # v0.2.0 - Authentication & RBAC
+
 **Release Date:** July 9, 2026
 
 ## Added
+
 - JWT Authentication.
 - Login.
 - Registration.
@@ -416,6 +481,7 @@ The format is based on semantic project versioning, with each release summarizin
 - Security middleware.
 
 ## Testing
+
 - Verified authentication.
 - Verified authorization.
 - Verified RBAC.
@@ -423,9 +489,11 @@ The format is based on semantic project versioning, with each release summarizin
 ---
 
 # v0.1.0 - Backend Foundation
+
 **Release Date:** July 8, 2026
 
 ## Added
+
 - Express backend.
 - MongoDB Atlas connection.
 - Environment configuration.
@@ -435,6 +503,7 @@ The format is based on semantic project versioning, with each release summarizin
 - Initial middleware configuration.
 
 ## Testing
+
 - Verified MongoDB connection.
 - Verified server startup.
 - Verified health endpoint.

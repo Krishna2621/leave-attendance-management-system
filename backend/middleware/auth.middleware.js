@@ -5,7 +5,8 @@ const User = require("../models/User");
 const protect = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
-    const bearerToken = authHeader && authHeader.startsWith("Bearer ") ? authHeader.split(" ")[1] : null;
+    const bearerToken =
+      authHeader && authHeader.startsWith("Bearer ") ? authHeader.split(" ")[1] : null;
     const token = req.cookies.accessToken || bearerToken;
 
     if (!token) {

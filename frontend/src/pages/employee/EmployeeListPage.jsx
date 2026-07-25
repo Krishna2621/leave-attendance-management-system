@@ -20,12 +20,36 @@ export default function EmployeeListPage() {
     return users.filter((user) => user.isActive === (isActive === "true"));
   }, [query.data, isActive]);
 
-  return <div className="mt-6 space-y-5">
-    <div><h1 className="text-2xl font-bold text-slate-900">Employee Directory</h1><p className="mt-1 text-sm text-slate-600">Search, filter, and manage employees across the organization.</p></div>
-    <EmployeeFilters filters={filters} onChange={setFilters} departments={departments.data?.departments || []} />
-    {query.isLoading ? <Loader label="Loading employees…" /> : query.isError ? <DashboardError error={query.error} onRetry={query.refetch} /> : <>
-      <EmployeeTable employees={employees} onView={(row) => navigate(`/employees/${row._id}`)} />
-      <Pagination page={pagination?.page || 1} totalPages={pagination?.totalPages || 1} onPageChange={(page) => setFilters((current) => ({ ...current, page }))} />
-    </>}
-  </div>;
+  return (
+    <div className="mt-6 space-y-5">
+      <div>
+        <h1 className="text-2xl font-bold text-slate-900">Employee Directory</h1>
+        <p className="mt-1 text-sm text-slate-600">
+          Search, filter, and manage employees across the organization.
+        </p>
+      </div>
+      <EmployeeFilters
+        filters={filters}
+        onChange={setFilters}
+        departments={departments.data?.departments || []}
+      />
+      {query.isLoading ? (
+        <Loader label="Loading employees…" />
+      ) : query.isError ? (
+        <DashboardError error={query.error} onRetry={query.refetch} />
+      ) : (
+        <>
+          <EmployeeTable
+            employees={employees}
+            onView={(row) => navigate(`/employees/${row._id}`)}
+          />
+          <Pagination
+            page={pagination?.page || 1}
+            totalPages={pagination?.totalPages || 1}
+            onPageChange={(page) => setFilters((current) => ({ ...current, page }))}
+          />
+        </>
+      )}
+    </div>
+  );
 }

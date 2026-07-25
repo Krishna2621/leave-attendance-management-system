@@ -9,11 +9,18 @@ const getCurrentLeaveYear = (date = new Date()) => {
   return Number(year.value);
 };
 
-const initializeLeaveBalancesForUser = async ({ userId, session, year = getCurrentLeaveYear() }) => {
+const initializeLeaveBalancesForUser = async ({
+  userId,
+  session,
+  year = getCurrentLeaveYear(),
+}) => {
   const existingBalance = await LeaveBalance.exists({ userId, year }).session(session);
   if (existingBalance) return { initialized: false, year };
 
-  const activeLeaveTypes = await LeaveType.find({ isActive: true }).select("_id maxDaysPerYear").session(session).lean();
+  const activeLeaveTypes = await LeaveType.find({ isActive: true })
+    .select("_id maxDaysPerYear")
+    .session(session)
+    .lean();
   if (activeLeaveTypes.length === 0) return { initialized: false, year };
 
   await LeaveBalance.create(
@@ -24,10 +31,10 @@ const initializeLeaveBalancesForUser = async ({ userId, session, year = getCurre
       allocated: leaveType.maxDaysPerYear,
       used: 0,
     })),
-    { 
+    {
       session,
-      ordered:true,
-     }
+      ordered: true,
+    }
   );
 
   return { initialized: true, year };

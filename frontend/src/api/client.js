@@ -38,9 +38,10 @@ client.interceptors.response.use(
       }
     }
 
-    if (status === 401 && !request?.url?.includes("/auth/refresh-token")) emitAuthEvent("unauthorized");
+    if (status === 401 && !request?.url?.includes("/auth/refresh-token"))
+      emitAuthEvent("unauthorized");
     return Promise.reject(error);
-  },
+  }
 );
 
 export { API_URL, refreshSession };

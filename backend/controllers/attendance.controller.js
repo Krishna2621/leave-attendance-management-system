@@ -278,7 +278,9 @@ const getTeamAttendance = async (req, res) => {
       }
     }
 
-    const employeeById = new Map(teamMembers.map((teamMember) => [String(teamMember._id), teamMember]));
+    const employeeById = new Map(
+      teamMembers.map((teamMember) => [String(teamMember._id), teamMember])
+    );
     const [attendance, totalRecords] = await Promise.all([
       Attendance.find(filter).sort({ date: -1 }).skip(skip).limit(limit).lean(),
       Attendance.countDocuments(filter),
@@ -312,7 +314,16 @@ const getTeamAttendance = async (req, res) => {
 
 const getOrganizationAttendance = async (req, res) => {
   try {
-    const { startDate, endDate, status, isLate, departmentId, managerId, page = 1, limit = 20 } = req.query;
+    const {
+      startDate,
+      endDate,
+      status,
+      isLate,
+      departmentId,
+      managerId,
+      page = 1,
+      limit = 20,
+    } = req.query;
     const filter = {};
 
     if (startDate || endDate) {
@@ -445,7 +456,8 @@ const correctAttendance = async (req, res) => {
         });
       }
 
-      const hoursWorked = Math.round(((correctedPunchOut - correctedPunchIn) / (60 * 60 * 1000)) * 100) / 100;
+      const hoursWorked =
+        Math.round(((correctedPunchOut - correctedPunchIn) / (60 * 60 * 1000)) * 100) / 100;
 
       attendance.punchIn = correctedPunchIn;
       attendance.punchOut = correctedPunchOut;

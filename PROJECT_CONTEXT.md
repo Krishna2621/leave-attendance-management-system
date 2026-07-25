@@ -17,6 +17,7 @@ A centralized **web application** (not mobile) that replaces manual spreadsheet-
 ## Tech Stack
 
 ### Frontend
+
 - **React.js** (with Vite)
 - **Tailwind CSS** for styling
 - **React Router v6** for navigation
@@ -25,6 +26,7 @@ A centralized **web application** (not mobile) that replaces manual spreadsheet-
 - **Recharts** for dashboard charts
 
 ### Backend
+
 - **Node.js + Express.js**
 - **JWT** for authentication (access token + refresh token)
 - **Bcrypt** for password hashing
@@ -35,10 +37,12 @@ A centralized **web application** (not mobile) that replaces manual spreadsheet-
 - **cors, helmet, dotenv** for security and config
 
 ### Database
+
 - **MongoDB** with **Mongoose ODM**
 - **MongoDB Atlas** (free cloud-hosted — no local MongoDB needed)
 
 ### DevOps (Simple)
+
 - **Docker + Docker Compose** (runs app + MongoDB together with one command)
 - **GitHub Actions** for CI/CD (auto deploy on push to main)
 - **Railway or Render** for cloud deployment (free tier — no AWS)
@@ -50,12 +54,12 @@ A centralized **web application** (not mobile) that replaces manual spreadsheet-
 
 There are 4 roles. Every API route is protected by JWT auth middleware + role middleware.
 
-| Role | What they can do |
-|---|---|
-| **Employee** | Mark attendance, apply leave, view own leave balance & history, download own reports |
-| **Reporting Manager** | Everything Employee can do + view team attendance, approve/reject leave requests, get clash alerts |
-| **HR** | Everything Manager can do + define leave policies, override attendance, generate org-wide reports, manage holidays & comp-offs |
-| **Admin** | Everything + user management, department management, system config, role assignment, audit logs |
+| Role                  | What they can do                                                                                                               |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| **Employee**          | Mark attendance, apply leave, view own leave balance & history, download own reports                                           |
+| **Reporting Manager** | Everything Employee can do + view team attendance, approve/reject leave requests, get clash alerts                             |
+| **HR**                | Everything Manager can do + define leave policies, override attendance, generate org-wide reports, manage holidays & comp-offs |
+| **Admin**             | Everything + user management, department management, system config, role assignment, audit logs                                |
 
 ---
 
@@ -148,6 +152,7 @@ leave-attendance-system/
 All use `_id` (ObjectId) as primary key. References use `ObjectId` ref — similar to foreign keys in SQL.
 
 ### users
+
 ```
 _id, name, email, password (bcrypt hashed),
 role (enum: employee | manager | hr | admin),
@@ -157,6 +162,7 @@ isActive (bool), createdAt, updatedAt
 ```
 
 ### departments
+
 ```
 _id, name,
 managerId (ref: User),
@@ -164,6 +170,7 @@ createdAt
 ```
 
 ### attendance
+
 ```
 _id,
 userId (ref: User),
@@ -176,6 +183,7 @@ createdAt
 ```
 
 ### leaveTypes
+
 ```
 _id, name (e.g. "Sick Leave", "Earned Leave", "Casual Leave"),
 maxDaysPerYear (Number),
@@ -184,6 +192,7 @@ createdAt
 ```
 
 ### leaveRequests
+
 ```
 _id,
 userId (ref: User),
@@ -199,6 +208,7 @@ createdAt, updatedAt
 ```
 
 ### leaveBalances
+
 ```
 _id,
 userId (ref: User),
@@ -210,6 +220,7 @@ remaining (Number)
 ```
 
 ### Additional collections (build later):
+
 - `holidays` — public holidays calendar
 - `notifications` — in-app notification log
 - `auditLogs` — who did what, when, from which IP
@@ -219,6 +230,7 @@ remaining (Number)
 ## Core Modules
 
 ### 1. Attendance Management
+
 - Web browser clock-in / clock-out (button on dashboard)
 - Auto-flag late arrivals and half-days based on shift time
 - HR can manually correct attendance records
@@ -226,6 +238,7 @@ remaining (Number)
 - Cron job runs nightly to mark absent for employees who didn't punch in
 
 ### 2. Leave Management
+
 - Employee applies for leave (type, dates, reason, optional document)
 - Manager gets notified by email → approves or rejects with comment
 - Leave balance auto-calculates and deducts on approval
@@ -234,6 +247,7 @@ remaining (Number)
 - Holiday calendar synced — weekends and holidays not counted as leave days
 
 ### 3. Reports & Dashboard
+
 - Employee dashboard: today's punch status, leave balance widget, recent activity
 - Manager dashboard: team attendance chart, pending approvals
 - HR dashboard: org-wide attendance %, leave trend analytics, absenteeism alerts
@@ -245,6 +259,7 @@ remaining (Number)
 ## API Structure (REST)
 
 ### Auth
+
 ```
 POST   /api/auth/register
 POST   /api/auth/login
@@ -253,6 +268,7 @@ POST   /api/auth/refresh-token
 ```
 
 ### Users
+
 ```
 GET    /api/users                  (admin/hr)
 GET    /api/users/:id
@@ -262,6 +278,7 @@ GET    /api/users/me               (self profile)
 ```
 
 ### Attendance
+
 ```
 POST   /api/attendance/punch-in
 POST   /api/attendance/punch-out
@@ -272,6 +289,7 @@ PUT    /api/attendance/:id/correct (hr override)
 ```
 
 ### Leaves
+
 ```
 POST   /api/leaves/apply
 GET    /api/leaves/me
@@ -285,6 +303,7 @@ GET    /api/leaves/types
 ```
 
 ### Reports
+
 ```
 GET    /api/reports/attendance     (hr/admin — with filters; PRODUCTION-READY, consumed by frontend)
 GET    /api/reports/leaves         (hr/admin — STUBBED 501, frontend shows Coming Soon)
@@ -309,16 +328,19 @@ GET    /api/reports/export         (CSV/PDF download — STUBBED 501, frontend o
 ## DevOps Setup (Simple)
 
 ### docker-compose.yml structure
+
 - Service 1: `backend` (Node.js app, port 5000)
 - Service 2: `mongo` (MongoDB, port 27017) — only used for local dev; production uses MongoDB Atlas
 - Single `docker-compose up` command runs everything locally
 
 ### GitHub Actions CI/CD
+
 - Trigger: push to `main` branch
 - Steps: checkout → install deps → run tests → SSH deploy to Railway/Render
 - No AWS, no Kubernetes, no complex infra
 
 ### Environment Variables (.env)
+
 ```
 PORT=5000
 MONGO_URI=mongodb+srv://...        # MongoDB Atlas connection string
@@ -336,12 +358,12 @@ CLIENT_URL=http://localhost:5173   # Frontend URL for CORS
 
 ## Development Phases (8-Week Plan)
 
-| Phase | Weeks | Tasks |
-|---|---|---|
-| **Phase 1 – Foundation** | Week 1–2 | Repo setup, Docker, MongoDB Atlas connection, Mongoose schemas, JWT auth (register/login), RBAC middleware, base Express server |
-| **Phase 2 – Attendance** | Week 3–4 | Punch in/out API + React UI, attendance records & history, HR correction flow, dashboard attendance widget |
-| **Phase 3 – Leave** | Week 5–6 | Leave type & balance APIs, apply/approve/reject flow, email notifications via Nodemailer, calendar & clash detection |
-| **Phase 4 – Reports & Deploy** | Week 7–8 | Dashboard charts (Recharts), export to CSV/PDF, Docker + GitHub Actions CI/CD, testing, documentation |
+| Phase                          | Weeks    | Tasks                                                                                                                           |
+| ------------------------------ | -------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| **Phase 1 – Foundation**       | Week 1–2 | Repo setup, Docker, MongoDB Atlas connection, Mongoose schemas, JWT auth (register/login), RBAC middleware, base Express server |
+| **Phase 2 – Attendance**       | Week 3–4 | Punch in/out API + React UI, attendance records & history, HR correction flow, dashboard attendance widget                      |
+| **Phase 3 – Leave**            | Week 5–6 | Leave type & balance APIs, apply/approve/reject flow, email notifications via Nodemailer, calendar & clash detection            |
+| **Phase 4 – Reports & Deploy** | Week 7–8 | Dashboard charts (Recharts), export to CSV/PDF, Docker + GitHub Actions CI/CD, testing, documentation                           |
 
 ---
 

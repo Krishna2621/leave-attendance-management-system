@@ -17,7 +17,9 @@ router.get(
     param("attendanceId").isMongoId().withMessage("Attendance ID must be a valid MongoDB ObjectId"),
     query().custom((value, { req }) => {
       const allowedFields = ["page", "limit"];
-      const unexpectedField = Object.keys(req.query).find((field) => !allowedFields.includes(field));
+      const unexpectedField = Object.keys(req.query).find(
+        (field) => !allowedFields.includes(field)
+      );
 
       if (unexpectedField) {
         throw new Error(`Query parameter '${unexpectedField}' is not allowed`);
@@ -25,8 +27,16 @@ router.get(
 
       return true;
     }),
-    query("page").optional().isInt({ min: 1 }).withMessage("page must be a positive integer").toInt(),
-    query("limit").optional().isInt({ min: 1, max: 100 }).withMessage("limit must be between 1 and 100").toInt(),
+    query("page")
+      .optional()
+      .isInt({ min: 1 })
+      .withMessage("page must be a positive integer")
+      .toInt(),
+    query("limit")
+      .optional()
+      .isInt({ min: 1, max: 100 })
+      .withMessage("limit must be between 1 and 100")
+      .toInt(),
   ],
   validateRequest,
   getAttendanceAuditLogs

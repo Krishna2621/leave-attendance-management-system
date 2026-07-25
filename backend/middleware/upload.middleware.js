@@ -20,9 +20,10 @@ const upload = multer({
 const uploadLeaveDocument = (req, res, next) => {
   upload(req, res, (error) => {
     if (error) {
-      const message = error instanceof multer.MulterError && error.code === "LIMIT_FILE_SIZE"
-        ? "Document must not exceed 10 MB"
-        : error.message || "Invalid document upload";
+      const message =
+        error instanceof multer.MulterError && error.code === "LIMIT_FILE_SIZE"
+          ? "Document must not exceed 10 MB"
+          : error.message || "Invalid document upload";
       return res.status(error.statusCode || 400).json({ success: false, message });
     }
 
@@ -45,9 +46,17 @@ const profileUpload = multer({
 
 const uploadProfilePicture = (req, res, next) => {
   profileUpload(req, res, (error) => {
-    if (error) return res.status(error.statusCode || 400).json({ success: false, message: error.message || "Invalid profile picture" });
+    if (error)
+      return res
+        .status(error.statusCode || 400)
+        .json({ success: false, message: error.message || "Invalid profile picture" });
     return next();
   });
 };
 
-module.exports = { uploadLeaveDocument, uploadProfilePicture, ALLOWED_MIME_TYPES, MAX_DOCUMENT_SIZE };
+module.exports = {
+  uploadLeaveDocument,
+  uploadProfilePicture,
+  ALLOWED_MIME_TYPES,
+  MAX_DOCUMENT_SIZE,
+};

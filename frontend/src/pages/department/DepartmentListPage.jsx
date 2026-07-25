@@ -29,20 +29,54 @@ export default function DepartmentListPage() {
   }, [query.data, status]);
 
   const submitCreate = async (payload) => {
-    try { await create.mutateAsync(payload); toast.success("Department created successfully."); setCreating(false); }
-    catch (error) { toast.error(getApiErrorMessage(error)); }
+    try {
+      await create.mutateAsync(payload);
+      toast.success("Department created successfully.");
+      setCreating(false);
+    } catch (error) {
+      toast.error(getApiErrorMessage(error));
+    }
   };
 
-  return <div className="mt-6 space-y-5">
-    <div className="flex flex-wrap items-start justify-between gap-3">
-      <div><h1 className="text-2xl font-bold text-slate-900">Departments</h1><p className="mt-1 text-sm text-slate-600">Organize teams, assign department heads, and manage status.</p></div>
-      <Button onClick={() => setCreating(true)}><Plus size={16} />New department</Button>
+  return (
+    <div className="mt-6 space-y-5">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900">Departments</h1>
+          <p className="mt-1 text-sm text-slate-600">
+            Organize teams, assign department heads, and manage status.
+          </p>
+        </div>
+        <Button onClick={() => setCreating(true)}>
+          <Plus size={16} />
+          New department
+        </Button>
+      </div>
+      <DepartmentFilters filters={filters} onChange={setFilters} />
+      {query.isLoading ? (
+        <Loader label="Loading departments…" />
+      ) : query.isError ? (
+        <DashboardError error={query.error} onRetry={query.refetch} />
+      ) : (
+        <>
+          <DepartmentTable
+            departments={departments}
+            onView={(row) => navigate(`/departments/${row._id}`)}
+          />
+          <Pagination
+            page={pagination?.page || 1}
+            totalPages={pagination?.totalPages || 1}
+            onPageChange={(page) => setFilters((current) => ({ ...current, page }))}
+          />
+        </>
+      )}
+      <DepartmentFormModal
+        open={creating}
+        managers={managers.data?.users || []}
+        loading={create.isPending}
+        onClose={() => setCreating(false)}
+        onSubmit={submitCreate}
+      />
     </div>
-    <DepartmentFilters filters={filters} onChange={setFilters} />
-    {query.isLoading ? <Loader label="Loading departments…" /> : query.isError ? <DashboardError error={query.error} onRetry={query.refetch} /> : <>
-      <DepartmentTable departments={departments} onView={(row) => navigate(`/departments/${row._id}`)} />
-      <Pagination page={pagination?.page || 1} totalPages={pagination?.totalPages || 1} onPageChange={(page) => setFilters((current) => ({ ...current, page }))} />
-    </>}
-    <DepartmentFormModal open={creating} managers={managers.data?.users || []} loading={create.isPending} onClose={() => setCreating(false)} onSubmit={submitCreate} />
-  </div>;
+  );
 }

@@ -15,7 +15,11 @@ const logger = require("../utils/logger");
 const ACCESS_TOKEN_DURATION_MS = 15 * 60 * 1000;
 const REFRESH_TOKEN_DURATION_MS = 7 * 24 * 60 * 60 * 1000;
 const PASSWORD_RESET_DURATION_MS = 20 * 60 * 1000;
-const cookieOptions = { httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production" };
+const cookieOptions = {
+  httpOnly: true,
+  sameSite: "lax",
+  secure: process.env.NODE_ENV === "production",
+};
 
 const sanitizeUser = (user) => ({
   id: user._id,
@@ -49,7 +53,9 @@ const createRefreshSession = async ({ user, token, req, session }) => {
     userId: user._id,
     tokenHash: hashToken(token),
     issuedAt: new Date((decoded?.iat || Math.floor(Date.now() / 1000)) * 1000),
-    expiresAt: new Date((decoded?.exp || Math.floor((Date.now() + REFRESH_TOKEN_DURATION_MS) / 1000)) * 1000),
+    expiresAt: new Date(
+      (decoded?.exp || Math.floor((Date.now() + REFRESH_TOKEN_DURATION_MS) / 1000)) * 1000
+    ),
     ...getSessionMetadata(req),
   };
 
@@ -66,11 +72,17 @@ const register = async (req, res) => {
   try {
     const { name, email, password, departmentId, managerId } = req.body;
     const existingUser = await User.findOne({ email });
-    if (existingUser) return res.status(409).json({ success: false, message: "User with this email already exists" });
+    if (existingUser)
+      return res
+        .status(409)
+        .json({ success: false, message: "User with this email already exists" });
 
     let user;
     await session.withTransaction(async () => {
-      const [createdUser] = await User.create([{ name, email, password: await bcrypt.hash(password, 10), departmentId, managerId }], { session });
+      const [createdUser] = await User.create(
+        [{ name, email, password: await bcrypt.hash(password, 10), departmentId, managerId }],
+        { session }
+      );
       user = createdUser;
       await initializeLeaveBalancesForUser({ userId: user._id, session });
     });
@@ -79,7 +91,11 @@ const register = async (req, res) => {
     await createRefreshSession({ user, token: refreshToken, req });
     setAuthCookies(res, accessToken, refreshToken);
 
-    return res.status(201).json({ success: true, message: "User registered successfully", data: { user: sanitizeUser(user) } });
+    return res.status(201).json({
+      success: true,
+      message: "User registered successfully",
+      data: { user: sanitizeUser(user) },
+    });
   } catch (_error) {
     return res.status(500).json({ success: false, message: "Unable to register user" });
   } finally {
@@ -98,7 +114,9 @@ const login = async (req, res) => {
     const refreshToken = generateRefreshToken(user);
     await createRefreshSession({ user, token: refreshToken, req });
     setAuthCookies(res, accessToken, refreshToken);
-    return res.status(200).json({ success: true, message: "Login successful", data: { user: sanitizeUser(user) } });
+    return res
+      .status(200)
+      .json({ success: true, message: "Login successful", data: { user: sanitizeUser(user) } });
   } catch (_error) {
     return res.status(500).json({ success: false, message: "Unable to complete login" });
   }
@@ -107,7 +125,10 @@ const login = async (req, res) => {
 const logout = async (req, res) => {
   try {
     if (req.cookies.refreshToken) {
-      await RefreshSession.updateOne({ tokenHash: hashToken(req.cookies.refreshToken), revokedAt: null }, { $set: { revokedAt: new Date() } });
+      await RefreshSession.updateOne(
+        { tokenHash: hashToken(req.cookies.refreshToken), revokedAt: null },
+        { $set: { revokedAt: new Date() } }
+      );
     }
     clearAuthCookies(res);
     return res.status(200).json({ success: true, message: "Logout successful", data: {} });
@@ -118,9 +139,14 @@ const logout = async (req, res) => {
 
 const logoutAll = async (req, res) => {
   try {
-    await RefreshSession.updateMany({ userId: req.user._id, revokedAt: null }, { $set: { revokedAt: new Date() } });
+    await RefreshSession.updateMany(
+      { userId: req.user._id, revokedAt: null },
+      { $set: { revokedAt: new Date() } }
+    );
     clearAuthCookies(res);
-    return res.status(200).json({ success: true, message: "Logged out from all devices successfully", data: {} });
+    return res
+      .status(200)
+      .json({ success: true, message: "Logged out from all devices successfully", data: {} });
   } catch (_error) {
     return res.status(500).json({ success: false, message: "Unable to log out from all devices" });
   }
@@ -130,7 +156,8 @@ const refreshToken = async (req, res) => {
   const session = await mongoose.startSession();
   try {
     const token = req.cookies.refreshToken;
-    if (!token) return res.status(401).json({ success: false, message: "Refresh token is missing" });
+    if (!token)
+      return res.status(401).json({ success: false, message: "Refresh token is missing" });
 
     const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
     let user;
@@ -138,7 +165,12 @@ const refreshToken = async (req, res) => {
     await session.withTransaction(async () => {
       const now = new Date();
       const currentSession = await RefreshSession.findOneAndUpdate(
-        { userId: decoded.id, tokenHash: hashToken(token), revokedAt: null, expiresAt: { $gt: now } },
+        {
+          userId: decoded.id,
+          tokenHash: hashToken(token),
+          revokedAt: null,
+          expiresAt: { $gt: now },
+        },
         { $set: { revokedAt: now, lastUsedAt: now } },
         { new: true, session }
       );
@@ -160,7 +192,9 @@ const refreshToken = async (req, res) => {
     });
 
     setAuthCookies(res, generateAccessToken(user), nextRefreshToken);
-    return res.status(200).json({ success: true, message: "Access token refreshed successfully", data: {} });
+    return res
+      .status(200)
+      .json({ success: true, message: "Access token refreshed successfully", data: {} });
   } catch (_error) {
     clearAuthCookies(res);
     return res.status(401).json({ success: false, message: "Invalid or expired refresh token" });
@@ -170,18 +204,28 @@ const refreshToken = async (req, res) => {
 };
 
 const forgotPassword = async (req, res) => {
-  const response = { success: true, message: "If an account exists, password reset instructions have been sent." };
+  const response = {
+    success: true,
+    message: "If an account exists, password reset instructions have been sent.",
+  };
   try {
     const user = await User.findOne({ email: req.body.email, isActive: true });
     if (!user) return res.status(200).json(response);
 
     const token = crypto.randomBytes(32).toString("hex");
     await PasswordResetToken.deleteMany({ userId: user._id });
-    await PasswordResetToken.create({ userId: user._id, tokenHash: hashToken(token), expiresAt: new Date(Date.now() + PASSWORD_RESET_DURATION_MS) });
+    await PasswordResetToken.create({
+      userId: user._id,
+      tokenHash: hashToken(token),
+      expiresAt: new Date(Date.now() + PASSWORD_RESET_DURATION_MS),
+    });
 
     const resetUrl = new URL("/reset-password", process.env.FRONTEND_URL || process.env.CLIENT_URL);
     resetUrl.searchParams.set("token", token);
-    await sendEmail({ to: user.email, ...passwordResetTemplate({ recipientName: user.name, resetUrl: resetUrl.toString() }) });
+    await sendEmail({
+      to: user.email,
+      ...passwordResetTemplate({ recipientName: user.name, resetUrl: resetUrl.toString() }),
+    });
   } catch (error) {
     logger.error("Password reset request could not be completed", { error: error.message });
   }
@@ -203,7 +247,9 @@ const resetPassword = async (req, res) => {
         throw error;
       }
 
-      user = await User.findOne({ _id: resetToken.userId, isActive: true }).select("+password").session(session);
+      user = await User.findOne({ _id: resetToken.userId, isActive: true })
+        .select("+password")
+        .session(session);
       if (!user) {
         const error = new Error("Invalid or expired password reset token");
         error.statusCode = 400;
@@ -213,10 +259,18 @@ const resetPassword = async (req, res) => {
       user.password = await bcrypt.hash(req.body.password, 10);
       await user.save({ session });
       await PasswordResetToken.deleteMany({ userId: user._id }).session(session);
-      await RefreshSession.updateMany({ userId: user._id, revokedAt: null }, { $set: { revokedAt: new Date() } }, { session });
+      await RefreshSession.updateMany(
+        { userId: user._id, revokedAt: null },
+        { $set: { revokedAt: new Date() } },
+        { session }
+      );
     });
     clearAuthCookies(res);
-    return res.status(200).json({ success: true, message: "Password reset successfully. Please log in again.", data: {} });
+    return res.status(200).json({
+      success: true,
+      message: "Password reset successfully. Please log in again.",
+      data: {},
+    });
   } catch (error) {
     return res.status(error.statusCode || 400).json({
       success: false,
@@ -227,4 +281,12 @@ const resetPassword = async (req, res) => {
   }
 };
 
-module.exports = { register, login, logout, logoutAll, refreshToken, forgotPassword, resetPassword };
+module.exports = {
+  register,
+  login,
+  logout,
+  logoutAll,
+  refreshToken,
+  forgotPassword,
+  resetPassword,
+};

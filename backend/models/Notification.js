@@ -2,7 +2,12 @@ const mongoose = require("mongoose");
 
 const notificationSchema = new mongoose.Schema(
   {
-    recipientId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true, immutable: true },
+    recipientId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+      immutable: true,
+    },
     channel: { type: String, enum: ["email", "in_app", "sms"], default: "email", immutable: true },
     type: { type: String, required: true, trim: true, maxlength: 100, immutable: true },
     referenceType: { type: String, trim: true, default: "", immutable: true },
@@ -12,7 +17,11 @@ const notificationSchema = new mongoose.Schema(
     metadata: { type: mongoose.Schema.Types.Mixed, default: {}, immutable: true },
     dedupeKey: { type: String, required: true, unique: true, trim: true, immutable: true },
     scheduledFor: { type: Date, default: Date.now, immutable: true },
-    status: { type: String, enum: ["queued", "processing", "sent", "failed", "cancelled"], default: "queued" },
+    status: {
+      type: String,
+      enum: ["queued", "processing", "sent", "failed", "cancelled"],
+      default: "queued",
+    },
     lockUntil: { type: Date, default: null },
     attemptCount: { type: Number, default: 0, min: 0 },
     nextAttemptAt: { type: Date, default: Date.now },

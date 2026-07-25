@@ -21,21 +21,40 @@ jobs:
     timeout-minutes: 15
 
     steps:
+      # -----------------------------------
+      # Checkout
+      # -----------------------------------
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      # -----------------------------------
+      # Setup Node.js
+      # -----------------------------------
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
           cache-dependency-path: |
+            package-lock.json
             backend/package-lock.json
             frontend/package-lock.json
 
-      # -----------------------------
+      # -----------------------------------
+      # Install Root Dependencies
+      # -----------------------------------
+      - name: Install Root Dependencies
+        run: npm ci
+
+      # -----------------------------------
+      # Check Code Formatting
+      # -----------------------------------
+      - name: Check Prettier Formatting
+        run: npm run format:check
+
+      # -----------------------------------
       # Backend
-      # -----------------------------
+      # -----------------------------------
       - name: Install Backend Dependencies
         working-directory: backend
         run: npm ci
@@ -48,21 +67,24 @@ jobs:
         working-directory: backend
         run: node --check server.js
 
-      # -----------------------------
+      # -----------------------------------
       # Frontend
-      # -----------------------------
+      # -----------------------------------
       - name: Install Frontend Dependencies
         working-directory: frontend
         run: npm ci
+
+      - name: Run Frontend ESLint
+        working-directory: frontend
+        run: npm run lint
 
       - name: Build Frontend
         working-directory: frontend
         run: npm run build
 
-      # -----------------------------
+      # -----------------------------------
       # Docker
-      # -----------------------------
-
+      # -----------------------------------
       - name: Create Backend Environment File
         run: cp backend/.env.example backend/.env
 

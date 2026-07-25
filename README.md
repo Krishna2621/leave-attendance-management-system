@@ -7,12 +7,14 @@ A full-stack Leave & Attendance Management System built using the MERN stack as 
 This application replaces manual spreadsheet-based attendance and leave management with a centralized web application.
 
 Employees can:
+
 - Mark attendance
 - Apply for leave
 - View leave balance
 - Track attendance history
 
 Managers and HR can:
+
 - Approve or reject leave requests
 - Monitor attendance
 - Generate reports
@@ -23,6 +25,7 @@ Managers and HR can:
 ## 🚀 Tech Stack
 
 ### Frontend
+
 - React.js
 - Vite
 - Tailwind CSS
@@ -32,6 +35,7 @@ Managers and HR can:
 - Recharts
 
 ### Backend
+
 - Node.js
 - Express.js
 - JWT Authentication
@@ -41,10 +45,12 @@ Managers and HR can:
 - Nodemailer
 
 ### Database
+
 - MongoDB Atlas
 - Mongoose
 
 ### Tools
+
 - Git
 - GitHub
 - Docker
@@ -69,6 +75,7 @@ leave-attendance-management-system/
 ## 📅 Development Progress
 
 ### ✅ Phase 1 - Foundation
+
 - [x] Git Repository
 - [x] Express Server
 - [x] MongoDB Atlas Connection
@@ -76,6 +83,7 @@ leave-attendance-management-system/
 - [x] Project Structure
 
 ### 🚧 Currently Working On
+
 - JWT Authentication
 
 ---

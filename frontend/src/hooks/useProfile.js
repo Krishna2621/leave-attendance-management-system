@@ -8,6 +8,9 @@ export function useProfileActions() {
   const refresh = () => client.invalidateQueries({ queryKey: ["profile", "me"] });
   return {
     update: useMutation({ mutationFn: (payload) => updateMyProfile(payload), onSuccess: refresh }),
-    uploadPicture: useMutation({ mutationFn: (file) => uploadMyProfilePicture(file), onSuccess: refresh }),
+    uploadPicture: useMutation({
+      mutationFn: (file) => uploadMyProfilePicture(file),
+      onSuccess: refresh,
+    }),
   };
 }

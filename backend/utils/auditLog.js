@@ -50,7 +50,8 @@ const createAttendanceAuditLog = async ({
   session = null,
 }) => {
   const changedFields = buildAttendanceChangedFields(beforeAttendance, afterAttendance);
-  const normalizedCorrectionReason = typeof correctionReason === "string" ? correctionReason.trim() : "";
+  const normalizedCorrectionReason =
+    typeof correctionReason === "string" ? correctionReason.trim() : "";
 
   if (Object.keys(changedFields).length === 0) {
     throw new Error("An audit log requires at least one changed attendance field");
@@ -82,7 +83,15 @@ const createAttendanceAuditLog = async ({
   return AuditLog.create(auditLog);
 };
 
-const createHRAuditLog = async ({ entityType, entityId, action, actor, targetUserId = null, changedFields = {}, session = null }) => {
+const createHRAuditLog = async ({
+  entityType,
+  entityId,
+  action,
+  actor,
+  targetUserId = null,
+  changedFields = {},
+  session = null,
+}) => {
   const auditLog = {
     entityType,
     entityId,

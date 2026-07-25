@@ -1,5 +1,5 @@
 const dns = require("dns");
-dns.setServers(["8.8.8.8", "1.1.1.1"]);  // Set global DNS
+dns.setServers(["8.8.8.8", "1.1.1.1"]); // Set global DNS
 dns.setDefaultResultOrder("ipv4first");
 const dotenv = require("dotenv");
 dotenv.config();
@@ -37,10 +37,7 @@ app.disable("x-powered-by");
 if (process.env.NODE_ENV === "production") app.set("trust proxy", 1);
 app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
 
-const allowedOrigins = [
-  "http://localhost:5173",
-  "http://localhost:3000",
-];
+const allowedOrigins = ["http://localhost:5173", "http://localhost:3000"];
 
 app.use(
   cors({
@@ -59,7 +56,16 @@ app.use(express.json({ limit: "1mb" }));
 app.use(express.urlencoded({ extended: true, limit: "1mb" }));
 app.use(cookieParser());
 app.use(requestLogger);
-app.use("/api", rateLimit({ windowMs: 15 * 60 * 1000, max: 1000, standardHeaders: true, legacyHeaders: false, message: { success: false, message: "Too many requests. Please try again later." } }));
+app.use(
+  "/api",
+  rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 1000,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { success: false, message: "Too many requests. Please try again later." },
+  })
+);
 
 app.use("/health", healthRoutes);
 app.get("/api/health", (req, res) => {
@@ -71,7 +77,11 @@ app.get("/api/health", (req, res) => {
     },
   });
 });
-app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec, { explorer: true, customSiteTitle: "Leave & Attendance API Docs" }));
+app.use(
+  "/api/docs",
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerSpec, { explorer: true, customSiteTitle: "Leave & Attendance API Docs" })
+);
 
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
@@ -91,7 +101,9 @@ const startServer = async () => {
   validateEnvironment();
   await connectDB();
   const cronJobs = startCronJobs();
-  const server = app.listen(PORT, () => logger.info("Server started", { port: PORT, environment: process.env.NODE_ENV }));
+  const server = app.listen(PORT, () =>
+    logger.info("Server started", { port: PORT, environment: process.env.NODE_ENV })
+  );
   let shuttingDown = false;
   const shutdown = async (signal) => {
     if (shuttingDown) return;
@@ -108,7 +120,10 @@ const startServer = async () => {
         process.exit(1);
       }
     });
-    setTimeout(() => { logger.error("Graceful shutdown timed out"); process.exit(1); }, 30000).unref();
+    setTimeout(() => {
+      logger.error("Graceful shutdown timed out");
+      process.exit(1);
+    }, 30000).unref();
   };
   process.once("SIGINT", () => shutdown("SIGINT"));
   process.once("SIGTERM", () => shutdown("SIGTERM"));
@@ -116,7 +131,10 @@ const startServer = async () => {
 };
 
 if (require.main === module) {
-  startServer().catch((error) => { logger.error("Server startup failed", { error: error.message }); process.exit(1); });
+  startServer().catch((error) => {
+    logger.error("Server startup failed", { error: error.message });
+    process.exit(1);
+  });
 }
 
 module.exports = { app, startServer };

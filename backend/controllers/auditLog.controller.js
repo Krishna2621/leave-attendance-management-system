@@ -11,7 +11,9 @@ const getAttendanceAuditLogs = async (req, res) => {
 
     const [auditLogs, totalRecords] = await Promise.all([
       AuditLog.find(filter)
-        .select("_id entityType entityId action actorId actorRole targetUserId changedFields correctionReason source createdAt")
+        .select(
+          "_id entityType entityId action actorId actorRole targetUserId changedFields correctionReason source createdAt"
+        )
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit)

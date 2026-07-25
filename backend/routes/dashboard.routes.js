@@ -25,7 +25,19 @@ const rejectQueryParameters = query().custom((value, { req }) => {
 router.use(protect);
 
 router.get("/me", [rejectQueryParameters], validateRequest, getEmployeeDashboard);
-router.get("/team", authorizeRoles("manager"), [rejectQueryParameters], validateRequest, getTeamDashboard);
-router.get("/organization", authorizeRoles("hr", "admin"), [rejectQueryParameters], validateRequest, getOrganizationDashboard);
+router.get(
+  "/team",
+  authorizeRoles("manager"),
+  [rejectQueryParameters],
+  validateRequest,
+  getTeamDashboard
+);
+router.get(
+  "/organization",
+  authorizeRoles("hr", "admin"),
+  [rejectQueryParameters],
+  validateRequest,
+  getOrganizationDashboard
+);
 
 module.exports = router;

@@ -15,7 +15,8 @@ const {
   toBusinessDate,
 } = require("../utils/leave.utils");
 
-const leaveRequestFields = "_id userId leaveTypeId startDate endDate totalDays reason document.url document.originalName document.mimeType status approvedBy approverComment approvedAt rejectedAt cancelledAt createdAt updatedAt";
+const leaveRequestFields =
+  "_id userId leaveTypeId startDate endDate totalDays reason document.url document.originalName document.mimeType status approvedBy approverComment approvedAt rejectedAt cancelledAt createdAt updatedAt";
 const formatDate = (date) => new Date(date).toISOString().slice(0, 10);
 
 const createError = (message, statusCode) => {
@@ -36,19 +37,40 @@ const getVerifiedDocumentMimeType = (file) => {
   if (!file) return null;
 
   const isPdf = file.buffer.subarray(0, 5).toString("ascii") === "%PDF-";
-  const isPng = file.buffer.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]));
-  const isJpeg = file.buffer.length >= 3 && file.buffer[0] === 0xff && file.buffer[1] === 0xd8 && file.buffer[2] === 0xff;
+  const isPng = file.buffer
+    .subarray(0, 8)
+    .equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]));
+  const isJpeg =
+    file.buffer.length >= 3 &&
+    file.buffer[0] === 0xff &&
+    file.buffer[1] === 0xd8 &&
+    file.buffer[2] === 0xff;
 
-  if ((file.mimetype === "application/pdf" && isPdf) || (file.mimetype === "image/png" && isPng) || (file.mimetype === "image/jpeg" && isJpeg)) {
+  if (
+    (file.mimetype === "application/pdf" && isPdf) ||
+    (file.mimetype === "image/png" && isPng) ||
+    (file.mimetype === "image/jpeg" && isJpeg)
+  ) {
     return file.mimetype;
   }
 
   throw createError("Document content does not match its declared file type", 400);
 };
 
-const safeOriginalName = (name) => String(name || "document").replace(/[\\/\0]/g, "_").slice(0, 255);
+const safeOriginalName = (name) =>
+  String(name || "document")
+    .replace(/[\\/\0]/g, "_")
+    .slice(0, 255);
 
-const appendHistory = async ({ leaveRequestId, action, previousStatus, nextStatus, actor, comment = "", session }) => {
+const appendHistory = async ({
+  leaveRequestId,
+  action,
+  previousStatus,
+  nextStatus,
+  actor,
+  comment = "",
+  session,
+}) => {
   await LeaveRequestHistory.create(
     [
       {
@@ -120,7 +142,10 @@ const getPaginatedLeaveRequests = async (filter, page, limit, populateUser = fal
     query.populate("userId", "name email departmentId managerId");
   }
 
-  const [leaveRequests, totalRecords] = await Promise.all([query.lean(), LeaveRequest.countDocuments(filter)]);
+  const [leaveRequests, totalRecords] = await Promise.all([
+    query.lean(),
+    LeaveRequest.countDocuments(filter),
+  ]);
 
   return {
     leaveRequests,
@@ -159,11 +184,20 @@ const createLeaveType = async (req, res) => {
 const getLeaveTypes = async (req, res) => {
   try {
     if (req.query.includeInactive && !["hr", "admin"].includes(req.user.role)) {
-      return sendError(res, createError("You do not have permission to view inactive leave types", 403));
+      return sendError(
+        res,
+        createError("You do not have permission to view inactive leave types", 403)
+      );
     }
 
-    const filter = req.query.includeInactive && ["hr", "admin"].includes(req.user.role) ? {} : { isActive: true };
-    const leaveTypes = await LeaveType.find(filter).select("_id name description maxDaysPerYear carryForward isActive createdAt updatedAt").sort({ name: 1 }).lean();
+    const filter =
+      req.query.includeInactive && ["hr", "admin"].includes(req.user.role)
+        ? {}
+        : { isActive: true };
+    const leaveTypes = await LeaveType.find(filter)
+      .select("_id name description maxDaysPerYear carryForward isActive createdAt updatedAt")
+      .sort({ name: 1 })
+      .lean();
 
     return res.status(200).json({
       success: true,
@@ -320,7 +354,7 @@ const applyForLeave = async (req, res) => {
     if (leaveDates.length === 0) {
       throw createError("Leave request must include at least one working day", 400);
     }
-    
+
     if (req.file) {
       const mimeType = getVerifiedDocumentMimeType(req.file);
       let cloudinaryResult;
@@ -328,9 +362,9 @@ const applyForLeave = async (req, res) => {
       try {
         cloudinaryResult = await uploadToCloudinary(req.file.buffer);
       } catch (error) {
-  logger.error("Leave document upload failed", { error: error.message });
-  throw createError("Unable to upload leave document", 500);
-}
+        logger.error("Leave document upload failed", { error: error.message });
+        throw createError("Unable to upload leave document", 500);
+      }
 
       uploadedDocument = {
         publicId: cloudinaryResult.public_id,
@@ -366,7 +400,10 @@ const applyForLeave = async (req, res) => {
       }
 
       if (overlappingRequest) {
-        throw createError("Leave request overlaps with an existing pending or approved request", 409);
+        throw createError(
+          "Leave request overlaps with an existing pending or approved request",
+          409
+        );
       }
 
       const balanceByYear = new Map(balances.map((balance) => [balance.year, balance]));
@@ -406,7 +443,10 @@ const applyForLeave = async (req, res) => {
       const reviewers = await User.find({
         isActive: true,
         _id: { $ne: req.user._id },
-        $or: [{ role: { $in: ["hr", "admin"] } }, ...(req.user.managerId ? [{ _id: req.user.managerId }] : [])],
+        $or: [
+          { role: { $in: ["hr", "admin"] } },
+          ...(req.user.managerId ? [{ _id: req.user.managerId }] : []),
+        ],
       })
         .select("_id")
         .session(session)
@@ -453,7 +493,10 @@ const applyForLeave = async (req, res) => {
       try {
         await deleteFromCloudinary(uploadedDocument.publicId);
       } catch (cleanupError) {
-        logger.error("Failed to remove orphaned leave document", { publicId: uploadedDocument.publicId, error: cleanupError.message });
+        logger.error("Failed to remove orphaned leave document", {
+          publicId: uploadedDocument.publicId,
+          error: cleanupError.message,
+        });
       }
     }
     await session.endSession();
@@ -462,7 +505,9 @@ const applyForLeave = async (req, res) => {
 
 const getLeaveDocument = async (req, res) => {
   try {
-    const leaveRequest = await LeaveRequest.findById(req.params.id).select("userId document.url").lean();
+    const leaveRequest = await LeaveRequest.findById(req.params.id)
+      .select("userId document.url")
+      .lean();
 
     if (!leaveRequest) {
       return sendError(res, createError("Leave request not found", 404));
@@ -473,7 +518,10 @@ const getLeaveDocument = async (req, res) => {
     }
 
     if (req.user.role === "employee" && String(leaveRequest.userId) !== String(req.user._id)) {
-      return sendError(res, createError("You can view documents only for your own leave requests", 403));
+      return sendError(
+        res,
+        createError("You can view documents only for your own leave requests", 403)
+      );
     }
 
     if (req.user.role === "manager") {
@@ -489,7 +537,11 @@ const getLeaveDocument = async (req, res) => {
 const getMyLeaveRequests = async (req, res) => {
   try {
     const { page = 1, limit = 20 } = req.query;
-    const data = await getPaginatedLeaveRequests(buildLeaveHistoryFilter(req.query, req.user._id), page, limit);
+    const data = await getPaginatedLeaveRequests(
+      buildLeaveHistoryFilter(req.query, req.user._id),
+      page,
+      limit
+    );
 
     return res.status(200).json({
       success: true,
@@ -554,7 +606,9 @@ const approveLeaveRequest = async (req, res) => {
     let leaveRequest;
 
     await session.withTransaction(async () => {
-      leaveRequest = await LeaveRequest.findOne({ _id: req.params.id, status: "pending" }).session(session);
+      leaveRequest = await LeaveRequest.findOne({ _id: req.params.id, status: "pending" }).session(
+        session
+      );
 
       if (!leaveRequest) {
         throw createError("Pending leave request not found", 409);
@@ -600,14 +654,23 @@ const approveLeaveRequest = async (req, res) => {
         comment: leaveRequest.approverComment,
         session,
       });
-      const leaveType = await LeaveType.findById(leaveRequest.leaveTypeId).select("name").session(session).lean();
+      const leaveType = await LeaveType.findById(leaveRequest.leaveTypeId)
+        .select("name")
+        .session(session)
+        .lean();
       await queueNotification({
         recipientId: leaveRequest.userId,
         type: "leave_approved",
         referenceType: "LeaveRequest",
         referenceId: leaveRequest._id,
         template: "leave_approved",
-        payload: { leaveTypeName: leaveType?.name || "Leave", startDate: formatDate(leaveRequest.startDate), endDate: formatDate(leaveRequest.endDate), totalDays: leaveRequest.totalDays, approverComment: leaveRequest.approverComment },
+        payload: {
+          leaveTypeName: leaveType?.name || "Leave",
+          startDate: formatDate(leaveRequest.startDate),
+          endDate: formatDate(leaveRequest.endDate),
+          totalDays: leaveRequest.totalDays,
+          approverComment: leaveRequest.approverComment,
+        },
         metadata: { source: "leave-approval" },
         dedupeKey: `leave-approved:${leaveRequest._id}`,
         session,
@@ -633,7 +696,9 @@ const rejectLeaveRequest = async (req, res) => {
     let leaveRequest;
 
     await session.withTransaction(async () => {
-      leaveRequest = await LeaveRequest.findOne({ _id: req.params.id, status: "pending" }).session(session);
+      leaveRequest = await LeaveRequest.findOne({ _id: req.params.id, status: "pending" }).session(
+        session
+      );
 
       if (!leaveRequest) {
         throw createError("Pending leave request not found", 409);
@@ -654,14 +719,22 @@ const rejectLeaveRequest = async (req, res) => {
         comment: leaveRequest.approverComment,
         session,
       });
-      const leaveType = await LeaveType.findById(leaveRequest.leaveTypeId).select("name").session(session).lean();
+      const leaveType = await LeaveType.findById(leaveRequest.leaveTypeId)
+        .select("name")
+        .session(session)
+        .lean();
       await queueNotification({
         recipientId: leaveRequest.userId,
         type: "leave_rejected",
         referenceType: "LeaveRequest",
         referenceId: leaveRequest._id,
         template: "leave_rejected",
-        payload: { leaveTypeName: leaveType?.name || "Leave", startDate: formatDate(leaveRequest.startDate), endDate: formatDate(leaveRequest.endDate), approverComment: leaveRequest.approverComment },
+        payload: {
+          leaveTypeName: leaveType?.name || "Leave",
+          startDate: formatDate(leaveRequest.startDate),
+          endDate: formatDate(leaveRequest.endDate),
+          approverComment: leaveRequest.approverComment,
+        },
         metadata: { source: "leave-rejection" },
         dedupeKey: `leave-rejected:${leaveRequest._id}`,
         session,
@@ -687,7 +760,11 @@ const cancelLeaveRequest = async (req, res) => {
     let leaveRequest;
 
     await session.withTransaction(async () => {
-      leaveRequest = await LeaveRequest.findOne({ _id: req.params.id, userId: req.user._id, status: "pending" }).session(session);
+      leaveRequest = await LeaveRequest.findOne({
+        _id: req.params.id,
+        userId: req.user._id,
+        status: "pending",
+      }).session(session);
 
       if (!leaveRequest) {
         throw createError("Your pending leave request was not found", 409);
@@ -727,7 +804,10 @@ const getLeaveRequestHistory = async (req, res) => {
     }
 
     if (req.user.role === "employee" && String(leaveRequest.userId) !== String(req.user._id)) {
-      return sendError(res, createError("You can view history only for your own leave requests", 403));
+      return sendError(
+        res,
+        createError("You can view history only for your own leave requests", 403)
+      );
     }
 
     if (req.user.role === "manager") {

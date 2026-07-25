@@ -1,7 +1,31 @@
 const Notification = require("../models/Notification");
 
-const queueNotification = async ({ recipientId, channel = "email", type, referenceType = "", referenceId = null, template = "", payload = {}, metadata = {}, dedupeKey, scheduledFor = new Date(), session }) => {
-  const notification = { recipientId, channel, type, referenceType, referenceId, template, payload, metadata, dedupeKey, scheduledFor, nextAttemptAt: scheduledFor };
+const queueNotification = async ({
+  recipientId,
+  channel = "email",
+  type,
+  referenceType = "",
+  referenceId = null,
+  template = "",
+  payload = {},
+  metadata = {},
+  dedupeKey,
+  scheduledFor = new Date(),
+  session,
+}) => {
+  const notification = {
+    recipientId,
+    channel,
+    type,
+    referenceType,
+    referenceId,
+    template,
+    payload,
+    metadata,
+    dedupeKey,
+    scheduledFor,
+    nextAttemptAt: scheduledFor,
+  };
 
   if (channel === "in_app") {
     notification.status = "sent";
@@ -24,7 +48,13 @@ const queueNotification = async ({ recipientId, channel = "email", type, referen
 const queueNotifications = async (notifications) => {
   if (!notifications.length) return { queuedCount: 0 };
   const result = await Notification.bulkWrite(
-    notifications.map((notification) => ({ updateOne: { filter: { dedupeKey: notification.dedupeKey }, update: { $setOnInsert: notification }, upsert: true } })),
+    notifications.map((notification) => ({
+      updateOne: {
+        filter: { dedupeKey: notification.dedupeKey },
+        update: { $setOnInsert: notification },
+        upsert: true,
+      },
+    })),
     { ordered: false }
   );
   return { queuedCount: result.upsertedCount || 0 };
