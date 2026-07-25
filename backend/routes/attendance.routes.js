@@ -8,7 +8,7 @@ const {
   getTeamAttendance,
   getOrganizationAttendance,
   correctAttendance,
-  notImplemented,
+  notImplemented: _notImplemented,
 } = require("../controllers/attendance.controller");
 const { protect } = require("../middleware/auth.middleware");
 const { authorizeRoles } = require("../middleware/role.middleware");

@@ -194,7 +194,7 @@ const getAttendanceReport = async (req, res) => {
         dailyTrend: reportData.dailyTrend || [],
       },
     });
-  } catch (error) {
+  } catch (_error) {
     return res.status(500).json({
       success: false,
       message: "Internal server error",
@@ -208,7 +208,7 @@ const notImplemented = async (req, res) => {
       success: false,
       message: "Report APIs are scheduled for Phase 4",
     });
-  } catch (error) {
+  } catch (_error) {
     res.status(500).json({
       success: false,
       message: "Internal server error",

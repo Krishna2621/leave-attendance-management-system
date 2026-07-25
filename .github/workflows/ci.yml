@@ -40,6 +40,10 @@ jobs:
         working-directory: backend
         run: npm ci
 
+      - name: Run Backend ESLint
+        working-directory: backend
+        run: npm run lint
+
       - name: Verify Backend Syntax
         working-directory: backend
         run: node --check server.js
@@ -58,7 +62,7 @@ jobs:
       # -----------------------------
       # Docker
       # -----------------------------
-      
+
       - name: Create Backend Environment File
         run: cp backend/.env.example backend/.env
 

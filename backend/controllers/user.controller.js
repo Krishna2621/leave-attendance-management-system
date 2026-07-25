@@ -7,7 +7,7 @@ const publicFields = "_id name email role departmentId managerId isActive phoneN
 const permittedProfileFields = ["name", "phoneNumber", "address", "dateOfBirth", "gender", "emergencyContact", "bloodGroup"];
 const fail = (res, err) => res.status(err.statusCode || 500).json({ success: false, message: err.message });
 const problem = (message, statusCode) => Object.assign(new Error(message), { statusCode });
-const changed = (before, after, fields) => Object.fromEntries(fields.filter((key) => JSON.stringify(before[key] ?? null) !== JSON.stringify(after[key] ?? null)).map((key) => [key, { before: before[key] ?? null, after: after[key] ?? null }]));
+const _changed = (before, after, fields) => Object.fromEntries(fields.filter((key) => JSON.stringify(before[key] ?? null) !== JSON.stringify(after[key] ?? null)).map((key) => [key, { before: before[key] ?? null, after: after[key] ?? null }]));
 
 const getMe = async (req, res) => {
   try {
@@ -46,7 +46,7 @@ const getEmployee = async (req, res) => {
 const updateMyProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
-    const before = user.toObject();
+    const _before = user.toObject();
     permittedProfileFields.forEach((field) => { if (Object.hasOwn(req.body, field)) user[field] = req.body[field]; });
     await user.save();
     return res.status(200).json({ success: true, message: "Profile updated successfully", data: { user: await User.findById(user._id).select(publicFields).lean() } });
@@ -93,7 +93,7 @@ const getMutableUser = async (id) => { const user = await User.findById(id); if 
 
 const updateEmployee = async (req, res) => {
   try {
-    const user = await getMutableUser(req.params.id); const before = user.toObject();
+    const user = await getMutableUser(req.params.id); const _before = user.toObject();
     permittedProfileFields.concat(["joiningDate"]).forEach((field) => { if (Object.hasOwn(req.body, field)) user[field] = req.body[field]; });
     await user.save();
     return res.status(200).json({ success: true, message: "Employee updated successfully", data: { user: await User.findById(user._id).select(publicFields).lean() } });

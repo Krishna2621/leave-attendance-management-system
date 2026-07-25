@@ -12,7 +12,7 @@ const getMyNotifications = async (req, res) => {
       Notification.countDocuments({ ...filter, isRead: { $ne: true } }),
     ]);
     return res.status(200).json({ success: true, message: "Notifications retrieved successfully", data: { notifications, unreadCount, pagination: { page, limit, totalRecords, totalPages: Math.ceil(totalRecords / limit) } } });
-  } catch (error) { return res.status(500).json({ success: false, message: "Internal server error" }); }
+  } catch (_error) { return res.status(500).json({ success: false, message: "Internal server error" }); }
 };
 
 const markNotificationAsRead = async (req, res) => {
@@ -27,7 +27,7 @@ const markNotificationAsRead = async (req, res) => {
     }
 
     return res.status(200).json({ success: true, message: "Notification marked as read", data: { notification } });
-  } catch (error) { return res.status(500).json({ success: false, message: "Internal server error" }); }
+  } catch (_error) { return res.status(500).json({ success: false, message: "Internal server error" }); }
 };
 
 const markAllNotificationsAsRead = async (req, res) => {
@@ -37,7 +37,7 @@ const markAllNotificationsAsRead = async (req, res) => {
       { $set: { isRead: true, readAt: new Date() } }
     );
     return res.status(200).json({ success: true, message: "Notifications marked as read", data: { updatedCount: result.modifiedCount } });
-  } catch (error) { return res.status(500).json({ success: false, message: "Internal server error" }); }
+  } catch (_error) { return res.status(500).json({ success: false, message: "Internal server error" }); }
 };
 
 const deleteNotification = async (req, res) => {
@@ -45,7 +45,7 @@ const deleteNotification = async (req, res) => {
     const notification = await Notification.findOneAndDelete({ _id: req.params.id, recipientId: req.user._id });
     if (!notification) return res.status(404).json({ success: false, message: "Notification not found" });
     return res.status(200).json({ success: true, message: "Notification deleted successfully", data: { notificationId: notification._id } });
-  } catch (error) { return res.status(500).json({ success: false, message: "Internal server error" }); }
+  } catch (_error) { return res.status(500).json({ success: false, message: "Internal server error" }); }
 };
 
 const testNotificationEmail = async (req, res) => {

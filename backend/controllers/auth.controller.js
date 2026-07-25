@@ -80,7 +80,7 @@ const register = async (req, res) => {
     setAuthCookies(res, accessToken, refreshToken);
 
     return res.status(201).json({ success: true, message: "User registered successfully", data: { user: sanitizeUser(user) } });
-  } catch (error) {
+  } catch (_error) {
     return res.status(500).json({ success: false, message: "Unable to register user" });
   } finally {
     await session.endSession();
@@ -99,7 +99,7 @@ const login = async (req, res) => {
     await createRefreshSession({ user, token: refreshToken, req });
     setAuthCookies(res, accessToken, refreshToken);
     return res.status(200).json({ success: true, message: "Login successful", data: { user: sanitizeUser(user) } });
-  } catch (error) {
+  } catch (_error) {
     return res.status(500).json({ success: false, message: "Unable to complete login" });
   }
 };
@@ -111,7 +111,7 @@ const logout = async (req, res) => {
     }
     clearAuthCookies(res);
     return res.status(200).json({ success: true, message: "Logout successful", data: {} });
-  } catch (error) {
+  } catch (_error) {
     return res.status(500).json({ success: false, message: "Unable to log out" });
   }
 };
@@ -121,7 +121,7 @@ const logoutAll = async (req, res) => {
     await RefreshSession.updateMany({ userId: req.user._id, revokedAt: null }, { $set: { revokedAt: new Date() } });
     clearAuthCookies(res);
     return res.status(200).json({ success: true, message: "Logged out from all devices successfully", data: {} });
-  } catch (error) {
+  } catch (_error) {
     return res.status(500).json({ success: false, message: "Unable to log out from all devices" });
   }
 };
@@ -161,7 +161,7 @@ const refreshToken = async (req, res) => {
 
     setAuthCookies(res, generateAccessToken(user), nextRefreshToken);
     return res.status(200).json({ success: true, message: "Access token refreshed successfully", data: {} });
-  } catch (error) {
+  } catch (_error) {
     clearAuthCookies(res);
     return res.status(401).json({ success: false, message: "Invalid or expired refresh token" });
   } finally {

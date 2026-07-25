@@ -185,7 +185,7 @@ const punchOut = async (req, res) => {
         attendance,
       },
     });
-  } catch (error) {
+  } catch (_error) {
     return res.status(500).json({
       success: false,
       message: "Internal server error",
@@ -229,7 +229,7 @@ const getAttendanceHistory = async (req, res) => {
         },
       },
     });
-  } catch (error) {
+  } catch (_error) {
     return res.status(500).json({
       success: false,
       message: "Internal server error",
@@ -302,7 +302,7 @@ const getTeamAttendance = async (req, res) => {
         },
       },
     });
-  } catch (error) {
+  } catch (_error) {
     return res.status(500).json({
       success: false,
       message: "Internal server error",
@@ -402,7 +402,7 @@ const getOrganizationAttendance = async (req, res) => {
         },
       },
     });
-  } catch (error) {
+  } catch (_error) {
     return res.status(500).json({
       success: false,
       message: "Internal server error",
@@ -472,7 +472,7 @@ const correctAttendance = async (req, res) => {
         attendance,
       },
     });
-  } catch (error) {
+  } catch (_error) {
     return res.status(500).json({
       success: false,
       message: "Internal server error",
@@ -486,7 +486,7 @@ const notImplemented = async (req, res) => {
       success: false,
       message: "Attendance APIs are scheduled for Phase 2",
     });
-  } catch (error) {
+  } catch (_error) {
     res.status(500).json({
       success: false,
       message: "Internal server error",
