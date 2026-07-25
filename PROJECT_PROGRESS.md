@@ -438,3 +438,9 @@ Latest Commit: latest commit of frontend
 | Frontend v1.5.0              | Released  | Department Management (directory, details, create/edit/delete, head assignment) and User Profile (view, edit, profile-picture upload)                                                                                                                                                                    |
 | Frontend v1.7.0              | Released  | Reports & Analytics: Attendance Reports (summary cards, Recharts pie/bar/line charts, department & manager breakdown tables, date/department/employee/status filters) using the production-ready attendance aggregation endpoint; Leave Reports Coming Soon state; export omitted (backend 501)          |
 | Sprint 2 – DevOps Foundation | Completed | Docker Desktop and WSL2 setup, backend and multi-stage frontend Dockerfiles, Nginx production serving, Docker Compose orchestration, automatic networking, environment variable integration, production backend container hardening, and verified containerized authentication and service communication |
+
+## Technical Debt
+
+- Refactor DepartmentFilters.jsx to export only React components.
+- Refactor EmployeeFilters.jsx to export only React components.
+- Investigate react-hook-form compatibility warning for future React Compiler support.
