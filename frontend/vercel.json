@@ -3,6 +3,10 @@
     {
       "source": "/api/:path*",
       "destination": "https://leave-attendance-management-system.onrender.com/api/:path*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }
