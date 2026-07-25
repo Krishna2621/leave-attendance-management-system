@@ -19,14 +19,14 @@ const details = (requiredName = false) => [
     const validator = body("name");
 
     if (requiredName) {
-     validator.isString();
+      validator.isString();
     } else {
       validator.optional();
     }
 
     return validator
-     .trim()
-     .isLength({ min: 2, max: 100 })
+      .trim()
+      .isLength({ min: 2, max: 100 })
       .withMessage("Name must be between 2 and 100 characters");
   })(),
 
