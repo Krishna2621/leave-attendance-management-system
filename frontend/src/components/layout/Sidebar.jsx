@@ -50,13 +50,7 @@ const navSections = [
         to: "/reports/attendance",
         icon: ChartColumn,
         roles: ["hr", "admin"],
-      },
-      {
-        label: "Leave Reports",
-        to: "/reports/leaves",
-        icon: ClipboardList,
-        roles: ["hr", "admin"],
-      },
+      }
     ],
   },
   {
