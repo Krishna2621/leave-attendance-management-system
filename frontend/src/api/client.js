@@ -2,10 +2,9 @@ let sessionExpiredNotified = false;
 import axios from "axios";
 import { emitAuthEvent } from "../services/authEvents";
 
-const API_URL =
-  import.meta.env.PROD
-    ? "/api"
-    : import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+const API_URL = import.meta.env.PROD
+  ? "/api"
+  : import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 const client = axios.create({
   baseURL: API_URL,
@@ -38,11 +37,11 @@ client.interceptors.response.use(
         await refreshSession();
         return client(request);
       } catch {
-          if (!sessionExpiredNotified) {
-            sessionExpiredNotified = true;
-            emitAuthEvent("session-expired");
-          }
+        if (!sessionExpiredNotified) {
+          sessionExpiredNotified = true;
+          emitAuthEvent("session-expired");
         }
+      }
     }
 
     if (status === 401 && !request?.url?.includes("/auth/refresh-token"))

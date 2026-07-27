@@ -50,7 +50,7 @@ const navSections = [
         to: "/reports/attendance",
         icon: ChartColumn,
         roles: ["hr", "admin"],
-      }
+      },
     ],
   },
   {

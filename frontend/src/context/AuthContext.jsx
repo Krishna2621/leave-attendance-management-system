@@ -48,16 +48,16 @@ export function AuthProvider({ children }) {
       }
     };
     restoreSession();
-   return subscribeToAuthEvents((event) => {
-  const storedUser = getStoredUser();
+    return subscribeToAuthEvents((event) => {
+      const storedUser = getStoredUser();
 
-  clearSession(
-    event === "session-expired" && storedUser
-      ? "Your session has expired. Please sign in again."
-      : null
-  );
-});
-}, [clearSession]);
+      clearSession(
+        event === "session-expired" && storedUser
+          ? "Your session has expired. Please sign in again."
+          : null
+      );
+    });
+  }, [clearSession]);
 
   const login = useCallback(
     async (credentials) => {
