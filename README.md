@@ -1,18 +1,72 @@
-# 🚀 LeaveFlow
+<p align="center">
+  <img src="docs/images/banner.png" alt="LeaveFlow Banner">
+</p>
 
-> A production-ready Leave & Attendance Management System built with the MERN Stack, featuring JWT Authentication, Role-Based Access Control (RBAC), Attendance Tracking, Leave Management, Automated Notifications, and CI/CD deployment.
+<h1 align="center">🚀 LeaveFlow</h1>
+
+<p align="center">
+  A Production-Ready Leave & Attendance Management System built with the MERN Stack.
+</p>
+
+<p align="center">
+  Secure JWT Authentication • RBAC • Attendance • Leave Management • Cloud Deployment
+</p>
+
+
+
+<p align="center">
+
+![GitHub last commit](https://img.shields.io/github/last-commit/Krishna2621/leave-attendance-management-system)
+![GitHub repo size](https://img.shields.io/github/repo-size/Krishna2621/leave-attendance-management-system)
+![GitHub issues](https://img.shields.io/github/issues/Krishna2621/leave-attendance-management-system)
+![GitHub license](https://img.shields.io/github/license/Krishna2621/leave-attendance-management-system)
+
+</p>
+
+<p align="center">
 
 ![React](https://img.shields.io/badge/React-19-61DAFB?logo=react)
 ![Node.js](https://img.shields.io/badge/Node.js-Express-339933?logo=node.js)
 ![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-47A248?logo=mongodb)
+![JWT](https://img.shields.io/badge/Auth-JWT-orange)
+![Docker](https://img.shields.io/badge/Docker-Enabled-2496ED?logo=docker)
 ![GitHub Actions](https://img.shields.io/badge/CI-GitHub%20Actions-2088FF?logo=githubactions)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
+</p>
+
+
+
+## 📑 Table of Contents
+
+- [🌐 Live Demo](#-live-demo)
+- [📖 About](#-about)
+- [✨ Features](#-features)
+- [🛠 Tech Stack](#-tech-stack)
+- [🏗️ System Architecture](#️-system-architecture)
+- [📂 Project Structure](#-project-structure)
+- [🚀 Getting Started](#-getting-started)
+- [🔑 Environment Variables](#-environment-variables)
+- [📖 API Documentation](#-api-documentation)
+- [🧪 Testing](#-testing)
+- [🚀 Deployment](#-deployment)
+- [📸 Application Preview](#-application-preview)
+- [🚀 Future Roadmap](#-future-roadmap)
+- [🤝 Contributing](#-contributing)
+- [📜 License](#-license)
+- [🙏 Acknowledgements](#-acknowledgements)
+  
+
 ## 🌐 Live Demo
 
-**Frontend:** https://leave-attendance-management-system.vercel.app
+> ⚠️ **Note:** The backend is hosted on **Render's free tier**. If the application has been inactive, the first request may take **30–60 seconds** while the server wakes up.
 
-**Backend API:** https://leave-attendance-management-system.onrender.com
+| Service | Link |
+|----------|------|
+| 🚀 Live Application | https://leave-attendance-management-system.vercel.app |
+| 📖 Swagger API Docs | https://leave-attendance-management-system.onrender.com/api/docs |
+| ⚙️ Backend API | https://leave-attendance-management-system.onrender.com |
+| 📂 GitHub Repository | https://github.com/Krishna2621/leave-attendance-management-system |
 
 ---
 
@@ -21,6 +75,58 @@
 LeaveFlow is a full-stack enterprise Leave & Attendance Management System developed as an internship project. It streamlines attendance tracking, leave applications, employee management, department management, and administrative operations through a secure role-based architecture.
 
 The application follows modern software engineering practices, including authentication using JWT, secure HTTP-only cookies, automated CI with GitHub Actions, cloud deployment, and a modular MERN architecture.
+
+## 💡 Why LeaveFlow?
+
+Many small and medium-sized organizations still rely on spreadsheets, emails, or manual processes to manage attendance and leave requests. LeaveFlow was built to provide a centralized, secure, and scalable solution that simplifies these workflows.
+
+The application enables employees to manage attendance and leave requests efficiently while giving managers, HR personnel, and administrators role-specific dashboards and controls. The project also demonstrates modern full-stack development practices, including secure authentication, RESTful API design, cloud deployment, and production-ready architecture.
+
+
+## 🌟 Project Highlights
+
+- 🔐 Secure authentication with **JWT Access Tokens** and **Refresh Token Rotation**
+- 🛡️ Role-Based Access Control (RBAC) for Employee, Manager, HR, and Admin
+- 📅 Attendance tracking with leave management and approval workflows
+- 📊 Interactive dashboards with role-specific analytics
+- ☁️ Cloud deployment using **Vercel** (Frontend) and **Render** (Backend)
+- 📖 REST API documented with **Swagger (OpenAPI)**
+- 🐳 Docker support for containerized development
+- ⚙️ Automated workflows with **GitHub Actions**
+- ✉️ Email notifications and password reset functionality
+- 🧪 Code quality maintained with **ESLint**, **Prettier**, and **Jest**
+
+## 📈 Key Metrics
+
+| Metric | Value |
+|---------|------:|
+| 🏗 Architecture | MERN Stack |
+| 👥 Supported Roles | 4 (Employee, Manager, HR, Admin) |
+| 🔐 Authentication | JWT + Refresh Tokens |
+| 🛡 Authorization | Role-Based Access Control (RBAC) |
+| 📚 API Documentation | Swagger (OpenAPI) |
+| ☁️ Deployment | Vercel + Render |
+| 💾 Database | MongoDB Atlas |
+| ⚙️ Background Jobs | Cron-based Automation |
+
+## 🗓️ Development Journey
+
+LeaveFlow was developed incrementally following modern software engineering practices. Each phase focused on building, testing, and validating a core part of the system before moving to the next.
+
+| Phase | Status |
+|--------|:------:|
+| 🏗️ Backend Foundation | ✅ Completed |
+| 🔐 Authentication & Authorization | ✅ Completed |
+| 👥 Employee & Department Management | ✅ Completed |
+| 📅 Attendance Management | ✅ Completed |
+| 🌴 Leave Management | ✅ Completed |
+| 📊 Dashboard & Reporting | ✅ Completed |
+| 📧 Notifications & Email Services | ✅ Completed |
+| ⚙️ Background Automation (Cron Jobs) | ✅ Completed |
+| 📖 Swagger API Documentation | ✅ Completed |
+| ☁️ Cloud Deployment (Render + Vercel) | ✅ Completed |
+| 🚀 Production Release | ✅ Completed |
+
 
 ## ✨ Features
 
@@ -124,6 +230,32 @@ LeaveFlow follows a modern client-server architecture built on the MERN stack.
 - **Email Service:** SMTP (Nodemailer)
 - **Automation:** Background Cron Jobs
 - **CI/CD:** GitHub Actions
+
+  ### 🌍 Production Deployment Flow
+
+```text
+                User
+                  │
+                  ▼
+      Vercel (React + Vite)
+                  │
+                  ▼
+        /api (Vercel Rewrite)
+                  │
+                  ▼
+     Render (Express.js Backend)
+                  │
+      ┌───────────┴───────────┐
+      ▼                       ▼
+ MongoDB Atlas          Cloudinary
+      │
+      ▼
+ Scheduled Jobs (Cron)
+      │
+      ▼
+ Email Service (SMTP)
+```
+
 
 - ## 📂 Project Structure
 
@@ -372,6 +504,39 @@ https://leave-attendance-management-system.vercel.app
 Backend
 
 https://leave-attendance-management-system.onrender.com
+
+## 🛠 Technical Challenges & Solutions
+
+Throughout the development and deployment of LeaveFlow, several real-world engineering challenges were encountered and resolved.
+
+| Challenge | Solution |
+|-----------|----------|
+| Cross-origin authentication between Vercel and Render | Configured secure HTTP-only cookies and routed API requests through Vercel rewrites to ensure reliable authentication. |
+| React Router refresh causing 404 errors | Added Vercel SPA rewrite rules so client-side routes resolve correctly after page refreshes. |
+| Secure session management | Implemented JWT access tokens with refresh token rotation using HTTP-only cookies. |
+| Role-based authorization | Designed middleware to protect routes for Employee, Manager, HR, and Admin roles. |
+| API documentation | Integrated Swagger (OpenAPI) for interactive API exploration and testing. |
+| Background automation | Implemented scheduled cron jobs for notifications and automated tasks. |
+| Production deployment | Deployed the frontend on Vercel and backend on Render with environment-based configuration. |
+
+
+## 🔒 Security Features
+
+LeaveFlow is designed with security best practices to protect user accounts and sensitive data.
+
+| Feature | Description |
+|----------|-------------|
+| 🔑 JWT Authentication | Secure access token authentication |
+| 🔄 Refresh Token Rotation | Automatically refreshes expired access tokens |
+| 🍪 HTTP-only Cookies | Prevents JavaScript access to authentication cookies |
+| 🔐 Password Hashing | Passwords are securely hashed using bcrypt |
+| 🛡 Role-Based Access Control (RBAC) | Restricts access based on user roles |
+| 🚦 Rate Limiting | Prevents brute-force and excessive API requests |
+| 🪖 Helmet | Adds secure HTTP headers |
+| ✅ Request Validation | Validates incoming requests using express-validator |
+| 🔒 Protected Routes | Prevents unauthorized access to sensitive endpoints |
+| 🌐 CORS Protection | Restricts requests to trusted frontend origins |
+
 
 ## 📸 Application Preview
 
