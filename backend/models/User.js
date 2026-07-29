@@ -16,8 +16,17 @@ const userSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      required: true,
+      required: false,
       select: false,
+    },
+    isEmailVerified: { type: Boolean, default: false },
+    mustSetPassword: { type: Boolean, default: false },
+    passwordSetupToken: { type: String, select: false, default: undefined },
+    passwordSetupTokenExpires: { type: Date, default: undefined },
+    accountStatus: {
+      type: String,
+      enum: ["Pending Password Setup", "Active"],
+      default: "Active",
     },
     role: {
       type: String,
