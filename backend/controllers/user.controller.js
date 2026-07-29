@@ -1,5 +1,15 @@
+const mongoose = require("mongoose");
 const User = require("../models/User");
 const Department = require("../models/Department");
+const Attendance = require("../models/Attendance");
+const LeaveBalance = require("../models/LeaveBalance");
+const LeaveRequest = require("../models/LeaveRequest");
+const LeaveRequestHistory = require("../models/LeaveRequestHistory");
+const RefreshSession = require("../models/RefreshSession");
+const PasswordResetToken = require("../models/PasswordResetToken");
+const EmailOtp = require("../models/EmailOtp");
+const Notification = require("../models/Notification");
+const AuditLog = require("../models/AuditLog");
 const { uploadToCloudinary, deleteFromCloudinary } = require("../utils/cloudinary");
 const { createHRAuditLog } = require("../utils/auditLog");
 
@@ -317,6 +327,100 @@ const changeRole = async (req, res) => {
   }
 };
 
+const deleteEmployee = async (req, res) => {
+  const session = await mongoose.startSession();
+  try {
+    const employeeId = req.params.id;
+    if (String(employeeId) === String(req.user._id))
+      throw problem("You cannot delete your own account.", 400);
+
+    let profilePicturePublicId = "";
+    let leaveDocumentPublicIds = [];
+    await session.withTransaction(async () => {
+      const employee = await User.findById(employeeId)
+        .select("+profilePicture.publicId")
+        .session(session);
+      if (!employee) throw problem("Employee not found", 404);
+
+      if (
+        employee.role === "admin" &&
+        (await User.countDocuments({ role: "admin" }).session(session)) === 1
+      )
+        throw problem("Cannot delete the last remaining Admin account", 409);
+
+      const leaveRequests = await LeaveRequest.find({ userId: employee._id })
+        .select("_id document.publicId")
+        .session(session)
+        .lean();
+      const leaveRequestIds = leaveRequests.map((leaveRequest) => leaveRequest._id);
+      profilePicturePublicId = employee.profilePicture?.publicId || "";
+      leaveDocumentPublicIds = leaveRequests
+        .map((leaveRequest) => leaveRequest.document?.publicId)
+        .filter(Boolean);
+
+      await Promise.all([
+        Attendance.deleteMany({ userId: employee._id }).session(session),
+        LeaveBalance.deleteMany({ userId: employee._id }).session(session),
+        LeaveRequest.deleteMany({ userId: employee._id }).session(session),
+        RefreshSession.deleteMany({ userId: employee._id }).session(session),
+        PasswordResetToken.deleteMany({ userId: employee._id }).session(session),
+        EmailOtp.deleteMany({ email: employee.email }).session(session),
+        Notification.deleteMany({
+          $or: [
+            { recipientId: employee._id },
+            ...(leaveRequestIds.length ? [{ referenceId: { $in: leaveRequestIds } }] : []),
+          ],
+        }).session(session),
+        User.updateMany({ managerId: employee._id }, { $set: { managerId: null } }).session(
+          session
+        ),
+        Department.updateMany({ managerId: employee._id }, { $set: { managerId: null } }).session(
+          session
+        ),
+        LeaveRequest.updateMany(
+          { approvedBy: employee._id },
+          { $set: { approvedBy: null } }
+        ).session(session),
+      ]);
+
+      // These immutable history/audit models intentionally reject Mongoose deletes.
+      // The raw collection operations keep employee deletion comprehensive.
+      await Promise.all([
+        LeaveRequestHistory.collection.deleteMany(
+          {
+            $or: [{ leaveRequestId: { $in: leaveRequestIds } }, { actorId: employee._id }],
+          },
+          { session }
+        ),
+        AuditLog.collection.deleteMany(
+          {
+            $or: [
+              { actorId: employee._id },
+              { targetUserId: employee._id },
+              { entityType: "employee", entityId: employee._id },
+            ],
+          },
+          { session }
+        ),
+      ]);
+      await employee.deleteOne({ session });
+    });
+
+    await Promise.all(
+      [profilePicturePublicId, ...leaveDocumentPublicIds]
+        .filter(Boolean)
+        .map((publicId) => deleteFromCloudinary(publicId).catch(() => null))
+    );
+    return res
+      .status(200)
+      .json({ success: true, message: "Employee deleted successfully", data: {} });
+  } catch (err) {
+    return fail(res, err);
+  } finally {
+    await session.endSession();
+  }
+};
+
 module.exports = {
   getMe,
   listEmployees,
@@ -328,4 +432,5 @@ module.exports = {
   changeManager,
   changeDepartment,
   changeRole,
+  deleteEmployee,
 };

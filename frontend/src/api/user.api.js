@@ -20,6 +20,7 @@ export const changeEmployeeManager = (id, managerId) =>
   client.put(`/users/${id}/manager`, { managerId: managerId || null }).then(getData);
 export const changeEmployeeDepartment = (id, departmentId) =>
   client.put(`/users/${id}/department`, { departmentId: departmentId || null }).then(getData);
+export const deleteEmployee = (id) => client.delete(`/users/${id}`).then(getData);
 export const getDepartments = (params) =>
   client.get("/departments", { params: cleanParams(params) }).then(getData);
 

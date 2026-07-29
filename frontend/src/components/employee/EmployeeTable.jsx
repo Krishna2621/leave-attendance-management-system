@@ -4,7 +4,7 @@ import Badge from "../ui/Badge";
 import Button from "../ui/Button";
 import { roleText, roleTone } from "../../utils/employee";
 
-export default function EmployeeTable({ employees, onView }) {
+export default function EmployeeTable({ employees, onView, onDelete }) {
   const columns = [
     {
       key: "name",
@@ -39,9 +39,18 @@ export default function EmployeeTable({ employees, onView }) {
       key: "actions",
       label: "",
       render: (row) => (
-        <Button variant="ghost" onClick={() => onView(row)}>
-          View
-        </Button>
+        <div className="flex justify-end gap-1">
+          <Button variant="ghost" onClick={() => onView(row)}>
+            View
+          </Button>
+          <Button
+            variant="ghost"
+            className="text-rose-600 hover:bg-rose-50 hover:text-rose-700"
+            onClick={() => onDelete(row)}
+          >
+            Delete
+          </Button>
+        </div>
       ),
     },
   ];

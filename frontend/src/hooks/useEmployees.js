@@ -3,6 +3,7 @@ import {
   changeEmployeeDepartment,
   changeEmployeeManager,
   changeEmployeeRole,
+  deleteEmployee,
   getDepartments,
   getEmployee,
   getEmployees,
@@ -59,5 +60,24 @@ export function useEmployeeActions() {
     changeDepartment: useMutation(
       withRefresh(({ id, departmentId }) => changeEmployeeDepartment(id, departmentId))
     ),
+    delete: useMutation({
+      mutationFn: ({ id }) => deleteEmployee(id),
+      onSuccess: (_data, { id }) => {
+        client.setQueriesData({ queryKey: ["employees"] }, (current) => {
+          if (!current?.users) return current;
+          return {
+            ...current,
+            users: current.users.filter((user) => user._id !== id),
+            pagination: current.pagination
+              ? {
+                  ...current.pagination,
+                  totalRecords: Math.max(0, current.pagination.totalRecords - 1),
+                }
+              : current.pagination,
+          };
+        });
+        return refresh(id);
+      },
+    }),
   };
 }

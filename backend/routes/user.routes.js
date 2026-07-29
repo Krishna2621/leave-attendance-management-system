@@ -162,4 +162,11 @@ router.put(
   validateRequest,
   controller.changeRole
 );
+router.delete(
+  "/:id",
+  authorizeRoles("hr", "admin"),
+  [param("id").isMongoId().withMessage("Employee ID must be a valid MongoDB ObjectId")],
+  validateRequest,
+  controller.deleteEmployee
+);
 module.exports = router;
