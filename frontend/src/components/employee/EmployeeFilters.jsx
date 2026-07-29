@@ -2,9 +2,7 @@ import { Search, SlidersHorizontal } from "lucide-react";
 import Button from "../ui/Button";
 import { roleLabels } from "../../utils/employee";
 
-const emptyFilters = { page: 1, limit: 20, search: "", role: "", departmentId: "", isActive: "" };
-
-export default function EmployeeFilters({ filters, onChange, departments = [] }) {
+export default function EmployeeFilters({ filters, onChange, onClear, departments = [] }) {
   const update = (key, value) => onChange({ ...filters, [key]: value, page: 1 });
   return (
     <form
@@ -63,16 +61,10 @@ export default function EmployeeFilters({ filters, onChange, departments = [] })
           <option value="false">Inactive</option>
         </select>
       </label>
-      <Button
-        variant="secondary"
-        className="self-end xl:col-start-4"
-        onClick={() => onChange({ ...emptyFilters })}
-      >
+      <Button variant="secondary" className="self-end xl:col-start-4" onClick={onClear}>
         <SlidersHorizontal size={16} />
         Clear
       </Button>
     </form>
   );
 }
-
-export { emptyFilters };

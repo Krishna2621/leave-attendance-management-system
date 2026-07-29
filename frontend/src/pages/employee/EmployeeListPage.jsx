@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDepartmentOptions, useEmployees } from "../../hooks/useEmployees";
-import EmployeeFilters, { emptyFilters } from "../../components/employee/EmployeeFilters";
+import EmployeeFilters from "../../components/employee/EmployeeFilters";
 import EmployeeTable from "../../components/employee/EmployeeTable";
 import Pagination from "../../components/common/Pagination";
 import Loader from "../../components/ui/Loader";
@@ -10,6 +10,8 @@ import ConfirmDialog from "../../components/ui/ConfirmDialog";
 import { useEmployeeActions } from "../../hooks/useEmployees";
 import toast from "react-hot-toast";
 import { getApiErrorMessage } from "../../utils/apiError";
+
+const emptyFilters = { page: 1, limit: 20, search: "", role: "", departmentId: "", isActive: "" };
 
 export default function EmployeeListPage() {
   const navigate = useNavigate();
@@ -57,6 +59,7 @@ export default function EmployeeListPage() {
       <EmployeeFilters
         filters={filters}
         onChange={setFilters}
+        onClear={() => setFilters({ ...emptyFilters })}
         departments={departments.data?.departments || []}
       />
       {query.isLoading ? (

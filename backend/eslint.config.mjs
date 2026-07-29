@@ -71,4 +71,12 @@ export default [
       "preserve-caught-error": "off",
     },
   },
+  {
+    files: ["tests/**/*.test.js"],
+    languageOptions: {
+      globals: {
+        ...globals.jest,
+      },
+    },
+  },
 ];

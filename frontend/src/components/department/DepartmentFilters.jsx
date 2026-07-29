@@ -1,7 +1,5 @@
 import { Search } from "lucide-react";
 
-const emptyFilters = { page: 1, limit: 20, search: "", status: "" };
-
 export default function DepartmentFilters({ filters, onChange }) {
   const update = (key, value) => onChange({ ...filters, [key]: value, page: 1 });
   return (
@@ -34,5 +32,3 @@ export default function DepartmentFilters({ filters, onChange }) {
     </form>
   );
 }
-
-export { emptyFilters };

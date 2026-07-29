@@ -4,13 +4,15 @@ import { Plus } from "lucide-react";
 import toast from "react-hot-toast";
 import { useDepartmentActions, useDepartments } from "../../hooks/useDepartments";
 import { useManagerOptions } from "../../hooks/useEmployees";
-import DepartmentFilters, { emptyFilters } from "../../components/department/DepartmentFilters";
+import DepartmentFilters from "../../components/department/DepartmentFilters";
 import DepartmentTable from "../../components/department/DepartmentTable";
 import DepartmentFormModal from "../../components/department/DepartmentFormModal";
 import Pagination from "../../components/common/Pagination";
 import Button from "../../components/ui/Button";
 import Loader from "../../components/ui/Loader";
 import DashboardError from "../../components/dashboard/DashboardError";
+
+const emptyFilters = { page: 1, limit: 20, search: "", status: "" };
 import { getApiErrorMessage } from "../../utils/apiError";
 
 export default function DepartmentListPage() {
