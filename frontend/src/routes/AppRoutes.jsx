@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import MainLayout from "../layout/MainLayout";
 import LoginPage from "../pages/auth/LoginPage";
 import RegisterPage from "../pages/auth/RegisterPage";
+import SetPasswordPage from "../pages/auth/SetPasswordPage";
 import DashboardPage from "../pages/dashboard/DashboardPage";
 import AttendanceDashboardPage from "../pages/attendance/AttendanceDashboardPage";
 import MarkAttendancePage from "../pages/attendance/MarkAttendancePage";
@@ -28,6 +29,9 @@ export default function AppRoutes() {
     <Routes>
       <Route element={<PublicRoute />}>
         <Route path="/login" element={<LoginPage />} />
+      </Route>
+      <Route path="/set-password/:token" element={<SetPasswordPage />} />
+      <Route element={<ProtectedRoute roles={["hr", "admin"]} />}>
         <Route path="/register" element={<RegisterPage />} />
       </Route>
       <Route element={<ProtectedRoute />}>

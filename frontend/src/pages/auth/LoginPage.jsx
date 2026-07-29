@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { LockKeyhole } from "lucide-react";
 import useAuth from "../../hooks/useAuth";
@@ -86,15 +86,6 @@ export default function LoginPage() {
               Sign in
             </Button>
           </div>
-          <p className="mt-6 text-center text-sm text-slate-600">
-            Don't have an account?{" "}
-            <Link
-              to="/register"
-              className="font-semibold text-teal-700 transition hover:text-teal-800"
-            >
-              Create Account
-            </Link>
-          </p>
         </form>
       </section>
     </main>
