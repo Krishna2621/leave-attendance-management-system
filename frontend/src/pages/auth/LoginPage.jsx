@@ -21,7 +21,12 @@ export default function LoginPage() {
   const onSubmit = async (values) => {
     setSubmitting(true);
     try {
-      await login(values);
+      const result = await login(values);
+      if (result.requirePasswordChange) {
+        toast("Change your temporary password to continue.");
+        navigate("/change-password", { replace: true });
+        return;
+      }
       toast.success("Welcome back!");
       navigate(location.state?.from?.pathname || "/dashboard", { replace: true });
     } catch (error) {

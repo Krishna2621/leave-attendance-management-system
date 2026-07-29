@@ -1,6 +1,4 @@
 const Notification = require("../models/Notification");
-const { sendEmail } = require("../services/email.service");
-const logger = require("../utils/logger");
 
 const getMyNotifications = async (req, res) => {
   try {
@@ -89,35 +87,9 @@ const deleteNotification = async (req, res) => {
   }
 };
 
-const testNotificationEmail = async (req, res) => {
-  try {
-    if (!req.user.email)
-      return res
-        .status(400)
-        .json({ success: false, message: "Your account does not have an email address" });
-    await sendEmail({
-      to: req.user.email,
-      subject: "Notification service test",
-      text: "The notification email service is configured successfully.",
-      html: "<p>The notification email service is configured successfully.</p>",
-    });
-    return res.status(200).json({
-      success: true,
-      message: "Test notification email sent successfully",
-      data: { recipient: req.user.email },
-    });
-  } catch (error) {
-    logger.error("Test notification email failed", { userId: req.user._id, error: error.message });
-    return res
-      .status(502)
-      .json({ success: false, message: "Test notification email could not be sent" });
-  }
-};
-
 module.exports = {
   getMyNotifications,
   markNotificationAsRead,
   markAllNotificationsAsRead,
   deleteNotification,
-  testNotificationEmail,
 };

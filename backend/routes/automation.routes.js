@@ -18,7 +18,6 @@ router.post(
         "attendance-absence",
         "attendance-reminder",
         "leave-reminder",
-        "notification-dispatch",
       ])
       .withMessage("Unsupported automation job"),
     body().custom((value, { req }) => {

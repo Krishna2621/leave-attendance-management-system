@@ -5,13 +5,11 @@ const {
   queueAttendanceReminders,
 } = require("../services/attendanceAutomation.service");
 const { queueLeaveReminders } = require("../services/leaveAutomation.service");
-const { dispatchQueuedNotifications } = require("../services/notificationDispatcher.service");
 const { runScheduledJob } = require("../services/jobRun.service");
 const { getBusinessDate, toBusinessDate } = require("./leave.utils");
 const logger = require("./logger");
 const timezone = process.env.CRON_TIMEZONE || process.env.ATTENDANCE_TIMEZONE || "Asia/Kolkata";
 const dateKey = (date) => date.toISOString().slice(0, 10);
-const minuteKey = (date) => date.toISOString().slice(0, 16);
 const resolveDate = (value, fallback) =>
   typeof value === "string" ? toBusinessDate(value) : value || fallback;
 
@@ -40,15 +38,6 @@ const runLeaveReminderJob = (targetDate) => {
     runKey: dateKey(date),
     metadata: { targetDate: dateKey(date) },
     handler: () => queueLeaveReminders({ targetDate: date }),
-  });
-};
-const runNotificationDispatchJob = () => {
-  const now = new Date();
-  return runScheduledJob({
-    jobName: "notification-dispatch",
-    runKey: minuteKey(now),
-    metadata: { startedAt: now.toISOString() },
-    handler: () => dispatchQueuedNotifications(),
   });
 };
 const schedule = (expression, name, handler) =>
@@ -82,11 +71,6 @@ const startCronJobs = () => {
       "leave-reminder",
       runLeaveReminderJob
     ),
-    schedule(
-      process.env.NOTIFICATION_DISPATCH_CRON_SCHEDULE || "* * * * *",
-      "notification-dispatch",
-      runNotificationDispatchJob
-    ),
   ];
   logger.info("Cron jobs registered", { timezone, count: jobs.length });
   return jobs;
@@ -98,5 +82,4 @@ module.exports = startCronJobs;
 module.exports.runAttendanceAbsenceJob = runAttendanceAbsenceJob;
 module.exports.runAttendanceReminderJob = runAttendanceReminderJob;
 module.exports.runLeaveReminderJob = runLeaveReminderJob;
-module.exports.runNotificationDispatchJob = runNotificationDispatchJob;
 module.exports.stopCronJobs = stopCronJobs;

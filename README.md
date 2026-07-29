@@ -197,7 +197,6 @@ LeaveFlow was developed incrementally following modern software engineering prac
 | **Authorization**     | Role-Based Access Control (RBAC)                      |
 | **API Documentation** | Swagger (OpenAPI)                                     |
 | **Cloud Storage**     | Cloudinary                                            |
-| **Email Service**     | Nodemailer (SMTP)                                     |
 | **Automation**        | node-cron                                             |
 | **Testing**           | Jest                                                  |
 | **Code Quality**      | ESLint, Prettier                                      |
@@ -220,7 +219,6 @@ LeaveFlow follows a modern client-server architecture built on the MERN stack.
 - **Database:** MongoDB Atlas
 - **Authentication:** JWT + Refresh Tokens using HTTP-only cookies
 - **Cloud Storage:** Cloudinary
-- **Email Service:** SMTP (Nodemailer)
 - **Automation:** Background Cron Jobs
 - **CI/CD:** GitHub Actions
 
@@ -246,7 +244,6 @@ LeaveFlow follows a modern client-server architecture built on the MERN stack.
  Scheduled Jobs (Cron)
       │
       ▼
- Email Service (SMTP)
 ```
 
 - ## 📂 Project Structure
@@ -398,10 +395,6 @@ Create a `.env` file inside the **backend** directory.
 | CLOUDINARY_CLOUD_NAME | Cloudinary cloud name           |
 | CLOUDINARY_API_KEY    | Cloudinary API key              |
 | CLOUDINARY_API_SECRET | Cloudinary API secret           |
-| SMTP_HOST             | SMTP server host                |
-| SMTP_PORT             | SMTP server port                |
-| SMTP_USER             | SMTP username                   |
-| SMTP_PASS             | SMTP password                   |
 
 ## 📖 API Documentation
 

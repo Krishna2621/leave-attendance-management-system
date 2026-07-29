@@ -16,7 +16,7 @@ const queueLeaveReminders = async ({ targetDate = getBusinessDate(new Date()) } 
   return queueNotifications(
     requests.map((request) => ({
       recipientId: request.userId,
-      channel: "email",
+      channel: "in_app",
       type: "leave_reminder",
       referenceType: "LeaveRequest",
       referenceId: request._id,

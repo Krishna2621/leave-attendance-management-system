@@ -19,13 +19,12 @@ const add = (path, method, summary, secured = true) => {
 [
   ["/health/live", "get", "Health liveness", false],
   ["/health/ready", "get", "Health readiness", false],
-  ["/auth/register", "post", "Authentication register", false],
+  ["/auth/employees", "post", "Authentication employee create"],
   ["/auth/login", "post", "Authentication login", false],
   ["/auth/logout", "post", "Authentication logout", false],
   ["/auth/logout-all", "post", "Authentication logout all"],
   ["/auth/refresh-token", "post", "Authentication refresh token", false],
-  ["/auth/forgot-password", "post", "Authentication forgot password", false],
-  ["/auth/reset-password", "post", "Authentication reset password", false],
+  ["/auth/change-password", "post", "Authentication change password"],
   ["/attendance/punch-in", "post", "Attendance punch in"],
   ["/attendance/punch-out", "post", "Attendance punch out"],
   ["/attendance/me", "get", "Attendance history"],
@@ -73,7 +72,6 @@ const add = (path, method, summary, secured = true) => {
   ["/notifications/read-all", "patch", "Notifications mark all read"],
   ["/notifications/{id}/read", "patch", "Notification mark read"],
   ["/notifications/{id}", "delete", "Notification delete"],
-  ["/notifications/test", "post", "Notifications test"],
   ["/automation/run/{jobName}", "post", "Automation run"],
 ].forEach(([path, method, summary, secured]) => add(path, method, summary, secured));
 

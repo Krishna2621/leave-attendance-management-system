@@ -14,13 +14,6 @@ const validateEnvironment = () => {
     if (!isSet(process.env[name])) missing.push(name);
   });
 
-  const hasSmtp = ["SMTP_HOST", "SMTP_PORT", "SMTP_USER", "SMTP_PASS"].every((name) =>
-    isSet(process.env[name])
-  );
-  const hasLegacyEmail = ["EMAIL_USER", "EMAIL_PASS"].every((name) => isSet(process.env[name]));
-  if (!hasSmtp && !hasLegacyEmail)
-    missing.push("SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS (or legacy EMAIL_USER, EMAIL_PASS)");
-
   if (
     isSet(process.env.PORT) &&
     (!/^\d+$/.test(process.env.PORT) ||

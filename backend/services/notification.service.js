@@ -2,7 +2,7 @@ const Notification = require("../models/Notification");
 
 const queueNotification = async ({
   recipientId,
-  channel = "email",
+  channel = "in_app",
   type,
   referenceType = "",
   referenceId = null,
@@ -47,11 +47,19 @@ const queueNotification = async ({
 
 const queueNotifications = async (notifications) => {
   if (!notifications.length) return { queuedCount: 0 };
+  const sentAt = new Date();
   const result = await Notification.bulkWrite(
     notifications.map((notification) => ({
       updateOne: {
         filter: { dedupeKey: notification.dedupeKey },
-        update: { $setOnInsert: notification },
+        update: {
+          $setOnInsert: {
+            ...notification,
+            channel: "in_app",
+            status: "sent",
+            sentAt,
+          },
+        },
         upsert: true,
       },
     })),

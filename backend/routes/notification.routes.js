@@ -5,10 +5,8 @@ const {
   markNotificationAsRead,
   markAllNotificationsAsRead,
   deleteNotification,
-  testNotificationEmail,
 } = require("../controllers/notification.controller");
 const { protect } = require("../middleware/auth.middleware");
-const developmentOnly = require("../middleware/developmentOnly.middleware");
 const validateRequest = require("../middleware/validate.middleware");
 
 const router = express.Router();
@@ -48,5 +46,4 @@ router.delete(
   validateRequest,
   deleteNotification
 );
-router.post("/test", developmentOnly, testNotificationEmail);
 module.exports = router;

@@ -8,7 +8,7 @@ const notificationSchema = new mongoose.Schema(
       required: true,
       immutable: true,
     },
-    channel: { type: String, enum: ["email", "in_app", "sms"], default: "email", immutable: true },
+    channel: { type: String, enum: ["in_app"], default: "in_app", immutable: true },
     type: { type: String, required: true, trim: true, maxlength: 100, immutable: true },
     referenceType: { type: String, trim: true, default: "", immutable: true },
     referenceId: { type: mongoose.Schema.Types.ObjectId, default: null, immutable: true },

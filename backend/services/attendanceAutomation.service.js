@@ -90,7 +90,7 @@ const queueAttendanceReminders = async ({ targetDate = getBusinessDate(new Date(
       .filter((id) => !existingIds.has(String(id)))
       .map((recipientId) => ({
         recipientId,
-        channel: "email",
+        channel: "in_app",
         type: "attendance_reminder",
         referenceType: "Attendance",
         template: "attendance_reminder",

@@ -2,14 +2,12 @@ const {
   runAttendanceAbsenceJob,
   runAttendanceReminderJob,
   runLeaveReminderJob,
-  runNotificationDispatchJob,
 } = require("../utils/cronJobs");
 
 const jobs = {
   "attendance-absence": runAttendanceAbsenceJob,
   "attendance-reminder": runAttendanceReminderJob,
   "leave-reminder": runLeaveReminderJob,
-  "notification-dispatch": runNotificationDispatchJob,
 };
 
 const runAutomationJob = async (req, res) => {

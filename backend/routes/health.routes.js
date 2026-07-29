@@ -1,7 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const { hasCloudinaryConfig } = require("../config/env");
-const { verifyEmailTransport } = require("../services/email.service");
 
 const router = express.Router();
 router.get("/live", (req, res) =>
@@ -15,15 +14,7 @@ router.get("/ready", async (req, res) => {
   const mongo = mongoose.connection.readyState === 1;
   const cloudinary = hasCloudinaryConfig();
 
-  let smtp = false;
-
-  try {
-    smtp = await verifyEmailTransport();
-  } catch {
-    // SMTP unavailable, keep default value (false)
-  }
-
-  const ready = mongo && cloudinary && smtp;
+  const ready = mongo && cloudinary;
 
   return res.status(ready ? 200 : 503).json({
     success: ready,
@@ -34,7 +25,6 @@ router.get("/ready", async (req, res) => {
       checks: {
         mongodb: mongo ? "ready" : "not_ready",
         cloudinary: cloudinary ? "configured" : "not_configured",
-        smtp: smtp ? "ready" : "not_ready",
       },
     },
   });

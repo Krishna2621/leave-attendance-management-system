@@ -6,8 +6,6 @@ const LeaveBalance = require("../models/LeaveBalance");
 const LeaveRequest = require("../models/LeaveRequest");
 const LeaveRequestHistory = require("../models/LeaveRequestHistory");
 const RefreshSession = require("../models/RefreshSession");
-const PasswordResetToken = require("../models/PasswordResetToken");
-const EmailOtp = require("../models/EmailOtp");
 const Notification = require("../models/Notification");
 const AuditLog = require("../models/AuditLog");
 const { uploadToCloudinary, deleteFromCloudinary } = require("../utils/cloudinary");
@@ -363,8 +361,6 @@ const deleteEmployee = async (req, res) => {
         LeaveBalance.deleteMany({ userId: employee._id }).session(session),
         LeaveRequest.deleteMany({ userId: employee._id }).session(session),
         RefreshSession.deleteMany({ userId: employee._id }).session(session),
-        PasswordResetToken.deleteMany({ userId: employee._id }).session(session),
-        EmailOtp.deleteMany({ email: employee.email }).session(session),
         Notification.deleteMany({
           $or: [
             { recipientId: employee._id },

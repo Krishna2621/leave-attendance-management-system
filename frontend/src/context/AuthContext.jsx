@@ -1,7 +1,7 @@
 import { createContext, useCallback, useEffect, useMemo, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { loginRequest, logoutRequest, registerRequest } from "../api/auth.api";
+import { loginRequest, logoutRequest } from "../api/auth.api";
 import { refreshSession, resetSessionNotification } from "../api/client";
 import { subscribeToAuthEvents } from "../services/authEvents";
 
@@ -67,20 +67,7 @@ export function AuthProvider({ children }) {
       localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(loggedInUser));
       setUser(loggedInUser);
       resetSessionNotification();
-      return loggedInUser;
-    },
-    [queryClient]
-  );
-
-  const register = useCallback(
-    async (payload) => {
-      const { data } = await registerRequest(payload);
-      const registeredUser = data.data.user;
-      queryClient.clear();
-      localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(registeredUser));
-      setUser(registeredUser);
-      resetSessionNotification();
-      return registeredUser;
+      return { user: loggedInUser, requirePasswordChange: data.requirePasswordChange === true };
     },
     [queryClient]
   );
@@ -110,11 +97,10 @@ export function AuthProvider({ children }) {
       isLoading,
       isAuthenticated: Boolean(user),
       login,
-      register,
       logout,
       updateUser,
     }),
-    [user, isLoading, login, register, logout, updateUser]
+    [user, isLoading, login, logout, updateUser]
   );
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

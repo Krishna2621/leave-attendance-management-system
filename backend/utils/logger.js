@@ -1,4 +1,4 @@
-const SENSITIVE_KEYS = /password|token|secret|authorization|cookie|smtp_pass|api_key/i;
+const SENSITIVE_KEYS = /password|token|secret|authorization|cookie|api_key/i;
 
 const redact = (value) => {
   if (Array.isArray(value)) return value.map(redact);
