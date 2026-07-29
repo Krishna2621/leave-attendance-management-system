@@ -37,6 +37,23 @@ app.disable("x-powered-by");
 if (process.env.NODE_ENV === "production") app.set("trust proxy", 1);
 app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
 
+
+const { verifyEmailTransport } = require("./services/email.service");
+
+app.get("/api/email-test", async (req, res) => {
+  try {
+    await verifyEmailTransport();
+    res.json({ success: true, message: "SMTP connection successful" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      success: false,
+      message: err.message,
+      code: err.code,
+    });
+  }
+});
+
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:3000",
